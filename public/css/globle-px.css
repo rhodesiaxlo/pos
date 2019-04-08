@@ -1,0 +1,418 @@
+/* 常用样式 */
+.z-index-2 {
+    z-index: 2;
+  }
+  .z-index-3 {
+    z-index: 3;
+  }
+  .h100pc {
+    height: 100%;
+  }
+  .w100pc {
+    width: 100%;
+  }
+  .bold{
+    font-weight: bold;
+  }
+  .dsn {
+    display: none;
+  }
+  .dslb {
+    display: inline-block;
+  }
+  .rel {
+    position: relative;
+  }
+  .abs {
+    position: absolute;
+  }
+  .fixed {
+    position: fixed;
+  }
+  .circle {
+    border-radius: 50%;
+  }
+  .bor {
+    border-radius: 14%;
+  }
+  li {
+    list-style: none;
+  }
+  .bob{
+    box-sizing: border-box;
+  }
+  .txal{
+    text-align: center;
+  }
+  .txalS{
+    text-align: start;
+  }
+  /*  */
+  .lh-0{
+      line-height: 0;
+  }
+  /* margin */
+  .mg-0{
+    margin: 0px;
+  }
+  .mg-15{
+    margin:15px;
+  }
+  .mg-20{
+    margin:20px;
+  }
+  .mg-25{
+    margin:25px;
+  }
+  .mg-33{
+    margin:33px;
+  }
+  .mg-rl-5{
+    margin:0 05px;
+  }
+  .mg-rl-7{
+    margin:0 7px;
+  }
+  .mg-rl-10{
+    margin:0 10px;
+  }
+  .mg-rl-16{
+    margin:0 16px;
+  }
+  .mg-rl-18{
+    margin:0 18px;
+  }
+  .mg-rl-20{
+    margin:0 20px;
+  }
+  .mg-rl-25{
+    margin:0 25px;
+  }
+  .mg-rl-28{
+    margin:0 28px;
+  }
+  .mg-rl-30{
+    margin:0 30px;
+  }
+  .mg-rl-33{
+    margin:0 33px;
+  }
+  .mg-bt-10{
+    margin: 10px 0;
+  }
+  .mg-bt-15{
+    margin: 15px 0;
+  }
+  .mg-bt-33{
+    margin:33px 0;
+  }
+  .mg-l-6{
+    margin-left:6px;
+  }
+  .mg-l-10{
+    margin-left:10px;
+  }
+  .mg-l-20{
+    margin-left:20px;
+  }
+  .mg-r-6{
+    margin-right:6px;
+  }
+  .mg-r-10{
+    margin-right:.10px;
+  }
+  .mg-r-20{
+    margin-right:20px;
+  }
+  .mg-t-10 {
+    margin-top: 10px;
+  }
+  .mg-t-15 {
+    margin-top: 15px;
+  }
+  .mg-t-18 {
+    margin-top: 18px;
+  }
+  .mg-t-20 {
+    margin-top: 20px;
+  }
+  .mg-t-25 {
+    margin-top: 25px;
+  }
+  .mg-t-30 {
+    margin-top: 30px;
+  }
+  .mg-b-30 {
+    margin-bottom: 30px;
+  }
+  /* padding */
+  .padd-20 {
+    padding: 20px;
+  }
+  .padd-25 {
+    padding: 25px;
+  }
+  .padd-30 {
+    padding: 30px;
+  }
+  .padd-40 {
+    padding: 40px;
+  }
+  .padd-rl-12 {
+    padding: 0 12px;
+  }
+  .padd-rl-15 {
+    padding: 0 15px;
+  }
+  .padd-rl-17 {
+    padding: 0 17px;
+  }
+  .padd-rl-20 {
+    padding: 0 20px;
+  }
+  .padd-rl-25 {
+    padding: 0 25px;
+  }
+  .padd-rl-30 {
+    padding: 0 30px;
+  }
+  .padd-tb-10{
+    padding: 10px 0;
+  }
+  .padd-tb-20{
+    padding: 20px 0;
+  }
+  .padd-tb-25{
+    padding: 25px 0;
+  }
+  .padd-r-35{
+    padding-right: 35px;
+  }
+  .padd-r-25{
+    padding-right: 25px;
+  }
+  .padd-r-10{
+    padding-right: 10px;
+  }
+  .padd-l-15{
+    padding-left: 15px;
+  }
+  .padd-l-18{
+    padding-left: 18px;
+  }
+  .padd-l-24{
+    padding-left: 24px;
+  }
+  /* 字体 */
+  .f1 {
+    font-size: 1px;
+  }
+  .f2 {
+    font-size: 2px;
+  }
+  .f4 {
+    font-size: 4px;
+  }
+  .f6 {
+    font-size: 6px;
+  }
+  .f8 {
+    font-size: 8px;
+  }
+  .f10 {
+    font-size: 10px;
+  }
+  .f12 {
+    font-size: 12px;
+  }
+  .f16{
+    font-size: 16px;
+  }
+  .f17{
+    font-size: 17px;
+  }
+  .f14{
+    font-size: 14px;
+  }
+  .f18 {
+    font-size: 18px;
+  }
+  .f20 {
+    font-size: 20px;
+  }
+  .f22{
+    font-size: 22px;
+  }
+  .f23{
+    font-size: 23px;
+  }
+  .f24 {
+    font-size: 24px;
+  }
+  .f25 {
+    font-size: 25px;
+  }
+  .f26 {
+    font-size: 26px;
+  }
+  .f28 {
+    font-size: 28px;
+  }
+  .f30 {
+    font-size: 30px;
+  }
+  .f32 {
+    font-size: 32px;
+  }
+  .f35 {
+    font-size: 35px;
+  }
+  .f42 {
+    font-size: 42px;
+  }
+  .f45 {
+    font-size: 45px;
+  }
+  .f47 {
+    font-size: 47px;
+  }
+  .f50{
+    font-size: 50px;
+  }
+  /* 字体颜色 */
+  .gray {
+    color: #9a9a9a;
+  }
+  .gray-1{
+    color: #edecec
+  }
+  .gray-2{
+   color: #ccc
+  }
+  .orange {
+    color: #f78360;
+  }
+  .red {
+    color: red;
+  }
+  .green {
+    color: green;
+  }
+  .red-1 {
+    color: #FF1744;
+  }
+  .yellow-1 {
+    color: #F2F832;
+  }
+  .white{
+    color: white;
+  }
+  .skyblue{
+    color: skyblue;
+  }
+  .skyblue-1{
+    color: #39DBF0;
+  }
+  .black{
+    color: black;
+  }
+  /* 背景颜色 */
+  .bg-gray {
+    background-color: #ebebeb;
+  }
+  .bg-fff {
+    background-color: #fff;
+  }
+  .bg-000{
+    background-color: #000;
+  }
+  .bg-00{
+    background-color: #303030;
+  }
+  .bg-0{
+    background-color: #DCDCDC;
+  }
+  .bg-skyblue{
+    background-color: skyblue;
+  }
+  .bg-orange{
+    background-color: orange;
+  }
+  .bg-red{
+    background-color: red;
+  }
+  .bg-red-1{
+    background-color: #FF1744;
+  }
+  /* flex布局 */
+  .flex {
+    display: flex;
+  }
+  .jc-start {
+    justify-content: flex-start;
+  }
+  .jc-center {
+    justify-content: center;
+  }
+  .jc-end {
+    justify-content: flex-end;
+  }
+  .jc-sa {
+    justify-content: space-around;
+  }
+  .jc-sb {
+    justify-content: space-between;
+  }
+  .fwp{
+     flex-wrap: wrap;
+  }
+  .fdc {
+    display: flex;
+    flex-direction: column;
+  }
+  .fg1 {
+    flex-grow: 1;
+  }
+   .fg2 {
+    flex-grow: 2;
+  }
+   .fg3 {
+    flex-grow: 3;
+  }
+  .aic {
+    align-items: center;
+  }
+  .fsb,
+  .fsa,
+  .fcc {
+    display: flex;
+    align-items: center;
+  }
+  .fcc {
+    justify-content: center;
+  }
+  .fsb {
+    justify-content: space-between;
+  }
+  .fsa {
+    justify-content: space-around;
+  }
+  .ifcc {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+  }
+  /*  两行超出省略 */
+.twoOver{
+    overflow: hidden;
+    width: calc(100% - 100px);
+    box-sizing: border-box;
+    display: -webkit-box;
+    word-break: break-all;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+.border_00{
+  border:1px solid #999;
+}

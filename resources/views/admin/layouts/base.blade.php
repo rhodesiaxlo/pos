@@ -214,6 +214,11 @@ desired effect
 <script src="https://cdn.staticfile.org/layer/2.3/layer.js"></script>
 <script src="/dist/js/common.js"></script>
 
+
+<!-- <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script> -->
+<script src="/js/jquery.date_input.pack.js"></script>
+<link href="/css/globle-px.css" rel="stylesheet">
+
 <!-- Optionally, you can add Slimscroll and FastClick plugins.
      Both of these plugins are recommended to enhance the
      user experience. Slimscroll is required when using the

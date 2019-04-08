@@ -1,3 +1,0 @@
-[2018-10-22 17:30:01] local.ERROR: exception 'Symfony\Component\Debug\Exception\FatalErrorException' with message 'Call to undefined function assets()' in E:\phpStudy\PHPTutorial\WWW\CRM\storage\framework\views\d7342fd42c322509da8ec46e5069665811265158.php:32
-Stack trace:
-#0 {main}  
