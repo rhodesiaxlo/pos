@@ -21,6 +21,12 @@ Route::get('/home', 'HomeController@index');
 Route::group(['prefix' => 'salesman', 'namespace' => 'Salesman','middleware'=>['auth:admin', 'menu', 'authAdmin']], function () {
     require_once 'salesman.php';
 });
+
+Route::group(['prefix' => 'pos', 'namespace' => 'Pos','middleware'=>['auth:admin', 'menu', 'authAdmin']], function () {
+    require_once 'pos.php';
+});
+
+
 Route::group(['prefix' => 'dashboard', 'namespace' => 'Dashboard','middleware'=>['auth:admin', 'menu', 'authAdmin']], function () {
     require_once 'dashboard.php';
 });

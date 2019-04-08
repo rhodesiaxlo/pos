@@ -28,7 +28,7 @@
         <td width="200" class="content" height="24">中金支付分页对账接口</td>
         <td width="*" class="content" height="24"><a target="_blank" href="/api/apipos/ccpc1811">地址</a></td>
     </tr>
-    <tr class="mouseout">
+<!--     <tr class="mouseout">
         <td width="200" class="content" height="24">同步用户数据(店员)</td>
         <td width="*" class="content" height="24"><a target="_blank" href="/api/apipos/syncuser">地址</a></td>
     </tr>
@@ -47,6 +47,10 @@
     <tr class="mouseout">
         <td width="200" class="content" height="24">同步交接班数据</td>
         <td width="*" class="content" height="24"><a target="_blank" href="/api/apipos/syncshiftlog">地址</a></td>
+    </tr> -->
+    <tr class="mouseout">
+        <td width="200" class="content" height="24">同步数据</td>
+        <td width="*" class="content" height="24"><a target="_blank" href="/api/apipos/syncdata">地址</a></td>
     </tr>
 	</table>
 </body>

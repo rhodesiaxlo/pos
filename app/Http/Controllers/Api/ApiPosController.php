@@ -124,6 +124,16 @@ class ApiPosController extends Controller
         return $this->ajaxFail([], 'not implement yet', 1000);
     }
 
+    /**
+     * 同步数据
+     * @param  Request $req [description]
+     * @return [type]       [description]
+     */
+    public function syncData(Request $req)
+    {
+         return $this->ajaxFail([], 'not implement yet', 1000);
+    }
+
 
     /**********************************************************************************/
 

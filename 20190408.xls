@@ -1,0 +1,37 @@
+PS： pos1.123.com 域名需要配置 host			
+			
+			
+			
+模块	内容	访问地址	文件地址
+店铺管理	店铺列表	http://pos1.123.com/pos/store/index	\resources\views\pos\store
+	店铺新增	http://pos1.123.com/pos/store/add	\resources\views\pos\store
+	店铺编辑	http://pos1.123.com/pos/store/edit	\resources\views\pos\store
+	店铺删除	http://pos1.123.com/pos/store/del	\resources\views\pos\store
+交易管理	收银交易对账	http://pos1.123.com/pos/transaction/depositconfirm	\resources\views\pos\tx
+	资金结算	http://pos1.123.com/pos/transaction/payment	\resources\views\pos\tx
+	结算对账	http://pos1.123.com/pos/transaction/withdrawconfirm	\resources\views\pos\tx
+中金接口	中金1401 接口		
+	中金1811 接口		
+	中金 1341 接口		
+接口	pos登录接口	http://pos1.123.com/api/apipos/poslogin	
+	pos从服务器同步数据接口	http://pos1.123.com/api/apipos/pullhistorydata	
+	pos向服务器发送同步数据接口	http://pos1.123.com/api/apipos/syncdata	
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			

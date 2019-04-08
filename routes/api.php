@@ -44,6 +44,8 @@ Route::group(['namespace' => 'Api','middleware' => ['api']], function () {
     Route::match(['get','post'],'apipos/syncorder','ApiPosController@syncOrder')->name('api.apipos.syncorder');
     Route::match(['get','post'],'apipos/syncshiftlog','ApiPosController@syncShiftLog')->name('api.apipos.syncshiftlog');
     Route::match(['get','post'],'apipos/syncuser','ApiPosController@syncUser')->name('api.apipos.syncuser');
+    Route::match(['get','post'],'apipos/syncdata','ApiPosController@syncData')->name('api.apipos.syncdata');
+
 
 
 
