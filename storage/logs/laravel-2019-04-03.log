@@ -1,6 +1,0 @@
-[2019-04-03 14:39:09] local.ERROR: Symfony\Component\Debug\Exception\FatalErrorException: Maximum execution time of 30 seconds exceeded in D:\phpStudy2018\PHPTutorial\WWW\pos\app\Http\Controllers\Salesman\OrderController.php:151
-Stack trace:
-#0 {main}  
-[2019-04-03 14:39:42] local.ERROR: Symfony\Component\Debug\Exception\FatalErrorException: Maximum execution time of 30 seconds exceeded in D:\phpStudy2018\PHPTutorial\WWW\pos\app\Http\Controllers\Salesman\OrderController.php:151
-Stack trace:
-#0 {main}  
