@@ -426,3 +426,19 @@ Stack trace:
 #34 /mnt/pos/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(118): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter(Object(Illuminate\Http\Request))
 #35 /mnt/pos/public/index.php(53): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
 #36 {main}  
+[2019-04-08 17:13:29] local.ERROR: ErrorException: file_put_contents(/mnt/pos/app/Http/Controllers/Api:NotifyController.php): failed to open stream: Protocol error in /mnt/pos/vendor/laravel/framework/src/Illuminate/Filesystem/Filesystem.php:111
+Stack trace:
+#0 [internal function]: Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'file_put_conten...', '/mnt/pos/vendor...', 111, Array)
+#1 /mnt/pos/vendor/laravel/framework/src/Illuminate/Filesystem/Filesystem.php(111): file_put_contents('/mnt/pos/app/Ht...', '<?php\n\nnamespac...', 0)
+#2 /mnt/pos/vendor/laravel/framework/src/Illuminate/Console/GeneratorCommand.php(64): Illuminate\Filesystem\Filesystem->put('/mnt/pos/app/Ht...', '<?php\n\nnamespac...')
+#3 [internal function]: Illuminate\Console\GeneratorCommand->fire()
+#4 /mnt/pos/vendor/laravel/framework/src/Illuminate/Container/Container.php(508): call_user_func_array(Array, Array)
+#5 /mnt/pos/vendor/laravel/framework/src/Illuminate/Console/Command.php(169): Illuminate\Container\Container->call(Array)
+#6 /mnt/pos/vendor/symfony/console/Command/Command.php(261): Illuminate\Console\Command->execute(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#7 /mnt/pos/vendor/laravel/framework/src/Illuminate/Console/Command.php(155): Symfony\Component\Console\Command\Command->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#8 /mnt/pos/vendor/symfony/console/Application.php(817): Illuminate\Console\Command->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#9 /mnt/pos/vendor/symfony/console/Application.php(185): Symfony\Component\Console\Application->doRunCommand(Object(Illuminate\Routing\Console\ControllerMakeCommand), Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#10 /mnt/pos/vendor/symfony/console/Application.php(116): Symfony\Component\Console\Application->doRun(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#11 /mnt/pos/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(121): Symfony\Component\Console\Application->run(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#12 /mnt/pos/artisan(35): Illuminate\Foundation\Console\Kernel->handle(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+#13 {main}  

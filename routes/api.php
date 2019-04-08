@@ -46,8 +46,8 @@ Route::group(['namespace' => 'Api','middleware' => ['api']], function () {
     Route::match(['get','post'],'apipos/syncuser','ApiPosController@syncUser')->name('api.apipos.syncuser');
     Route::match(['get','post'],'apipos/syncdata','ApiPosController@syncData')->name('api.apipos.syncdata');
 
-
-
+    // 中金回调函数
+    Route::match(['get','post'],'notify/index','NotifyController@index')->name('api.notify.index');
 
     Route::resource('apiadmin','ApiAdminController');
 });

@@ -13,25 +13,7 @@ PS： pos1.123.com 域名需要配置 host
 中金接口	中金1401 接口		
 	中金1811 接口		
 	中金 1341 接口		
+	中金回调接口	http://pos1.123.com/api/notify/index	
 接口	pos登录接口	http://pos1.123.com/api/apipos/poslogin	
 	pos从服务器同步数据接口	http://pos1.123.com/api/apipos/pullhistorydata	
 	pos向服务器发送同步数据接口	http://pos1.123.com/api/apipos/syncdata	
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
