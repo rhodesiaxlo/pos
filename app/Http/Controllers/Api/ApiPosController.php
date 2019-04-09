@@ -35,7 +35,31 @@ class ApiPosController extends Controller
      */
     public function posLogin(Request $req)
     {
+        $name = $req->get('name');
+        $password = $req->get('password');
+        $device_no = $req->get('device_no');
+
+        
+
+
         return $this->ajaxFail([], 'not implement yet', 1000);
+    }
+
+    private function validateLogin()
+    {
+        $name = $req->get('name');
+        $password = $req->get('password');
+        $device_no = $req->get('device_no');
+
+        // 名字不能为空
+        // todo 
+        
+        // 密码不能为空
+        // todo
+        
+        // device_no 不能为空
+        // todo
+        
     }
 
     /**
