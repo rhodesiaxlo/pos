@@ -12,7 +12,7 @@ class TransactionController extends Controller
 {
     public function index(Request $req)
     {
-
+        return redirect('/pos/transaction/depositconfirm');
     }
 
     public function add(Request $req)
