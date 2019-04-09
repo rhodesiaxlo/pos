@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Pos;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
+use App\Models\Pos\User;
 
 /**
  * 便利店店铺类
@@ -18,8 +19,9 @@ class StoreController extends Controller
      * @return [type]       [description]
      */
     public function index(Request $req){
-    	// 搜索，分页
-    	return view('pos.store.index');
+    	// 搜索，分页 
+        $userlist = User::paginate(env('RECORD_PERPAGE'));
+    	return view('pos.store.index')->with('users', $userlist);
     }
 
     /**
