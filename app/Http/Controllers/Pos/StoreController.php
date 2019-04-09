@@ -30,16 +30,37 @@ class StoreController extends Controller
      */
     public function add(Request $req)
     {
+        if($req->isMethod('post'))
+        {
+            // todo 
+            // 
+            return redirect('pos/store/index')->withErrors("添加失败");
+            return redirect('pos/store/index')->withSuccess('添加成功');
+        }
     	return view('pos.store.add');
     }
 
     public function edit(Request $req)
     {
+        if($req->isMethod('post'))
+        {
+            // todo 
+            // 
+            return redirect('pos/store/index')->withErrors("更新失败");
+            return redirect('pos/store/index')->withSuccess('更新成功');
+        }
     	return view('pos.store.update');
     }
 
     public function del(Request $req)
     {
+        if($req->isMethod('post'))
+        {
+            // todo 
+            // 
+            return redirect('pos/store/index')->withErrors("删除失败");
+            return redirect('pos/store/index')->withSuccess('删除成功');
+        }
     	return view('pos.store.del');
     }
 }

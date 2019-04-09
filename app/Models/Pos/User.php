@@ -8,6 +8,7 @@ class User extends Model
 {
     
     protected $table = 'pos_user';
+    public $timestamps = false;
     
 
     /**
@@ -36,5 +37,14 @@ class User extends Model
     public function area()
     {
     	return $this->belongsTo('App\Models\Pos\Region', 'area_id', 'region_id');
+    }
+
+    /**
+     * 生成随机订单编号
+     * @return [type] [description]
+     */
+    public function getRandomStoreCode()
+    {
+            return "code_".strval(time());
     }
 }

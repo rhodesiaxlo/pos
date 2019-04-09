@@ -45,4 +45,14 @@ class Order extends Model
     {
     	return $this->hasMany('App\Models\Pos\OrderGoods');
     }
+
+    /**
+     * 生成随机订单编号
+     * @return [type] [description]
+     */
+    public function getRandomOrderSn()
+    {
+        // to do 
+        return "ordersn_".strval(time());
+    }
 }

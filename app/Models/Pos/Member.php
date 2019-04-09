@@ -6,5 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Member extends Model
 {
-    //
+    protected $table = "pos_member";
+    protected $primaryKey = "local_id";
 }
