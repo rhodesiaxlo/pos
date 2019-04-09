@@ -20,7 +20,8 @@ class StoreController extends Controller
      */
     public function index(Request $req){
     	// 搜索，分页 
-        $userlist = User::paginate(env('RECORD_PERPAGE'));
+        $userlist = User::with('creator')->with('bank')->paginate(env('RECORD_PERPAGE'));
+
     	return view('pos.store.index')->with('users', $userlist);
     }
 

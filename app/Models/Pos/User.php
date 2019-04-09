@@ -20,6 +20,11 @@ class User extends Model
     	return $this->belongsTo('App\Models\Pos\Bank');
     }
 
+    public function creator()
+    {
+        return $this->belongsTo('App\Models\Admin\AdminUser', 'created_by', 'id');   
+    }
+
     /**
      * region 表的多对一关系
      * @return [type] [description]
