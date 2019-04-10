@@ -7,7 +7,9 @@ function ajaxs(url,data,suc){
 		type : "POST",
 		timeout: 15000,
 		success: function(response, status, xhr){
-			suc(JSON.parse(response))
+			// debugger
+			// suc(JSON.parse(response))
+			suc(response)
 			var sta=xhr.status.toString()
 			switch (xhr.status) {
 				case '304':

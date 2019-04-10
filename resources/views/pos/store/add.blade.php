@@ -22,8 +22,8 @@
                 <select style='width:15%;' name="city" id="city"><option>省份</option><option>城市</option></select>
                 <select style='width:15%;' name="area" id="area"><option>省份</option><option>区</option></select> -->
                 <div class='fsb fg2 mg-l-3'>
-                    <select style='width:15%;' name="province" id="province"></select>
-                    <select style='width:15%;' name="city" id="city"></select>
+                    <select style='width:15%;' onchange="citY(this.options[this.options.selectedIndex].value)" name="province" id="province"></select>
+                    <select style='width:15%;' onchange="countY(this.options[this.options.selectedIndex].value)" name="city" id="city"></select>
                     <select style='width:15%;' name="county" id="county"></select>
                     <input style='width:25%;' value='54' name='address' id='' type="text" placeholder='详细地址'>
                 </div>
@@ -53,7 +53,7 @@
                 <div class='w50pc'><span class='w120px dslb'> 收款账户名 </span> <input name='amuName' value='54' type="text" class='w50pc' /></div>
                 <div class='w50pc'> 收款账号  <input name='amuNum' value='54' type="text" class='w50pc' placeholder='' /></div>
             </div>
-            <div><span class='w120px dslb'>开户行</span><select style=';' class='w50pc mg-b-10' name="place" id="" onclick='newC()'><option>where</option></select></div>
+            <div><span class='w120px dslb'>开户行</span><select style=';' class='w50pc mg-b-10' name="place" id="place" ></select></div>
         </div>
         <div>
             <p class='bg-gray padd-tb-15 f17'>账号信息</p>
@@ -99,21 +99,7 @@
 
 @section('js')
     <script>
-        setup() 
-        let selectName=[
-            {name:'按店铺名称'},
-            {name:'按店主姓名'},
-            {name:'按商铺编号'},
-            {name:'按营业执照编号'},
-            {name:'按店铺地址'},
-            {name:'按联系方式'},
-            {name:'按收款账户名'},
-            {name:'按收款账户号'},
-            {name:'按开户行'}
-        ]
-        for(let item of selectName){
-            $('#selectName').append(`<option value ="${item.name}">${item.name}</option>`)
-        }
+        // 提交验证
         function beforeSub(){
             var d = {};
             var t = $('form').serializeArray();
@@ -121,6 +107,7 @@
             d[this.name] = this.value;
             });
             if (d.address==''||d.amuName==''||d.amuNum==''||d.area=='区'||d.city=='城市'||d.name==''||d.nameStort==''||d.number==''||d.phone==''||d.place=='where'||d.province=='省份'||d.staus==''||d.userSub==''||d.username=='') {
+                $('#eor').empty()
                 $('#eor').show()
                 $('#eor').append("<div class='txal w100pc bold' style='height:100px;line-height:100px;'>请填写完整信息！</div>")
                 $("#eor").fadeOut(3000);
@@ -129,23 +116,63 @@
                 $('#or').show()
             }
         }
-
+        // 点击取消
         function delSub(){
             $('#del').show()
         }
-
+        // 确认店铺添加
         function delyes(){
             window.location = "/pos/store/index";
         }
-
+        // 获取开户行列表
         function newC(){
-            // debugger
             var url ='http://192.168.1.161/api/apipos/banklist'
             var data={}
             ajaxs(url,data,(res)=>{
-                closelog.log(res)
+                $('#place').empty()
+                for(let item of res.data){
+                     $('#place').append(`<option value ="${item.id}">${item.name}</option>`)
+                 }
             })
         }
+
+        // 获取省市区
+        function province(){
+            var url ='http://pos1.123.com/api/apipos/province'
+            var data={}
+            ajaxs(url,data,(res)=>{
+                $('#province').empty()
+                for(let item of res.data){
+                    $('#province').append(`<option value ="${item.region_id}" >${item.region_name}</option>`)
+                 }
+            })
+        }
+        function citY(e){
+            var url ='http://pos1.123.com/api/apipos/city'
+            var data={
+                id:e
+            }
+            ajaxs(url,data,(res)=>{
+                $('#city').empty()
+                for(let item of res.data){
+                     $('#city').append(`<option value ="${item.region_id}" onclick=''>${item.region_name}</option>`)
+                 }
+            })
+        }
+        function countY(e){
+            var url ='http://pos1.123.com/api/apipos/area'
+            var data={
+                id:e
+            }
+            ajaxs(url,data,(res)=>{
+                $('#county').empty()
+                for(let item of res.data){
+                    $('#county').append(`<option value ="${item.region_id}" onclick=''>${item.region_name}</option>`)
+                 }
+            })
+        }
+        newC()
+        province()
     </script>
 
 @stop
