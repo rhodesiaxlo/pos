@@ -22,9 +22,9 @@
                 <select style='width:15%;' name="city" id="city"><option>省份</option><option>城市</option></select>
                 <select style='width:15%;' name="area" id="area"><option>省份</option><option>区</option></select> -->
                 <div class='fsb fg2 mg-l-3'>
-                    <select style='width:15%;' name="province" id="province"></select>
-                    <select style='width:15%;' name="city" id="city"></select>
-                    <select style='width:15%;' name="county" id="county"></select>
+                    <select style='width:15%;' onchange="citY(this.options[this.options.selectedIndex].value)" name="province" id="province"><option>省份</option></select>
+                    <select style='width:15%;' onchange="countY(this.options[this.options.selectedIndex].value)" name="city" id="city"><option>城市</option></select>
+                    <select style='width:15%;' name="county" id="county"><option>区</option></select>
                     <input style='width:25%;' value='54' name='address' id='' type="text" placeholder='详细地址'>
                 </div>
                 
@@ -37,10 +37,6 @@
                     <input id='staus1' name="staus" type="radio" value='启用' />
                     <label for="staus2">禁用</label> 
                     <input id='staus2' name="staus" type="radio" value='禁用' />
-                    <!-- <label for="male">Male</label>
-                    <input type="radio" name="sex" id="male" />
-                    <label for="female">Female</label>
-                    <input type="radio" name="sex" id="female" /> -->
             </div>
             </div>
         </div>
@@ -57,7 +53,7 @@
                 <div class='w50pc'><span class='w120px dslb'> 收款账户名 </span> <input name='amuName' value='54' type="text" class='w50pc' /></div>
                 <div class='w50pc'> 收款账号  <input name='amuNum' value='54' type="text" class='w50pc' placeholder='' /></div>
             </div>
-            <div><span class='w120px dslb'>开户行</span><select style=';' class='w50pc mg-b-10' name="place" id=""><option>省份</option><option>where</option></select></div>
+            <div><span class='w120px dslb'>开户行</span><select style=';' class='w50pc mg-b-10' name="place" id="place" ></select></div>
         </div>
         <div>
             <p class='bg-gray padd-tb-15 f17'>账号信息</p>
@@ -101,21 +97,6 @@
 
 @section('js')
     <script>
-        setup() 
-        let selectName=[
-            {name:'按店铺名称'},
-            {name:'按店主姓名'},
-            {name:'按商铺编号'},
-            {name:'按营业执照编号'},
-            {name:'按店铺地址'},
-            {name:'按联系方式'},
-            {name:'按收款账户名'},
-            {name:'按收款账户号'},
-            {name:'按开户行'}
-        ]
-        for(let item of selectName){
-            $('#selectName').append(`<option value ="${item.name}">${item.name}</option>`)
-        }
         function beforeSub(){
             var d = {};
             var t = $('form').serializeArray();
@@ -140,12 +121,8 @@
         function delyes(){
             window.location = "/pos/store/index";
         }
-
-        function newC(){
-            // ajaxs(url,(res)=>{
-
-            // })
-        }
+        newC()
+        province()
     </script>
 
 @stop

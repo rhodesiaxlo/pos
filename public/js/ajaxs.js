@@ -47,3 +47,50 @@ function timeLV(num){
 	console.log(time);
 	return time
 }
+
+// 获取省市区
+function province(){
+	var url ='http://pos1.123.com/api/apipos/province'
+	var data={}
+	ajaxs(url,data,(res)=>{
+		$('#province').empty()
+		for(let item of res.data){
+			$('#province').append(`<option value ="${item.region_id}" >${item.region_name}</option>`)
+			}
+	})
+}
+function citY(e){
+	var url ='http://pos1.123.com/api/apipos/city'
+	var data={
+		id:e
+	}
+	ajaxs(url,data,(res)=>{
+		$('#city').empty()
+		for(let item of res.data){
+				$('#city').append(`<option value ="${item.region_id}" onclick=''>${item.region_name}</option>`)
+			}
+	})
+}
+function countY(e){
+	var url ='http://pos1.123.com/api/apipos/area'
+	var data={
+		id:e
+	}
+	ajaxs(url,data,(res)=>{
+		$('#county').empty()
+		for(let item of res.data){
+			$('#county').append(`<option value ="${item.region_id}" onclick=''>${item.region_name}</option>`)
+			}
+	})
+}
+// 获取开户行列表
+function newC(){
+	var url ='http://192.168.1.161/api/apipos/banklist'
+	var data={}
+	ajaxs(url,data,(res)=>{
+		$('#place').empty()
+		for(let item of res.data){
+				$('#place').append(`<option value ="${item.id}">${item.name}</option>`)
+			}
+	})
+}

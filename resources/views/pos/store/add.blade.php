@@ -18,13 +18,10 @@
             </div>
             <div class='fsb mg-b-10'>
                 <div class='w120px dslb'> 店铺地址  </div>
-                <!-- <select style='width:15%;' name="province" id=""><option>份</option><option>省份</option></select>
-                <select style='width:15%;' name="city" id="city"><option>省份</option><option>城市</option></select>
-                <select style='width:15%;' name="area" id="area"><option>省份</option><option>区</option></select> -->
                 <div class='fsb fg2 mg-l-3'>
-                    <select style='width:15%;' onchange="citY(this.options[this.options.selectedIndex].value)" name="province" id="province"></select>
-                    <select style='width:15%;' onchange="countY(this.options[this.options.selectedIndex].value)" name="city" id="city"></select>
-                    <select style='width:15%;' name="county" id="county"></select>
+                    <select style='width:15%;' onchange="citY(this.options[this.options.selectedIndex].value)" name="province" id="province"><option>省份</option></select>
+                    <select style='width:15%;' onchange="countY(this.options[this.options.selectedIndex].value)" name="city" id="city"><option>城市</option></select>
+                    <select style='width:15%;' name="county" id="county"><option>区</option></select>
                     <input style='width:25%;' value='54' name='address' id='' type="text" placeholder='详细地址'>
                 </div>
                 
@@ -124,53 +121,7 @@
         function delyes(){
             window.location = "/pos/store/index";
         }
-        // 获取开户行列表
-        function newC(){
-            var url ='http://192.168.1.161/api/apipos/banklist'
-            var data={}
-            ajaxs(url,data,(res)=>{
-                $('#place').empty()
-                for(let item of res.data){
-                     $('#place').append(`<option value ="${item.id}">${item.name}</option>`)
-                 }
-            })
-        }
 
-        // 获取省市区
-        function province(){
-            var url ='http://pos1.123.com/api/apipos/province'
-            var data={}
-            ajaxs(url,data,(res)=>{
-                $('#province').empty()
-                for(let item of res.data){
-                    $('#province').append(`<option value ="${item.region_id}" >${item.region_name}</option>`)
-                 }
-            })
-        }
-        function citY(e){
-            var url ='http://pos1.123.com/api/apipos/city'
-            var data={
-                id:e
-            }
-            ajaxs(url,data,(res)=>{
-                $('#city').empty()
-                for(let item of res.data){
-                     $('#city').append(`<option value ="${item.region_id}" onclick=''>${item.region_name}</option>`)
-                 }
-            })
-        }
-        function countY(e){
-            var url ='http://pos1.123.com/api/apipos/area'
-            var data={
-                id:e
-            }
-            ajaxs(url,data,(res)=>{
-                $('#county').empty()
-                for(let item of res.data){
-                    $('#county').append(`<option value ="${item.region_id}" onclick=''>${item.region_name}</option>`)
-                 }
-            })
-        }
         newC()
         province()
     </script>
