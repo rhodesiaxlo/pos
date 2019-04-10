@@ -731,6 +731,11 @@ class ApiPosController extends Controller
         return $this->ajaxFail([], 'not implement yet', 1000);
     }
 
+    public function ccpcNotify(Request $req)
+    {
+        exit('1234');
+    }
+
 
     /**********************************************************************************/
 
