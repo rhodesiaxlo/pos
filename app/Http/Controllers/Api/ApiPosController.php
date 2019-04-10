@@ -31,7 +31,17 @@ class ApiPosController extends Controller
 
     private $cpcc_url = "";
     private $cpcc_url_dev = "https://test.cpcn.com.cn/Gateway/InterfaceII";
-    private $cpcc_url_pro = "";
+    private $cpcc_url_pro = "https://www.china-clearing.com/Gateway/InterfaceII";
+
+    const SYNC_USER = 1;
+    const SYNC_MEMBER = 2;
+    const SYNC_GOODSSKU = 3;
+    const SYNC_GOODS = 4;
+    const SYNC_ORDER =5;
+    const SYNC_ORDERGOODS = 6;
+    const SYNC_SHIFTLOG = 7;
+    const SYNC_CATEGORY = 8;
+
 
    public function __construct()
    {
@@ -46,7 +56,6 @@ class ApiPosController extends Controller
    }
 
     public function index(Request $request){
-        
         return view('api.apipos.index');
     }
 
@@ -106,10 +115,13 @@ class ApiPosController extends Controller
                 return $this->ajaxFail([], 'device_no currently empty ,bingding with no success', 1005);
             }
 
-            return $this->ajaxSuccess(['userinfo'=>$result], "success");
+            $tmp['userinfo'] = $result;
+
+            return $this->ajaxSuccess($tmp, "success");
         }
 
-        return $this->ajaxSuccess(['userinfo'=>$result], "success");
+        $tmp[] = $result;
+        return $this->ajaxSuccess($tmp, "success");
         // return $this->ajaxFail([], 'not implement yet', 1000);
     }
 
@@ -123,33 +135,86 @@ class ApiPosController extends Controller
     public function pullHistoryData(Request $req)
     {
         $store_code = $req->get('store_code');
+        $type = $req->get('type');
         if(empty($store_code))
         {
             return $this->ajaxFail([], "store_code can not be empty", 1000);
+        }
+
+        if(empty($type))
+        {
+            return $this->ajaxFail([], "type can not be empty", 1002);
+        }
+
+        if(intval($type)===false || intval($type)> self::SYNC_SHIFTLOG || intval($type) < self::SYNC_USER)
+        {
+            return $this->ajaxFail([], "type value illegal", 1003);
         }
 
         // 需要同步的信息
         // 用户信息
         $where['store_code'] = $store_code;
         $userinfo =User::where($where)->get();
+
         if(empty($userinfo[0]))
         {
             return $this->ajaxFail([], "store not found", 1001);   
         }
-        // 会员信息
-        $memberinfo = Member::where($where)->get();
-        // category
-        $category = Category::all();
-        // store_goods_sku
-        $storeGoodsSkuInfo = StoreGoodsSku::where($where)->get();
-        // goods
-        $goodsinfo = Goods::where($where)->get();
-        // order
-        $orderinfo = Order::where($where)->get();
-        // order goods
-        $ordergoodsinfo = OrderGoods::where($where)->get();
-        // shiftlog
-        $shiftloginfo = ShiftLog::where($where)->first();
+        if(intval($type) == self::SYNC_USER)
+        {
+            return $this->ajaxSuccess($userinfo, "success");
+        }
+
+        if(intval($type) == self::SYNC_MEMBER)
+        {
+            // 会员信息
+            $memberinfo = Member::where($where)->get();
+            return $this->ajaxSuccess($memberinfo, "success");
+        }
+
+
+        if(intval($type) == self::SYNC_CATEGORY)
+        {
+            // category
+            $category = Category::all();
+            return $this->ajaxSuccess($category, "success");
+        }
+
+        if(intval($type) == self::SYNC_GOODSSKU)
+        {
+
+            // store_goods_sku
+            $storeGoodsSkuInfo = StoreGoodsSku::where($where)->get();
+            return $this->ajaxSuccess($storeGoodsSkuInfo, "success");
+        }
+
+        if(intval($type) == self::SYNC_GOODS)
+        {
+            // goods
+            $goodsinfo = Goods::where($where)->get();
+            return $this->ajaxSuccess($goodsinfo, "success");
+        }
+
+        if(intval($type) == self::SYNC_ORDER)
+        {
+            // order
+            $orderinfo = Order::where($where)->get();
+            return $this->ajaxSuccess($orderinfo, "success");
+        }
+
+        if(intval($type) == self::SYNC_ORDERGOODS)
+        {
+            // order goods
+            $ordergoodsinfo = OrderGoods::where($where)->get();
+            return $this->ajaxSuccess($ordergoodsinfo, "success");
+        }
+
+        if(intval($type) == self::SYNC_SHIFTLOG)
+        {
+            // shiftlog
+            $shiftloginfo = ShiftLog::where($where)->first();
+            return $this->ajaxSuccess($shiftloginfo, "success");
+        }
 
         $ret = [];
         $ret['category'] = $category;
@@ -284,38 +349,38 @@ class ApiPosController extends Controller
 
         if(empty($orderNo))
         {
-            return $this->ajaxFail([]," orderNo can not be empty", 1000);
+            return $this->ajaxFail([]," orderNo can not be empty", 1001);
         }
 
         if(empty($paymentNo))
         {
-            return $this->ajaxFail([]," paymentNo can not be empty", 1000);
+            return $this->ajaxFail([]," paymentNo can not be empty", 1002);
         }
 
         if(empty($paymentWay))
         {
-            return $this->ajaxFail([]," paymentWay can not be empty", 1000);
+            return $this->ajaxFail([]," paymentWay can not be empty", 1003);
         }
 
         
         if(empty($paymentScene))
         {
-            return $this->ajaxFail([]," paymentScene can not be empty", 1000);
+            return $this->ajaxFail([]," paymentScene can not be empty", 1004);
         }
 
         if(empty($authCode))
         {
-            return $this->ajaxFail([]," authCode can not be empty", 1000);
+            return $this->ajaxFail([]," authCode can not be empty", 1005);
         }
 
         if(empty($amount))
         {
-            return $this->ajaxFail([]," amount can not be empty", 1000);
+            return $this->ajaxFail([]," amount can not be empty", 1006);
         }
 
         if(empty($subject))
         {
-            return $this->ajaxFail([]," subject can not be empty", 1000);
+            return $this->ajaxFail([]," subject can not be empty", 1007);
         }
 
         return true;
@@ -667,13 +732,7 @@ class ApiPosController extends Controller
      */
     public function syncData(Request $req)
     {
-        define('SYNC_USER' ,1);
-        define('SYNC_MEMBER', 2);
-        define('SYNC_GOODSSKU', 3);
-        define('SYNC_GOODS', 4);
-        define('SYNC_ORDER', 5);
-        define('SYNC_ORDERGOODS', 6);
-        define('SYNC_SHIFTLOG', 7);
+
 
         $store_code = $req->get('store_code');
         $type = $req->get('type');
@@ -706,25 +765,25 @@ class ApiPosController extends Controller
         }
 
         switch (intval($type)) {
-            case SYNC_USER:
+            case slef::SYNC_USER:
                 return $this->syncUser($req);
                 break;
-            case SYNC_MEMBER:
+            case slef::SYNC_MEMBER:
                 return $this->syncMember($req);
                 break;
-            case SYNC_GOODSSKU:
+            case slef::SYNC_GOODSSKU:
                 return $this->syncGoodsSku($req);
                 break;
-            case SYNC_GOODS:
+            case slef::SYNC_GOODS:
                 return $this->syncGoods($req);
                 break;
-            case SYNC_ORDER:
+            case slef::SYNC_ORDER:
                 return $this->syncOrder($req);
                 break;
-            case SYNC_ORDERGOODS:
+            case slef::SYNC_ORDERGOODS:
                 return $this->syncOrderGoods($req);
                 break;
-            case SYNC_SHIFTLOG:
+            case slef::SYNC_SHIFTLOG:
                 return $this->syncShiftLog($req);
                 break;
             default:
@@ -740,6 +799,25 @@ class ApiPosController extends Controller
         exit('1234');
     }
 
+    /**
+     * 定时任务接口，定时从中金拉取账单数据，生成 prepayment 表
+     * @param  Request $req [description]
+     * @return [type]       [description]
+     */
+    public function pullBillFromCcpc(Request $req)
+    {
+
+    }
+
+    /**
+     * 中金查询订单状态接口
+     * @param  Request $req [description]
+     * @return [type]       [description]
+     */
+    public function cpcc1410(Request $req)
+    {
+        
+    }
 
     /**********************************************************************************/
 
