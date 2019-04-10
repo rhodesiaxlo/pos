@@ -12,6 +12,8 @@
         padding:10px;
     }
 </style>
+
+<?php echo json_encode($prepayments); ?>
 <div class='bold f20'>POS收银交易对账</div>
 <div>
     <div style="font-size:18px;">查询条件</div>
@@ -28,6 +30,14 @@
             <td>经办人</td>
             <td>复核人</td>
         </tr>
+        @foreach($logs as $abnormal_transaction_log)
+            <tr>
+                <td>{{$abnormal_transaction_log->amount}}</td>
+                <td>{{$abnormal_transaction_log->message}}</td>
+                <td>{{$abnormal_transaction_log->admin_name}}</td>
+                <td>{{$abnormal_transaction_log->confirm_name}}</td>
+            </tr>
+            @endforeach
         <tr>
             <td>566</td>
             <td>例：今日结账差额为57657元，其中5单为我方无此单，交易金额以第三方支付平台为准</td>

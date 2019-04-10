@@ -217,6 +217,8 @@ desired effect
 
 <!-- <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script> -->
 <script src="/js/jquery.date_input.pack.js"></script>
+<script src="/js/place.js"></script>
+<script src="/js/ajaxs.js"></script>
 <link href="/css/globle-px.css" rel="stylesheet">
 
 <!-- Optionally, you can add Slimscroll and FastClick plugins.
