@@ -15,22 +15,23 @@
     <!-- <?php echo json_encode($users); ?> -->
 
 <form action="{{url::route('pos.store.index')}}" method="POST">
-<input type="hidden" name="_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="_token" value="{{ csrf_token() }}">
     <div>
         <div class='f18' style="">店铺信息</div>
         <div class='fsb' style="margin:10px 20px;">
             <div>
-                <select class='rel' style='height:30px;top:1px;' name="" id="selectName" ></select>
-                <input style='height:30px;' type="text" placeholder="请输入关键字查找">
-                <button class='' style='border-radius: 14px;'>查找</button>
+                <select class='rel' name='class' style='height:30px;top:1px;' name="" id="selectName" ></select>
+                <input name='Keyword' style='height:30px;' type="text" placeholder="请输入关键字查找">
+                <button class='' type='submit' style='border-radius: 14px;'>查找</button>
             </div>
             <div>
                 <!-- <button style='border-radius: 14px;' id="new" onclick="window.location = '/pos/store/add';return false;">+新增店铺</button> -->
                 <button style='border-radius: 14px;' id="new" onclick="return add()">+新增店铺</button>
-                <button style='border-radius: 14px;'>刷新</button>
+                <button style='border-radius: 14px;' onclick='newPage()'>刷新</button>
             </div>
         </div>
     </div>
+</form>
     <div  style="margin-top:30px;">
         <table id="box" class="tableA f12 w100pc" style="text-align: center;" border='1' rules='all' >
             <tr>
@@ -62,19 +63,19 @@
                 <td>{{$user->creator->name}}</td>
                 <td>{{$user->create_time}}</td>
                 <td><a href='/pos/store/edit?id={{$user->id}}'>编辑</a></td>
-                <td>{{$user->is_active}}</td>
+                <td>{{$user->is_active==1?"正常":"禁用"}}</td>
             </tr>
             @endforeach
         </table>
         <div id='' class='fsb mg-t-20' style='width:260px;'>
             {{$users->links()}}
-            <div>
+            <!-- <div>
                 <span>去 &nbsp<input type="text" style='width:25px;' />&nbsp 页</span>
                 &nbsp<button type='submit'>GO</button>
-            </div>
+            </div> -->
         </div>
     </div>
-</form>
+
   
  @stop
 
@@ -98,6 +99,10 @@
             //debugger;
             window.location = "/pos/store/add";
             return false;
+        }
+        // console.log(timeLV({{$user->create_time}}))
+        function newPage(){
+            window.location.reload()//刷新当前页面.
         }
     </script>
 

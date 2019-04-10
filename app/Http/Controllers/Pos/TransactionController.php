@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Pos;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
+use App\Models\Pos\AbnormalTransactionLog;
+use App\Models\Pos\Prepayment;
+
+
 /**
  * 收银交易控制器
  */
@@ -37,7 +41,9 @@ class TransactionController extends Controller
      */
     public function depositConfirm(Request $req)
     {
-    	return view('pos.tx.depositconfirm');
+        $logs = AbnormalTransactionLog::all();
+        $prepayments = Prepayment::all();
+    	return view('pos.tx.depositconfirm')->with('logs', $logs)->with('prepayments', $prepayments);
     }
 
     /**
