@@ -156,7 +156,7 @@ class ApiPosController extends Controller
             return $this->ajaxFail([], "type can not be empty", 1002);
         }
 
-        if(intval($type)===false || intval($type)> self::SYNC_SHIFTLOG || intval($type) < self::SYNC_USER)
+        if(intval($type)===false || intval($type)> self::SYNC_CATEGORY || intval($type) < self::SYNC_USER)
         {
             return $this->ajaxFail([], "type value illegal", 1003);
         }
@@ -222,7 +222,7 @@ class ApiPosController extends Controller
         if(intval($type) == self::SYNC_SHIFTLOG)
         {
             // shiftlog
-            $shiftloginfo = ShiftLog::where($where)->first();
+            $shiftloginfo = ShiftLog::where($where)->get();
             return $this->ajaxSuccess($shiftloginfo, "success");
         }
 

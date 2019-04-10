@@ -52,6 +52,8 @@ class StoreController extends Controller
         {
             // todo 
             // 
+            exit(json_encode(['code'=>0, 'message'=>"error",'data'=>json_encode($_POST)]));
+            
             return redirect('pos/store/index')->withErrors("更新失败");
             return redirect('pos/store/index')->withSuccess('更新成功');
         }
@@ -64,9 +66,14 @@ class StoreController extends Controller
         {
             // todo 
             // 
+            exit(json_encode(['code'=>0, 'message'=>"error",'data'=>json_encode($_POST)]));
+            
             return redirect('pos/store/index')->withErrors("删除失败");
             return redirect('pos/store/index')->withSuccess('删除成功');
         }
-    	return view('pos.store.del');
+        
+        exit(json_encode(['code'=>0, 'message'=>"error",'data'=>json_encode($_POST)]));
+
+    	//return view('pos.store.del');
     }
 }
