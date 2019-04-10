@@ -39,6 +39,9 @@ Route::group(['namespace' => 'Api','middleware' => ['api']], function () {
     Route::match(['get','post'],'apipos/ccpc1402','ApiPosController@ccpc1402')->name('api.apipos.ccpc1402');
     Route::match(['get','post'],'apipos/ccpc1811','ApiPosController@ccpc1811')->name('api.apipos.ccpc1811');
     Route::match(['get','post'],'apipos/ccpc1341','ApiPosController@ccpc1341')->name('api.apipos.ccpc1341');
+    Route::match(['get','post'],'apipos/ccpc1410','ApiPosController@ccpc1410')->name('api.apipos.ccpc1410');
+
+
     Route::match(['get','post'],'apipos/ccpcnotify','ApiPosController@ccpcNotify')->name('api.apipos.ccpcnotify');
 
     Route::match(['get','post'],'apipos/banklist','ApiPosController@banklist')->name('api.apipos.banklist');

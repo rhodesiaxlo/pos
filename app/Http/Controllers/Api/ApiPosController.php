@@ -42,6 +42,11 @@ class ApiPosController extends Controller
     const SYNC_SHIFTLOG = 7;
     const SYNC_CATEGORY = 8;
 
+    // 支付方式
+    // 订单状态
+    // 支付场景
+    // 卡类型
+
 
    public function __construct()
    {
@@ -94,10 +99,16 @@ class ApiPosController extends Controller
 
         $where['uname'] = $name;
         $where['password'] = $password;
+
         $result = User::where($where)->first();
         if(empty($result))
         {
             return $this->ajaxFail([], 'name and password conbination incorrect, please try again', 1003);
+        }
+
+        if(intval($result['rank'])!==0)
+        {
+            return $this->ajaxFail([], 'account illegal', 1006);
         }
 
         if(!empty($result->device_no) &&trim($result->device_no) != trim($device_no))
@@ -115,14 +126,13 @@ class ApiPosController extends Controller
                 return $this->ajaxFail([], 'device_no currently empty ,bingding with no success', 1005);
             }
 
-            $tmp['userinfo'] = $result;
+            $tmp[] = $result;
 
             return $this->ajaxSuccess($tmp, "success");
         }
 
         $tmp[] = $result;
         return $this->ajaxSuccess($tmp, "success");
-        // return $this->ajaxFail([], 'not implement yet', 1000);
     }
 
 
@@ -664,6 +674,125 @@ class ApiPosController extends Controller
     }
 
     /**
+     * 中金查询订单状态接口
+     * @param  Request $req [description]
+     * @return [type]       [description]
+     */
+    public function ccpc1410(Request $req)
+    {
+        if(($res = $this->cpcc1410Validate($req))!==true)
+        {
+            return $res;
+        }
+
+        // 读取参数
+        $institutionID = $req->get("InstitutionID");
+        $paymentNo     = $req->get("PaymentNo");
+
+        // 组装xml
+        $xml1410 = config('xmltype.tx1410');
+        $simpleXML= new \SimpleXMLElement($xml1410);
+
+        // 4.赋值
+        $simpleXML->Body->InstitutionID=$institutionID;
+        $simpleXML->Body->PaymentNo=$paymentNo;
+
+        $xmlStr = $simpleXML->asXML();    
+        $message=base64_encode(trim($xmlStr));
+        $signature=$this->cfcasign_pkcs12(trim($xmlStr));  
+        $response=$this->cfcatx_transfer($message,$signature); 
+        $plainText=trim(base64_decode($response[0]));
+
+        $ok=$this->cfcaverify($plainText,$response[1]);
+        if($ok!=1)
+        {
+            // 验证签名失败
+            $this->ajaxFail([], "验签失败", 9999);
+        } else {  
+            $simpleXML= new \SimpleXMLElement($plainText);    
+            $txName="二维码支付订单查询";
+            $txCode="1410";
+
+            $code =(string) $simpleXML->Head->Code;
+            $msg = (string)$simpleXML->Head->Message;
+
+            if($code !=2000)
+            {
+                return $this->ajaxFail([], $msg, $code);
+            } else {
+                $data = [];
+                $data['txname'] = $txCode;
+                $data['desc'] = $txName;
+
+                $data['InstitutionID']        = (string)$simpleXML->Body->InstitutionID;
+                $data['PaymentNo']            = (string)$simpleXML->Body->PaymentNo;
+                $data['PaymentWay']           = (string)$simpleXML->Body->PaymentWay;
+                $data['Status']               = (string)$simpleXML->Body->Status;
+                $data['CardType']             = (string)$simpleXML->Body->CardType;
+                $data['Amount']               = (string)$simpleXML->Body->Amount;
+                $data['RefundAmount']         = (string)$simpleXML->Body->RefundAmount;
+                $data['DiscountAmount']       = (string)$simpleXML->Body->DiscountAmount;
+                $data['CouponAmount']         = (string)$simpleXML->Body->CouponAmount;
+                $data['BankNotificationTime'] = (string)$simpleXML->Body->BankNotificationTime;
+                $data['Subject']              = (string)$simpleXML->Body->Subject;
+                $data['PayerID']              = (string)$simpleXML->Body->PayerID;
+                $data['OperatorID']           = (string)$simpleXML->Body->OperatorID;
+                $data['StoreID']              = (string)$simpleXML->Body->StoreID;
+                $data['TerminalID']           = (string)$simpleXML->Body->TerminalID;
+                $data['Remark']               = (string)$simpleXML->Body->Remark;
+                $data['ResponseCode']         = (string)$simpleXML->Body->ResponseCode;
+                $data['ResponseMessage']      = (string)$simpleXML->Body->ResponseMessage;
+                $data['Fee']                  = (string)$simpleXML->Body->Fee;
+
+                
+                return $this->ajaxSuccess($data, "success");
+            }
+
+
+            require("response.php");
+        }
+        
+    }
+
+    public function cpcc1410Validate(Request $req)
+    {
+        $institutionID = $req->get("InstitutionID");
+        $paymentNo     = $req->get("PaymentNo");
+
+        if(empty($institutionID))
+        {
+            return $this->ajaxFail([], "institutionID can not be empty ");
+        }
+
+        if(empty($paymentNo))
+        {
+            return $this->ajaxFail([], "paymentNo can not be empty ");
+        }
+
+        return true;
+    }
+
+    /**
+     * 
+     * @param  Request $req [description]
+     * @return [type]       [description]
+     */
+    public function ccpcNotify(Request $req)
+    {
+        $this->ccpc1408($req);
+    }
+
+    /**
+     * 中金回调
+     * @param  Request $req [description]
+     * @return [type]       [description]
+     */
+    public function ccpc1408(Request $req)
+    {
+
+    }
+
+    /**
      * 同步会员数据
      * @param  Request $req [description]
      * @return [type]       [description]
@@ -794,11 +923,6 @@ class ApiPosController extends Controller
         return $this->ajaxFail([], 'not implement yet', 1000);
     }
 
-    public function ccpcNotify(Request $req)
-    {
-        exit('1234');
-    }
-
     /**
      * 定时任务接口，定时从中金拉取账单数据，生成 prepayment 表
      * @param  Request $req [description]
@@ -809,15 +933,7 @@ class ApiPosController extends Controller
 
     }
 
-    /**
-     * 中金查询订单状态接口
-     * @param  Request $req [description]
-     * @return [type]       [description]
-     */
-    public function cpcc1410(Request $req)
-    {
-        
-    }
+
 
     /**********************************************************************************/
 
