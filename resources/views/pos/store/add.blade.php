@@ -52,27 +52,23 @@
         </div>
         
         <div class='fsa'>
-            <span type="" onclick='beforeSub()' class="">新增</span>
+            <button type="button" onclick='beforeSub()' class="">新增</button>
             <button type="button" class="" >取消</button>
         </div>
         
-        <div class='fixed bg-fff' id='eor' style='width:26%; left:40%;top:50%;display:none;'>
+        <div class='fixed bg-fff' id='eor' style='width:26%; left:40%; top:50%; display:none;'>
             <p class='txal bold w100pc' style='border-bottom:1px solid #999;'>警告</p>
         </div>
         <div class='fixed bg-fff' id='or' style='width:26%; left:40%;top:50%;display:none;'>
             <p class='txal bold w100pc' style='border-bottom:1px solid #999;'>警告</p>
             <div class='txal w100pc bold' style='height:100px;line-height:100px;'>
-               <div> 
-                   <p>确定新增店铺信息？</p>
-                   <div>
-                       <input type="submit" value="是" />
-                       <input type="button" class="abs" onclick="$('#or').hide()" value='否' />
-                    </div>
-                </div>
-               
+                <p>确定新增店铺信息？</p>
+            </div>
+            <div class='fsa mg-b-10'>
+                <input type="submit" value="是" />
+                <input type="button" class="" onclick="$('#or').hide()" value='否' />
             </div>
         </div>
-
     </form>
        
 
