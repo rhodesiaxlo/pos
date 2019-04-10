@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 use App\Models\Pos\User;
+use App\Models\Pos\Bank;
+
 
 /**
  * 便利店店铺类
@@ -39,7 +41,9 @@ class StoreController extends Controller
             return redirect('pos/store/index')->withErrors("添加失败");
             return redirect('pos/store/index')->withSuccess('添加成功');
         }
-    	return view('pos.store.add');
+
+        $banklist = Bank::all();
+    	return view('pos.store.add')->with('banklist', $banklist);
     }
 
     public function edit(Request $req)
