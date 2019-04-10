@@ -20,6 +20,10 @@ use App\Models\Pos\Goods;
 use App\Models\Pos\Order;
 use App\Models\Pos\OrderGoods;
 use App\Models\Pos\ShiftLog;
+use App\Models\Pos\Bank;
+use App\Models\Pos\Region;
+
+
 
 
 class ApiPosController extends Controller
@@ -731,6 +735,11 @@ class ApiPosController extends Controller
         return $this->ajaxFail([], 'not implement yet', 1000);
     }
 
+    public function ccpcNotify(Request $req)
+    {
+        exit('1234');
+    }
+
 
     /**********************************************************************************/
 
@@ -870,6 +879,58 @@ class ApiPosController extends Controller
             else $vars .= $keyprefix.$key.$keypostfix."=".urlencode($value)."&";
           }
           return $vars;
+    }
+
+
+    /**
+     * 中金支持银行列表
+     * @param  Request $req [description]
+     * @return [type]       [description]
+     */
+    public function banklist(Request $req)
+    {
+        $list = Bank::all();
+        return $this->ajaxSuccess($list, 'success');
+    }
+
+    public function province(Request $req)
+    {
+        $prolist = Region::where(['parent_id'=>1])->get();
+        return $this->ajaxSuccess($prolist, 'success');
+    }
+
+    /**
+     * 市列表 需要 省id 查询
+     * @param  Request $req [description]
+     * @return [type]       [description]
+     */
+    public function city(Request $req)
+    {
+        $id = $req->get('id');
+        if(empty($id))
+        {
+            return $this->ajaxFail([], "province id can not be empty",1000);
+        }
+
+        $city = Region::where(['parent_id'=>$id])->get();
+        return $this->ajaxSuccess($city, 'success');
+    }        
+
+    /**
+     * 区列表，如要 市 id 查询
+     * @param  Request $req [description]
+     * @return [type]       [description]
+     */
+    public function area(Request $req)
+    {
+        $id = $req->get('id');
+        if(empty($id))
+        {
+            return $this->ajaxFail([], "city id can not be empty", 1000);
+        }
+
+        $city = Region::where(['parent_id'=>$id])->get();
+        return $this->ajaxSuccess($city, 'success');
     }
 
 }
