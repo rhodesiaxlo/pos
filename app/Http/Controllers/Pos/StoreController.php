@@ -35,6 +35,7 @@ class StoreController extends Controller
         {
             // todo 
             // 
+            exit(json_encode(['code'=>0, 'message'=>"error",'data'=>json_encode($_POST)]));
             return redirect('pos/store/index')->withErrors("添加失败");
             return redirect('pos/store/index')->withSuccess('添加成功');
         }
