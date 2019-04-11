@@ -7131,5 +7131,6 @@ return [
 	'tx1410'=>$xmltx1410,
 	'tx1341'=>$xmltx1341,
 	'tx1811'=>$xmltx1811,
+	'txnotify'=>$xmlNotification,
 ];
 ?>

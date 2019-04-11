@@ -23,6 +23,9 @@ use App\Models\Pos\ShiftLog;
 use App\Models\Pos\Bank;
 use App\Models\Pos\Region;
 
+use App\Models\Pos\CpccTxLog;
+use App\Models\Pos\CpccDownloadLog;
+
 
 
 
@@ -352,6 +355,8 @@ class ApiPosController extends Controller
         $limitPay        = $req->get("LimitPay");
         $notificationURL = $req->get("NotificationURL");
 
+        $store_name = $req->get("store_name");
+
         if(empty($institutionID))
         {
             return $this->ajaxFail([]," institutionID can not be empty", 1000);
@@ -393,6 +398,11 @@ class ApiPosController extends Controller
             return $this->ajaxFail([]," subject can not be empty", 1007);
         }
 
+        if(empty($store_name))
+        {
+            return $this->ajaxFail([]," store_name can not be empty", 1008);
+        }
+
         return true;
     }
 
@@ -414,20 +424,95 @@ class ApiPosController extends Controller
         $pageno        = $req->get("PageNO");
         $countperpage  = $req->get("CountPerPage");
 
+        $res = $this->fun1811($institutionID, $date, $pageno, $countperpage,false);
+        if($res!==true)
+        {
+            return $res;
+        }
+
+        // // 组装 xml
+        // $xml1811 = config('xmltype.tx1811');
+        // $simpleXML= new \SimpleXMLElement($xml1811);
+    
+        // // 4.赋值
+        // $simpleXML->Head->InstitutionID=$institutionID;
+        // $simpleXML->Body->Date=$date;
+        // $simpleXML->Body->PageNO=$pageno;
+        // $simpleXML->Body->CountPerPage=$countperpage;
+        // // 签名
+        // $xmlStr = $simpleXML->asXML();    
+        // $message=base64_encode(trim($xmlStr));
+        // $signature=$this->cfcasign_pkcs12(trim($xmlStr));  
+        // $response=$this->cfcatx_transfer($message,$signature); 
+        // $plainText=trim(base64_decode($response[0]));
+
+        // // 验证签名，返回结果
+        // $ok=$this->cfcaverify($plainText,$response[1]);
+        // if($ok!=1)
+        // {
+        //     // 验证签名失败
+        //     $this->ajaxFail([], "验签失败", 9999);
+        // }
+        // else
+        // {  
+        //     $simpleXML= new \SimpleXMLElement($plainText);    
+        //     $txName="分页方式下载交易对账单";
+        //     $txCode="1811";
+
+        //     $code =(string) $simpleXML->Head->Code;
+        //     $msg = (string)$simpleXML->Head->Message;
+        //     $total = (string)$simpleXML->Head->TotalCount;
+
+
+        //     if($code !=2000)
+        //     {
+        //         return $this->ajaxFail([], $msg, $code);
+        //     } else {
+        //         $data = [];
+        //         if($total > 1)
+        //         {
+        //             for($i = 0; $i<$total; $i++)
+        //             {
+        //                 $tmp = [];
+        //                 $tmp['TxType']               = (string)$simpleXML->Body->Tx[$i]->TxType;  
+        //                 $tmp['TxSn']                 = (string)$simpleXML->Body->Tx[$i]->TxSn;        
+        //                 $tmp['TxAmount']             = (string)$simpleXML->Body->Tx[$i]->TxAmount;        
+        //                 $tmp['InstitutionAmount']    = (string)$simpleXML->Body->Tx[$i]->InstitutionAmount;        
+        //                 $tmp['PaymentAmount']        = (string)$simpleXML->Body->Tx[$i]->PaymentAmount;        
+        //                 $tmp['PayerFee']             = (string)$simpleXML->Body->Tx[$i]->PayerFee;        
+        //                 $tmp['Remark']               = (string)$simpleXML->Body->Tx[$i]->Remark;        
+        //                 $tmp['BankNotificationTime'] = (string)$simpleXML->Body->Tx[$i]->BankNotificationTime;        
+        //                 $tmp['InstitutionFee']       = (string)$simpleXML->Body->Tx[$i]->InstitutionFee;     
+        //                 $tmp['SettlementFlag']       = (string)$simpleXML->Body->Tx[$i]->SettlementFlag;        
+        //                 $tmp['SplitType']            = (string)$simpleXML->Body->Tx[$i]->SplitType;        
+        //                 $tmp['SplitResult']          = (string)$simpleXML->Body->Tx[$i]->SplitResult;        
+        //                 $data[] = $tmp;
+        //             }
+
+        //         }
+        //         return $this->ajaxSuccess($data, "success");
+        //     }
+        // }
+
+        // return $this->ajaxFail([], 'not implement yet', 1000);
+    }
+
+    private function fun1811($institution, $date, $pageno, $pagecount, $is_json)
+    {
         // 组装 xml
         $xml1811 = config('xmltype.tx1811');
         $simpleXML= new \SimpleXMLElement($xml1811);
     
         // 4.赋值
-        $simpleXML->Head->InstitutionID=$institutionID;
+        $simpleXML->Head->InstitutionID=$institution;
         $simpleXML->Body->Date=$date;
         $simpleXML->Body->PageNO=$pageno;
-        $simpleXML->Body->CountPerPage=$countperpage;
+        $simpleXML->Body->CountPerPage=$pagecount;
         // 签名
         $xmlStr = $simpleXML->asXML();    
         $message=base64_encode(trim($xmlStr));
         $signature=$this->cfcasign_pkcs12(trim($xmlStr));  
-        $response=$this->cfcatx_transfer($message,$signature); 
+        $response=$this->cfcatx_transfer($message,$signature, $is_json); 
         $plainText=trim(base64_decode($response[0]));
 
         // 验证签名，返回结果
@@ -446,16 +531,23 @@ class ApiPosController extends Controller
             $code =(string) $simpleXML->Head->Code;
             $msg = (string)$simpleXML->Head->Message;
             $total = (string)$simpleXML->Head->TotalCount;
-
+            $cur_total = (string)$simpleXML->Body->Tx->count();
+            // if($cur_total ==0)
+            // {
+            //     // 当前查询没有记录，终止 
+            //     $this->ajaxFail([], "query end", 666666);
+            // }
 
             if($code !=2000)
             {
                 return $this->ajaxFail([], $msg, $code);
             } else {
+                $ret = [];
+                $ret['total'] = $total;
                 $data = [];
-                if($total > 1)
+                if($cur_total > 1)
                 {
-                    for($i = 0; $i<$total; $i++)
+                    for($i = 0; $i<$cur_total; $i++)
                     {
                         $tmp = [];
                         $tmp['TxType']               = (string)$simpleXML->Body->Tx[$i]->TxType;  
@@ -474,12 +566,22 @@ class ApiPosController extends Controller
                     }
 
                 }
-                return $this->ajaxSuccess($data, "success");
+                $ret['list'] = $data;
+
+                // 做一个特殊处理
+                if($is_json)
+                {
+                    return $ret;
+                }
+
+                return $this->ajaxSuccess($ret, "success");
             }
         }
 
-        return $this->ajaxFail([], 'not implement yet', 1000);
+        return true;
+        //return $this->ajaxFail([], 'not implement yet', 1000);
     }
+
 
     private function cpcc1811Validate(Request $req)
     {
@@ -761,12 +863,12 @@ class ApiPosController extends Controller
 
         if(empty($institutionID))
         {
-            return $this->ajaxFail([], "institutionID can not be empty ");
+            return $this->ajaxFail([], "institutionID can not be empty ", 1000);
         }
 
         if(empty($paymentNo))
         {
-            return $this->ajaxFail([], "paymentNo can not be empty ");
+            return $this->ajaxFail([], "paymentNo can not be empty ", 1001);
         }
 
         return true;
@@ -789,6 +891,204 @@ class ApiPosController extends Controller
      */
     public function ccpc1408(Request $req)
     {
+        $message = $req->get('message');
+        $signature = $req->get('signature');
+
+        // 组装 xml
+        $xmlnotify = config('xmltype.txnotify');
+        $responseXML= new SimpleXMLElement($xmlnotify); 
+
+        $plainText=base64_decode($message); 
+        $ok=cfcaverify($plainText,$signature);
+
+        if($ok!=1)
+        {
+            $errInfo="验签失败";    
+            $responseXML->Head->Code = "2001";
+            $responseXML->Head->Message =$errInfo;
+            
+        }else{
+            $txName = "";
+            $simpleXML= new SimpleXMLElement($plainText);   
+            $txCode=$simpleXML->Head->TxCode;
+            
+            if ($txCode=="1118"){
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName = "商户订单支付状态变更通知";
+            } else if ($txCode=="1119") {
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "商户订单支付状态变更通知";
+            } else if ($txCode=="1138") {
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "商户订单退款结算状态变更通知";
+            } else if ($txCode=="1318") {
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "市场订单支付状态变更通知";
+            } else if ($txCode=="1348") {
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "市场订单结算状态变更通知";
+            } else if ($txCode=="1363") {
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "市场订单单笔代收结果通知";
+            } else if ($txCode=="1363") {
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "市场订单单笔代收结果通知（短信确认）";
+            } else if ($txCode=="1408") {
+                //！！！ 在这里添加商户处理逻辑！！！
+                $order_no    =(string)$simpleXML->Body->OrderNo;
+                $seria_no    =(string)$simpleXML->Body->PaymentNo;
+                $status      = (string)$simpleXML->Body->Status;
+                $notify_time = (string)$simpleXML->Body->BankNotificationTime;
+                $store_id    = (string)$simpleXML->Body->StoreID;
+                $this->notify1408($order_no, $seria_no, $status, $notify_timem, $store_id);
+                //以下为演示代码
+                $txName =  "市场订单O2O支付状态变更通知";
+            } else if ($txCode=="1455") {
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "市场订单O2O支付资金到账通知";
+            } else if ($txCode=="1456") {
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "市场订单聚合支付结果通知";
+            } else if ($txCode=="1712") {
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "预授权成功结果通知";
+            } else if ($txCode=="1722") {
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "预授权撤销结果通知";
+            } else if ($txCode=="1732") {
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "预授权扣款结果通知";
+            } else if ($txCode=="2018") {
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "实时代扣结果通知";
+            } else if ($txCode=="2038") {
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "实时代扣结果通知";
+            } else if ($txCode=="2247") {
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "商户模式O2O支付退款通知";
+            } else if ($txCode=="2248") {
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "商户模式O2O支付状态变更通知";
+            } else if ($txCode=="2249") {
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "商户模式O2O支付资金到账通知";
+            } else if ($txCode=="2353") {
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "企业账户验证申请结果通知";
+            } else if ($txCode=="2702"){
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "协议签署结果通知";
+            } else if ($txCode=="2818") {
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "支付结果通知";
+            } else if ($txCode=="2838") {
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "退款结果通知";
+            } else if ($txCode=="3218"){
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName = "P2P支付成功通知（托管户）";
+            } else if ($txCode=="4233") {
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "用户支付账户注册成功通知";
+            } else if ($txCode=="4243") {
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "用户支付账户银行账户绑定成功通知（托管户）";
+            } else if($txCode=="4247"){
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "用户支付账户银行账户解绑成功通知（托管户）";
+            } else if($txCode=="4253"){
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "用户支付账户充值成功通知（托管户）";
+            } else if($txCode=="4257"){
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "用户支付账户提现成功通知（托管户）";
+            } else if($txCode=="4263"){
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "用户支付账户扣款签约成功通知（托管户）";
+            } else if($txCode=="4703"){
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "电子账户开户通知";
+            } else if($txCode=="4723"){
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "设置电子账户密码状态通知";
+            } else if($txCode=="4743"){
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "电子账户充值通知";
+            } else if($txCode=="4753"){
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "电子账户提现通知";
+            } else if($txCode=="4773"){
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "P2P项目投资支付通知";
+            } else if($txCode=="4783"){
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "P2P项目自动投资签约通知";
+            } else if($txCode=="4793"){
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "P2P徽商债权转让通知";
+            } else if($txCode=="6061"){
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "Pos订单支付结果通知 收银支付/O2O支付/轻支付结果通知";
+            } else if($txCode=="6062"){
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "Pos撤销结果通知";
+            } else if($txCode=="6063"){
+                //！！！ 在这里添加商户处理逻辑！！！
+                //以下为演示代码
+                $txName =  "Pos退货结果通知";
+            }else {
+                $txName = "未知通知类型";
+            }       
+            $responseXML->Head->Code = "2000";
+            $responseXML->Head->Message ="OK.";
+        }
+        
+        // 商户自身逻辑处理完成之后,需要向支付平台返回响应
+        $responseXMLStr = $responseXML->asXML();    
+        $base64Str = base64_encode(trim($responseXMLStr));
+        /**HttpResponse::status(200);
+        HttpResponse::setContentType('text/plain');
+        HttpResponse::setData($base64Str);
+        HttpResponse::send();*/
+        print $base64Str;
 
     }
 
@@ -930,6 +1230,85 @@ class ApiPosController extends Controller
      */
     public function pullBillFromCcpc(Request $req)
     {
+        $date = $req->get('date');
+        $date = '2019-03-29';
+        if(empty($date))
+        {
+            return $this->ajaxFail([], "date can not be empty", 1000);
+        }
+
+        //遍历数据，至 error_code = 666666
+        $page = 1;
+        while(1)
+        {
+            $response = $this->fun1811('004792', $date, $page, 10000, true);
+            $current_no = sizeof($response['list']);
+            $total = $response['total'];
+            // 如果 current_no 小于 1 ，中断执行
+            if($current_no < 1)
+            {
+                break;
+            }
+            
+            // 写入数据   
+            // 开启事务
+            DB::beginTransaction();
+            try{
+                foreach ($response['list'] as $key => $value) {
+                    $newrec = new CpccTxLog();
+                    $newrec->TxType               =$value['TxType'];
+                    $newrec->TxSn                 =$value['TxSn'];
+                    $newrec->TxAmount             =$value['TxAmount'];
+                    $newrec->InstitutionAmount    =$value['InstitutionAmount'];
+                    $newrec->PaymentAmount        =$value['PaymentAmount'];
+                    $newrec->PayerFee             =$value['PayerFee'];
+                    $newrec->BankNotificationTime =$value['BankNotificationTime'];
+                    $newrec->check_date           =$date;
+                    $newrec->InstitutionFee       =$value['InstitutionFee'];
+                    $newrec->SplitType            =$value['SplitType'];
+                    $save_result = $newrec->save();
+                    if($save_result === false)
+                    {
+                        throw new Exception("save error", 1);
+                    } else {
+
+                    }
+
+                }
+
+                DB::commit();
+                // 写日志
+                // todo 
+                
+                // 生成 prepayment 
+                $this->generatePrepayment($date);
+
+                return $this->ajaxSuccess([], "read success");
+            } catch (Exception $e) {
+                DB::rollBack();
+                // 写日志
+                return $this->ajaxFail([], "read data fail", 1000);
+            }
+                     
+        }
+        
+        return $response;
+
+        // 写入数据库
+    }
+
+    private function generatePrepayment($date)
+    {
+
+    }
+
+    private function generateOrder()
+    {
+
+    }
+
+    private function notify1408($order_no, $seria_no, $status, $notify_timem, $store_id)
+    {
 
     }
 
@@ -984,19 +1363,21 @@ class ApiPosController extends Controller
         return $ret;
     }
 
-    private function cfcatx_transfer($message,$signature){ 
+    private function cfcatx_transfer($message,$signature, $is_json){ 
         $post_data = array();
         $post_data['message'] = $message;
         $post_data['signature'] = $signature;
-        
-        $response= $this->get_web_content($this->data_encode($post_data) );
+        $response= $this->get_web_content($this->data_encode($post_data), null, $is_json );
         $response=trim($response);
         
         return explode(",",$response);
     }
 
-    private function get_web_content( $curl_data )
+    private function get_web_content( $curl_data, $url= null ,$is_json=false)
     {
+        if($url == null)
+            $url = $this->cpcc_url;
+
         $options = array(
             CURLOPT_RETURNTRANSFER => true,         // return web page
             CURLOPT_HEADER         => false,        // don't return headers
@@ -1008,15 +1389,20 @@ class ApiPosController extends Controller
             CURLOPT_TIMEOUT        => 120,          // timeout on response
             CURLOPT_MAXREDIRS      => 10,           // stop after 10 redirects
             CURLOPT_POST            => 1,            // i am sending post data
-               CURLOPT_POSTFIELDS     => $curl_data,    // this are my post vars
+            CURLOPT_POSTFIELDS     => $curl_data,    // this are my post vars
             CURLOPT_SSL_VERIFYHOST => 0,            // don't verify ssl
             CURLOPT_SSL_VERIFYPEER => false,        //
             CURLOPT_VERBOSE        => 1                //
         );
 
-        $ch      = curl_init($this->cpcc_url);
+        $ch      = curl_init($url);
         curl_setopt_array($ch,$options);
-        curl_setopt($ch,CURLOPT_HTTPHEADER,array("Expect:"));
+        if($is_json)
+        {
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json'));
+        } else {
+            curl_setopt($ch,CURLOPT_HTTPHEADER,array("Expect:"));
+        }
         $content = curl_exec($ch);
         curl_close($ch);
         return $content;

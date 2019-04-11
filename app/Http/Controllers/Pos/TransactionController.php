@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 
 use App\Models\Pos\AbnormalTransactionLog;
 use App\Models\Pos\Prepayment;
+use App\Models\Pos\OutflowLog;
+
 
 
 /**
@@ -43,6 +45,7 @@ class TransactionController extends Controller
     {
         $logs = AbnormalTransactionLog::all();
         $prepayments = Prepayment::all();
+        exit(json_encode($logs));
     	return view('pos.tx.depositconfirm')->with('logs', $logs)->with('prepayments', $prepayments);
     }
 
@@ -53,7 +56,8 @@ class TransactionController extends Controller
      */
     public function payment(Request $req)
     {
-    	return view('pos.tx.payment');
+        $outflows = OutflowLog::all();
+    	return view('pos.tx.payment')->with('outflows', $outflows);
     }
 
     /**

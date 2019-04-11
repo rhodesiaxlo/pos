@@ -36,6 +36,21 @@
         <td>结算（划出）状态</td>
         <td>实际划出时间</td>
     </tr>
+    @foreach($outflows as $out)
+    <tr>
+        <td class='red'>{{$out->OrderNo}}</td>
+        <td>{{$out->OrderNo}}</td>
+        <td>{{$out->Amount}}</td>
+        <td>{{$out->Amount}}</td>
+        <td>{{$out->Amount}}</td>
+        <td>{{$out->BankID}}</td>
+        <td>{{$out->AccountNumber}}</td>
+        <td>{{$out->AccountName}}</td>
+        <td>{{$out->status}}</td>
+        <td>{{$out->create_time}}</td>
+
+    </tr>
+    @endforeach
 </table>
 
 @stop
