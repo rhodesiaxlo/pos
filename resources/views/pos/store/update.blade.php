@@ -88,7 +88,7 @@
                 <p>确定删除店铺信息？</p>
             </div>
             <div class='fsa mg-b-10'>
-                <input type="button" onclick='' value="是" />
+                <input type="button" onclick='dalList()' value="是" />
                 <input type="button" class="" onclick="$('#del').hide()" value='否' />
             </div>
         </div>
@@ -120,6 +120,20 @@
 
         function delyes(){
             window.location = "/pos/store/index";
+        }
+        function dalList(){
+            let url='{{url::route('pos.store.del')}}'
+            let data={
+                id:1
+            }
+            ajaxGet(url,data,res=>{
+                if(res.code==1){
+                    window.location = "/pos/store/index"
+                }else{
+                    alert(res.message)
+                    $('#del').hide()
+                }
+            })
         }
         newC()
         province()

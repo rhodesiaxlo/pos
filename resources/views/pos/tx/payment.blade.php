@@ -117,11 +117,6 @@
             $('.date_picker').date_input();
         })
         function val(e){
-            var curDate = new Date();
-            var preDate = new Date(curDate.getTime() - 24*60*60*1000); //前一天
-            var start = new Date(new Date(new Date().toLocaleDateString()).getTime());//当天00:00
-            var yest=Date.parse(start)
-
             var start1 = new Date(new Date(new Date().toLocaleDateString()).getTime()-24*60*60*1000);//前天00:00
             var yest1=Date.parse(start1)
 

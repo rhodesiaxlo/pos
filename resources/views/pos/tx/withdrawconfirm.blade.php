@@ -102,21 +102,10 @@ $(function(){
     $('.date_picker').date_input();
 })
 function val(e){
-    var curDate = new Date();
-    var preDate = new Date(curDate.getTime() - 24*60*60*1000); //前一天
     var start = new Date(new Date(new Date().toLocaleDateString()).getTime());//当天00:00
-    console.log('当天时间：'+start)
-    console.log('当天时间：'+Date.parse(start))
     var yest=Date.parse(start)
 
-    var start1 = new Date(new Date(new Date().toLocaleDateString()).getTime()-24*60*60*1000);//前天00:00
-    console.log('前天时间：'+start1)
-    console.log('前天时间：'+Date.parse(start1))
-    var yest1=Date.parse(start1)
-
-    console.log($('.date_picker').val())
     var date=new Date($('.date_picker').val())
-    console.log('选择时间'+Date.parse(date))
     var tod=Date.parse(date)
     if(tod>=yest){
         alert('当前时间不可选择')
