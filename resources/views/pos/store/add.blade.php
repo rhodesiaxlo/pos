@@ -14,7 +14,7 @@
             <p class='bg-gray padd-tb-15 f17'>店铺信息</p>
             <div class='fsb w100pc'  >
                 <p style='width:50%;'><span class='w120px dslb'> 店铺名称</span>  <input id='nameStort' name='nameStort' style='width:60%;' type="text" value='54' /></p>
-                <div class='mg-b-10' style='width:50%;'> <span class='red'>*</span> 商家编号  <input  style='width:60%;' type="text" placeholder='无需填写，系统自动生成编码' /></div>
+                <div class='mg-b-10' style='width:50%;'> <span class='red'>*</span> 商家编号  <input  style='width:60%;' type="text" placeholder='无需填写，系统自动生成编码' value="{{$store_code}}" name="store_code" /></div>
             </div>
             <div class='fsb mg-b-10'>
                 <div class='w120px dslb'> 店铺地址  </div>
@@ -31,7 +31,7 @@
                 <div class='w50pc'>
                     店铺状态 &nbsp
                     <label for="staus1">启用</label> 
-                    <input id='staus1' name="staus" type="radio" value='启用' />
+                    <input id='staus1' name="staus" type="radio" checked="checked" value='启用' />
                     <label for="staus2">禁用</label> 
                     <input id='staus2' name="staus" type="radio" value='禁用' />
                 </div>

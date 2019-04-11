@@ -51,7 +51,7 @@
             </tr>
             @foreach($users as $user)
             <tr>
-                <td>{{$user->uname}}</td>
+                <td>{{$user->store_name}}</td>
                 <td>{{$user->realname}}</td>
                 <td>{{$user->store_code}}</td>
                 <td>{{$user->business_licence_no}}</td>
@@ -61,8 +61,8 @@
                 <td>{{$user->account_no}}</td>
                 <td>{{$user->bank->name}}</td>
                 <td>{{$user->creator->name}}</td>
-                <td>{{$user->create_time}}</td>
-                <td><a href='/pos/store/edit?id={{$user->id}}'>编辑</a></td>
+                <td>{{date('Y-m-d', $user->create_time)}}</td>
+                <td><a href='/pos/store/edit?id={{$user->local_id}}'>编辑</a></td>
                 <td>{{$user->is_active==1?"正常":"禁用"}}</td>
             </tr>
             @endforeach

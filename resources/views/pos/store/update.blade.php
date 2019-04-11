@@ -10,11 +10,13 @@
     <div class='f18 bold mg-bt-15' style="">编辑</div>
     <form class="" id='form' method="POST" action="{{url::route('pos.store.edit')}}" >
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="local_id" id="local_id" value="{{$userinfo->local_id}}">
+
         <div>
             <p class='bg-gray padd-tb-15 f17'>店铺信息</p>
             <div class='fsb w100pc'  >
-                <p style='width:50%;'><span class='w120px dslb'> 店铺名称</span>  <input id='nameStort' name='nameStort' style='width:60%;' type="text" value='54' /></p>
-                <div class='mg-b-10' style='width:50%;'> <span class='red'>*</span> 商家编号  <input  style='width:60%;' type="text" placeholder='无需填写，系统自动生成编码' /></div>
+                <p style='width:50%;'><span class='w120px dslb'> 店铺名称</span>  <input id='nameStort' name='nameStort' style='width:60%;' type="text" value='{{$userinfo->store_name}}' /></p>
+                <div class='mg-b-10' style='width:50%;'> <span class='red'>*</span> 商家编号  <input  style='width:60%;' type="text" placeholder='无需填写，系统自动生成编码'  value="{{$userinfo->store_code}}" /></div>
             </div>
             <div class='fsb mg-b-10'>
                 <div class='w120px dslb'> 店铺地址  </div>
@@ -25,41 +27,41 @@
                     <select style='width:15%;' onchange="citY(this.options[this.options.selectedIndex].value)" name="province" id="province"><option>省份</option></select>
                     <select style='width:15%;' onchange="countY(this.options[this.options.selectedIndex].value)" name="city" id="city"><option>城市</option></select>
                     <select style='width:15%;' name="county" id="county"><option>区</option></select>
-                    <input style='width:25%;' value='54' name='address' id='' type="text" placeholder='详细地址'>
+                    <input style='width:25%;' value='{{$userinfo->address}}' name='address' id='' type="text" placeholder='详细地址'>
                 </div>
                 
             </div>
             <div class='fsb mg-b-10'>
-                <div class='w50pc'><span class='w120px dslb'> 营业执照编号</span>  <input name='number' value='54' type="text" class='w50pc' /></div>
+                <div class='w50pc'><span class='w120px dslb'> 营业执照编号</span>  <input name='number' value='{{$userinfo->business_licence_no}}' type="text" class='w50pc' /></div>
                 <div class='w50pc'>
                     店铺状态 &nbsp
                     <label for="staus1">启用</label> 
-                    <input id='staus1' name="staus" type="radio" value='启用' />
+                    <input id='staus1' name="staus"  type="radio" @if ($userinfo['is_active'] == 1) checked="checked" @endif value='启用' />
                     <label for="staus2">禁用</label> 
-                    <input id='staus2' name="staus" type="radio" value='禁用' />
+                    <input id='staus2' name="staus" type="radio" @if ($userinfo['is_active'] !=1) checked="checked" @endif value='禁用' />
             </div>
             </div>
         </div>
         <div>
             <p class='bg-gray padd-tb-15 f17'>店主信息</p>
             <div class='fsb mg-b-10'>
-                <div class='w50pc'> <span class='w120px dslb'>店主姓名</span> <input name='name' value='54' type="text" class='w50pc' /></div>
-                <div class='w50pc'> 联系方式  <input name='phone' value='54' type="text" class='w50pc' placeholder='' /></div>
+                <div class='w50pc'> <span class='w120px dslb'>店主姓名</span> <input name='name' value='{{$userinfo->realname}}' type="text" class='w50pc' /></div>
+                <div class='w50pc'> 联系方式  <input name='phone' value='{{$userinfo->phone}}' type="text" class='w50pc' placeholder='' /></div>
             </div>
         </div>
         <div>
             <p class='bg-gray padd-tb-15 f17'>收款信息</p>
             <div class='fsb  mg-b-10'>
-                <div class='w50pc'><span class='w120px dslb'> 收款账户名 </span> <input name='amuName' value='54' type="text" class='w50pc' /></div>
-                <div class='w50pc'> 收款账号  <input name='amuNum' value='54' type="text" class='w50pc' placeholder='' /></div>
+                <div class='w50pc'><span class='w120px dslb'> 收款账户名 </span> <input name='account_name' value='{{$userinfo->account_name}}' type="text" class='w50pc' /></div>
+                <div class='w50pc'> 收款账号  <input name='account_no' value='{{$userinfo->account_no}}' type="text" class='w50pc' placeholder='' /></div>
             </div>
             <div><span class='w120px dslb'>开户行</span><select style=';' class='w50pc mg-b-10' name="place" id="place" ></select></div>
         </div>
         <div>
             <p class='bg-gray padd-tb-15 f17'>账号信息</p>
             <div class='fsb mg-b-10'>
-                <div class='w50pc'> <span class='w120px dslb'>登录用户名</span>  <input type="text" value='54' name='username' class='w50pc' placeholder='文本'/></div>
-                <div class='w50pc'> 登录密码  <input type="text" value='54' name='userSub' class='w50pc' placeholder='数字、六位' /></div>
+                <div class='w50pc'> <span class='w120px dslb'>登录用户名</span>  <input type="text" value='{{$userinfo->uname}}' name='uname' class='w50pc' placeholder='文本'/></div>
+                <div class='w50pc'> 登录密码  <input type="text" value='{{$userinfo->uname}}' name='password' class='w50pc' placeholder='数字、六位' /></div>
             </div>
         </div>
         
@@ -97,6 +99,8 @@
 
 @section('js')
     <script>
+        var local_id = $('#local_id').val();
+
         function beforeSub(){
             var d = {};
             var t = $('form').serializeArray();
@@ -124,7 +128,7 @@
         function dalList(){
             let url='{{url::route('pos.store.del')}}'
             let data={
-                id:1
+                id:local_id
             }
             ajaxGet(url,data,res=>{
                 if(res.code==1){

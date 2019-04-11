@@ -9,7 +9,8 @@ class User extends Model
     
     protected $table = 'pos_user';
     public $timestamps = false;
-    
+    protected $primaryKey = "local_id";
+
 
     /**
      * 和  pos_user 多对一关系
@@ -48,7 +49,7 @@ class User extends Model
      * 生成随机订单编号
      * @return [type] [description]
      */
-    public function getRandomStoreCode()
+    public static  function getRandomStoreCode()
     {
             return "code_".strval(time());
     }
