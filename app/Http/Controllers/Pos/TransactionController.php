@@ -9,7 +9,7 @@ use App\Models\Pos\AbnormalTransactionLog;
 use App\Models\Pos\Prepayment;
 use App\Models\Pos\OutflowLog;
 use App\Models\Pos\OutflowPrepayment;
-
+use DB;
 
 
 
@@ -45,8 +45,32 @@ class TransactionController extends Controller
      */
     public function depositConfirm(Request $req)
     {
-        $logs = AbnormalTransactionLog::all();
-        $prepayments = Prepayment::all();
+        // 根据日期选择 prepayment , prepayment 里面有 log_id
+        $date = "2019-04-10";
+        if($req->isMethod('post'))
+        {
+            $tmpdate = $req->get('date');
+            if(empty($tmpdate))
+            {
+                // 报错
+            }
+            $date = $tmp;
+        }
+
+        // 
+        $time = strtotime($date);
+        // 生成凌晨和午夜的时间段
+        $drawn = date('Y-m-d 0:0:0', $time);
+        $midnight = date('Y-m-d 23:59:59', $time);
+
+        // $drawntimestamp = strtotime($drawn);
+        // $midnighttimestamp = strtotime($midnight);
+
+        //exit(" drawn = {$drawn} midnight = {$midnight}");
+        
+        $prepayments = DB::table('pos_prepayment')->whereBetween('pos_prepayment.order_time',array($drawntimestamp, $midnighttimestamp))->get();
+
+        $logs = DB::table('pos_abnormal_transaction_log')->whereBetween('pos_abnormal_transaction_log.create_time',array($drawntimestamp, $midnighttimestamp))->get();
     	return view('pos.tx.depositconfirm')->with('logs', $logs)->with('prepayments', $prepayments);
     }
 
@@ -100,6 +124,7 @@ class TransactionController extends Controller
     {
         if($req->isMethod('post'))
         {
+
             exit(json_encode(['code'=>1,'message'=>'success']));
         }
         return view('pos.tx.dlgfirstcheck');

@@ -46,17 +46,13 @@ Route::group(['namespace' => 'Api','middleware' => ['api']], function () {
     Route::match(['get','post'],'apipos/ccpcnotify','ApiPosController@ccpcNotify')->name('api.apipos.ccpcnotify');
     Route::match(['get','post'],'apipos/pullbillfromccpc','ApiPosController@pullBillFromCcpc')->name('api.apipos.pullbillfromccpc');
     Route::match(['get','post'],'apipos/generatepreapi','ApiPosController@generatePreApi')->name('api.apipos.generatepreapi');
+    Route::match(['get','post'],'apipos/generateoutflowprepayment','ApiPosController@generateOutflowPrepayment')->name('api.apipos.generateoutflowprepayment');
     
-
-
     Route::match(['get','post'],'apipos/banklist','ApiPosController@banklist')->name('api.apipos.banklist');
     Route::match(['get','post'],'apipos/province','ApiPosController@province')->name('api.apipos.province');
     Route::match(['get','post'],'apipos/city','ApiPosController@city')->name('api.apipos.city');
     Route::match(['get','post'],'apipos/area','ApiPosController@area')->name('api.apipos.area');
 
-
-
-    
     Route::match(['get','post'],'apipos/syncmember','ApiPosController@syncMember')->name('api.apipos.syncmember');
     Route::match(['get','post'],'apipos/syncgoods','ApiPosController@syncGoods')->name('api.apipos.syncgoods');
     Route::match(['get','post'],'apipos/syncorder','ApiPosController@syncOrder')->name('api.apipos.syncorder');

@@ -1499,6 +1499,160 @@ class ApiPosController extends Controller
         
     }
 
+    public function generateOutflowPrepayment(Request $req)
+    {
+        $date = $req->get('date');
+        if(empty($date))
+        {
+            return $this->ajaxFail([], "date can not be empty", 1000);
+        }
+
+
+        $orderlist = DB::select("select * from pos_outflow_log where 1");
+        $loglist = DB::select("select * from pos_cpcc_tx_log where 1");
+
+        $order_sn       = array_column($orderlist, 'SerialNumber');
+        $txsn           = array_column($loglist, 'TxSn');
+        $merge          = array_merge($order_sn, $txsn);
+        $order_diff_log = array_diff($order_sn, $txsn);
+        $log_diff_order = array_diff($txsn, $order_sn);
+
+        if(sizeof($merge) == sizeof($order_sn))
+        {
+            // 没有差异
+        }
+
+
+        $ll = DB::select("SELECT
+            o.OrderNo, o.Amount as o_amount,o.create_time as o_notify_time, o.create_time as o_create_time,o.SerialNumber as o_serial_no,o.id as o_id,
+            l.TxAmount as l_amount, l.BankNotificationTime as l_notify_time,l.TxSn as l_serial_no,l.TxType as l_type,l.id as l_id
+                FROM pos_outflow_log as o
+            JOIN pos_cpcc_tx_log as l
+            ON o.order_sn = l.TxSn
+            where l.TxType=1341
+           
+        ");
+
+        // 开启事务
+        DB::beginTransaction();
+        try{
+                foreach ($ll as $key => $value) {
+                    // 去重
+                    $is_exist = Prepayment::where(['serial_no'=>$value->l_serial_no])->first();
+                    if($is_exist !==null)
+                    {
+                        continue;
+                    }
+                    // Prepayment::
+                    $tmppre = new Prepayment();
+                    $tmppre->check_date = "12345";
+                    // exit(json_encode($value->o_serial_no));
+                    $tmppre->serial_no = $value->o_serial_no;
+                    // exit($tmppre->seria_no);
+                    $tmppre->store_name = "待处理1";
+                    $tmppre->store_code = $value->order_no;
+                    $tmppre->cpcc_amount = $value->l_amount;
+                    $tmppre->order_amount = $value->o_amount;
+                    if(abs($value->l_amount - $value->o_amount) > 1)
+                    {
+                        $tmppre->result_status = self::CHECK_NUMBERNOTMATCH;
+                    } else {
+                        $tmppre->result_status = self::CHECK_SUCCESS;
+                    }
+                    $tmppre->status = 0;
+                    $tmppre->order_time = $value->o_create_time;
+                    $tmppre->cpcc_time = $value->l_notify_time;
+                    $tmppre->cpcc_tx_log_id = $value->l_id;
+                    $tmppre->order_id = $value->o_id;
+                    $saveresult = $tmppre->save();
+                    if($saveresult === false)
+                    {
+                        throw new Exception("Error Processing Request", 1);
+                    }
+
+
+                }
+ 
+
+                // 差异性插入
+                if(sizeof($order_diff_log) > 0)
+                {
+
+                    foreach ($order_diff_log as $key => $value) {
+                        // 去重
+                        
+                        $is_exist = Prepayment::where(['serial_no'=>$value])->first();
+                        if($is_exist !==null)
+                        {
+                            continue;
+                        }
+
+                        $orderinfo = OutflowLog::where(['order_sn'=>$value])->first();
+
+                        $tmppre = new Prepayment();
+                        $tmppre->check_date = "12345";
+                        $tmppre->serial_no = $orderinfo->SerialNumber;
+                        $tmppre->store_name = "待处理";
+                        $tmppre->store_code = $orderinfo->OrderNo;
+                        $tmppre->cpcc_amount = 0;
+                        $tmppre->order_amount = $orderinfo->Amount;
+                        $tmppre->result_status = self::check_CCPCNOT;// 
+                        $tmppre->status = 0;
+                        $tmppre->order_time = $orderinfo->create_time;
+                        $tmppre->cpcc_time = 0;
+                        $tmppre->cpcc_tx_log_id = 0;
+                        $tmppre->order_id = $orderinfo->id;
+                        $saveresult = $tmppre->save();
+                        if($saveresult === false)
+                        {
+                            throw new Exception("Error Processing Request", 1);
+                        }                        
+                    }                    
+                }
+
+                if(sizeof($log_diff_order) > 0)
+                {
+                    foreach ($log_diff_order as $key => $value) {
+                        // 去重
+                        $is_exist = Prepayment::where(['serial_no'=>$value])->first();
+                        if($is_exist !==null)
+                        {
+                            continue;
+                        }
+
+                        $loginfo = CpccTxLog::where(['TxSn'=>$value])->first();
+
+                        $tmppre = new Prepayment();
+                        $tmppre->check_date = "12345";
+                        $tmppre->serial_no = $loginfo->TxSn;
+                        $tmppre->store_name = "待处理";
+                        $tmppre->store_code = "xxxx";
+                        $tmppre->cpcc_amount = $loginfo->TxAmount;
+                        $tmppre->order_amount = 0;
+                        $tmppre->result_status = self::CHECK_ORDERNOT;
+                        $tmppre->status = 0;
+                        $tmppre->order_time = 0;
+                        $tmppre->cpcc_time = $loginfo->BankNotificationTime;
+                        $tmppre->cpcc_tx_log_id = $loginfo->id;
+                        $tmppre->order_id = 0;
+                        $saveresult = $tmppre->save();
+                        if($saveresult === false)
+                        {
+                            throw new Exception("Error Processing Request", 1);
+                        }
+                    }
+                }
+
+            DB::commit();
+            return $this->ajaxSuccess([], "read success");
+        } catch (Exception $e) {
+            DB::rollBack();
+            // 写日志
+            return $this->ajaxFail([], "read data fail", 1000);
+        }
+
+    }
+
     /**
      * 预处理订单生成接口
      * @param  Request $req [description]
