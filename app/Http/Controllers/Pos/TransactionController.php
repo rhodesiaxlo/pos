@@ -56,6 +56,10 @@ class TransactionController extends Controller
      */
     public function payment(Request $req)
     {
+        if($req->isMethod('post'))
+        {
+            exit(json_encode(['code'=>1,'message'=>'success']));
+        }
         $outflows = OutflowLog::all();
     	return view('pos.tx.payment')->with('outflows', $outflows);
     }

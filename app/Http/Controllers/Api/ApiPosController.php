@@ -930,6 +930,14 @@ class ApiPosController extends Controller
                 $txName =  "市场订单支付状态变更通知";
             } else if ($txCode=="1348") {
                 //！！！ 在这里添加商户处理逻辑！！！
+                $serial_no      =(string)$simpleXML->Body->SerialNumber;
+                $order_no       =(string)$simpleXML->Body->OrderNo;
+                $amount         = (string)$simpleXML->Body->Amount;
+                $status         = (string)$simpleXML->Body->Status;
+                $transafer_time = (string)$simpleXML->Body->TransferTime;
+                
+                $this->notify1348($serial_no, $order_no, $amount, $status, $transafer_time);
+
                 //以下为演示代码
                 $txName =  "市场订单结算状态变更通知";
             } else if ($txCode=="1363") {
@@ -942,8 +950,8 @@ class ApiPosController extends Controller
                 $txName =  "市场订单单笔代收结果通知（短信确认）";
             } else if ($txCode=="1408") {
                 //！！！ 在这里添加商户处理逻辑！！！
-                $order_no    =(string)$simpleXML->Body->OrderNo;
-                $seria_no    =(string)$simpleXML->Body->PaymentNo;
+                $order_no    = (string)$simpleXML->Body->OrderNo;
+                $seria_no    = (string)$simpleXML->Body->PaymentNo;
                 $status      = (string)$simpleXML->Body->Status;
                 $notify_time = (string)$simpleXML->Body->BankNotificationTime;
                 $store_id    = (string)$simpleXML->Body->StoreID;
@@ -1307,9 +1315,28 @@ class ApiPosController extends Controller
 
     }
 
-    private function notify1408($order_no, $seria_no, $status, $notify_timem, $store_id)
+    /**
+     * 反扫1402回调函数
+     * @param  [type] $order_no     [description]
+     * @param  [type] $seria_no     [description]
+     * @param  [type] $status       [description]
+     * @param  [type] $notify_timem [description]
+     * @param  [type] $store_id     [description]
+     * @return [type]               [description]
+     */
+    private function notify1408($order_no, $serial_no, $status, $notify_time, $store_id)
     {
+         Log::info('1402 异步回调 order_no {$order_no}  serial {$serial_no} status {$status} notify {$notify_time} store_id {$store_id}');
+        // 查找 server_order 里面的 seria_no 的订单，更新状态位
+    }
 
+    /**
+     * 结算1341划出异步回调
+     * @return [type] [description]
+     */
+    private function notify1348($serial_no, $order_no, $amount, $status, $transafer_time)
+    {
+         Log::info('1341 异步回调 serial_no {$serial_no}  order_no {$order_no} amount {$amount} status {$status} transafer_time {$transafer_time}');
     }
 
 
@@ -1469,6 +1496,8 @@ class ApiPosController extends Controller
      */
     public function banklist(Request $req)
     {
+         Log::info('hello wolrd');
+
         $list = Bank::all();
         return $this->ajaxSuccess($list, 'success');
     }
