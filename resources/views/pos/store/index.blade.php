@@ -12,7 +12,6 @@
         padding:10px;
     }
 </style>
-    <!-- <?php echo json_encode($users); ?> -->
 
 <form action="{{url::route('pos.store.index')}}" method="POST">
     <input type="hidden" name="_token" value="{{ csrf_token() }}">

@@ -39,12 +39,13 @@ function ajaxs(url,data,suc){
 }
 function ajaxGet(url,data,suc){
 	$.ajax({
-		//async : true,
+		async : false,
 		url,
 		data,
 		dataType:"json",
 		type : "GET",
 		timeout: 15000,
+		traditional: true,
 		success: function(response, status, xhr){
 			// debugger
 			// suc(JSON.parse(response))
@@ -70,10 +71,10 @@ function ajaxGet(url,data,suc){
 				alert('服务器错误')
 			}
 		},
-		error:function(XMLHttpRequest, textStatus, errorThrown){
-			debugger
-			alert('请求超时，请检查当前网络状态，并刷新页面' + textStatus)
-		}
+		// error:function(XMLHttpRequest, textStatus, errorThrown){
+		// 	debugger
+		// 	alert('请求超时，请检查当前网络状态，并刷新页面' + textStatus)
+		// }
 	});
 }
 
@@ -92,10 +93,10 @@ function province(){
 	var url ='http://pos1.123.com/api/apipos/province'
 	var data={}
 	ajaxs(url,data,(res)=>{
-		$('#province').empty()
+		// $('#province').empty()
 		for(let item of res.data){
 			$('#province').append(`<option value ="${item.region_id}" >${item.region_name}</option>`)
-			}
+		}
 	})
 }
 function citY(e){
@@ -107,9 +108,11 @@ function citY(e){
 		$('#city').empty()
 		for(let item of res.data){
 				$('#city').append(`<option value ="${item.region_id}" onclick=''>${item.region_name}</option>`)
-			}
+		}
+		countY(res.data[0].region_id)
 	})
 }
+
 function countY(e){
 	var url ='http://pos1.123.com/api/apipos/area'
 	var data={
@@ -122,6 +125,7 @@ function countY(e){
 			}
 	})
 }
+
 // 获取开户行列表
 function newC(){
 	var url ='http://192.168.1.161/api/apipos/banklist'
@@ -132,4 +136,13 @@ function newC(){
 				$('#place').append(`<option value ="${item.id}">${item.name}</option>`)
 			}
 	})
+}
+
+function date(){
+	var date=new Date()
+	var year=date.getFullYear()
+	var mouth=date.getMonth()+1
+	var day=date.getDate()
+	var today=`${year}-${mouth}-${day}`
+	return today
 }
