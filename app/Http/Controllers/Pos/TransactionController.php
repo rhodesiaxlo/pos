@@ -84,6 +84,10 @@ class TransactionController extends Controller
      */
     public function outflow(Request $req)
     {
+        if($req->isMethod('post'))
+        {
+            exit(json_encode(['code'=>1,'message'=>'success']));
+        }
         exit("批量结算");
     }
 
@@ -94,6 +98,10 @@ class TransactionController extends Controller
      */
     public function firstCheck(Request $req)
     {
+        if($req->isMethod('post'))
+        {
+            exit(json_encode(['code'=>1,'message'=>'success']));
+        }
         return view('pos.tx.dlgfirstcheck');
         exit("初审");
 
@@ -106,6 +114,10 @@ class TransactionController extends Controller
      */
     public function reCheck(Request $req)
     {
+        if($req->isMethod('post'))
+        {
+            exit(json_encode(['code'=>1,'message'=>'success']));
+        }
         return view('pos.tx.dlgrecheck');
         exit("复审");
     }
