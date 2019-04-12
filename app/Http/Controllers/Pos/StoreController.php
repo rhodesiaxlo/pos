@@ -123,11 +123,27 @@ class StoreController extends Controller
         if($req->isMethod('post'))
         {
             // todo 
-            // 
-            exit(json_encode(['code'=>0, 'message'=>"error",'data'=>json_encode($_POST)]));
-            
-            return redirect('pos/store/index')->withErrors("删除失败");
-            return redirect('pos/store/index')->withSuccess('删除成功');
+            $user_id = $req->get('local_id');
+            if(empty($user_id)||intval($user_id)===false)
+            {
+                return redirect('pos/store/index')->withErrors("删除失败. ");
+            }
+
+            $info = User::find($user_id);
+            if(empty($info))
+            {
+                return redirect('pos/store/index')->withErrors("删除失败 .. ");
+            }
+
+            $info->deleted = 1;
+            $result = $info->save();
+            if($result === false)
+            {
+                return redirect('pos/store/index')->withErrors("删除失败 .. ");
+            } else {
+                return redirect('pos/store/index')->withSuccess('删除成功');
+            }
+
         }
         
         $user_id = $req->get('id');
