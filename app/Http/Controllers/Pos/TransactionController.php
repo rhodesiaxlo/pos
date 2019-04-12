@@ -63,13 +63,14 @@ class TransactionController extends Controller
         $drawn = date('Y-m-d 0:0:0', $time);
         $midnight = date('Y-m-d 23:59:59', $time);
 
-        // $drawntimestamp = strtotime($drawn);
-        // $midnighttimestamp = strtotime($midnight);
+        $drawntimestamp = strtotime($drawn);
+        $midnighttimestamp = strtotime($midnight);
 
         //exit(" drawn = {$drawn} midnight = {$midnight}");
         
         $prepayments = DB::table('pos_prepayment')->whereBetween('pos_prepayment.order_time',array($drawntimestamp, $midnighttimestamp))->get();
 
+$prepayments = [];
         $logs = DB::table('pos_abnormal_transaction_log')->whereBetween('pos_abnormal_transaction_log.create_time',array($drawntimestamp, $midnighttimestamp))->get();
     	return view('pos.tx.depositconfirm')->with('logs', $logs)->with('prepayments', $prepayments);
     }
