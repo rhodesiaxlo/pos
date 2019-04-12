@@ -29,7 +29,6 @@
                     <select style='width:15%;' name="county" id="county"><option>区</option></select>
                     <input style='width:25%;' value='{{$userinfo->address}}' name='address' id='' type="text" placeholder='详细地址'>
                 </div>
-                
             </div>
             <div class='fsb mg-b-10'>
                 <div class='w50pc'><span class='w120px dslb'> 营业执照编号</span>  <input name='number' value='{{$userinfo->business_licence_no}}' type="text" class='w50pc' /></div>
@@ -132,15 +131,64 @@
             }
             ajaxGet(url,data,res=>{
                 if(res.code==1){
-                    window.location = "/pos/store/index"
+                    // window.location = "/pos/store/index"
                 }else{
                     alert(res.message)
                     $('#del').hide()
                 }
             })
         }
-        newC()
-        province()
+
+        let url1='http://192.168.1.161/api/apipos/banklist',data1={},msg1="{{$userinfo->bank_id}}",id1="place";
+        let url2='http://pos1.123.com/api/apipos/province',data2={},msg2="{{$userinfo->province_id}}",id2="province";
+        let url3='http://pos1.123.com/api/apipos/city',data3={id:"{{$userinfo->province_id}}"},msg3="{{$userinfo->city_id}}",id3="city";
+        let url4='http://pos1.123.com/api/apipos/area',data4={id:"{{$userinfo->city_id}}"},msg4="{{$userinfo->area_id}}",id4="county";
+        
+        lv(url2,data2,msg2,id2)
+        
+        
+        function lv(url,data,msg,id){
+            var list=[],one=[],a=[],url=url,data=data,msg=msg,id=id;
+            ajaxs(url,data,(res)=>{
+                $('#'+id).empty()
+                if(id=='place'){
+                    for(let item of res.data){
+                        if(item.id==msg){
+                            one.push(item)
+                        }
+                        if(item.id!=msg){
+                            list.push(item)
+                        }
+                    }
+                    a=one.concat(list)
+                    for(let item of a){
+                        $('#'+id).append(`<option value ="${item.id}">${item.name}</option>`)
+                    }
+                }else{
+                    for(let item of res.data){
+                        if(item.region_id==msg){
+                            one.push(item)
+                        }
+                        if(item.region_id!=msg){
+                            list.push(item)
+                        }
+                    }
+                    a=one.concat(list)
+                    for(let item of a){
+                        $('#'+id).append(`<option value ="${item.region_id}" onclick=''>${item.region_name}</option>`)
+                    }
+                }
+                if(id=='province'){
+                    lv(url3,data3,msg3,id3)
+                }
+                if(id=='city'){
+                    lv(url4,data4,msg4,id4)
+                }
+                if(id=='county'){
+                    lv(url1,data1,msg1,id1)
+                }
+            })
+        }
     </script>
 
 @stop

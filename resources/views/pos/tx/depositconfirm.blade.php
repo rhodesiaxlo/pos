@@ -21,8 +21,8 @@
         <span style="">交易日期</span>
         <form class="" id='form' method="POST" action="{{url::route('pos.transaction.depositconfirm')}}" >
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
-            <input onchange="val()" name='chatTime' style='height:30px;width:226px;' type="text" placeholder="2019-09-23" class="date_picker">
-            <button type='submit' onclick='forM()' style='border-radius:14px;'>查询</button>
+            <input onchange="val()" name='chatTime' style='height:30px;width:226px;' type="text" placeholder="" autocomplete="off" class="date_picker">
+            <button type='submit' onclick='' style='border-radius:14px;'>查询</button>
         </form>
     </div>
     <table style="text-align: center;" class='w100pc' border='1' rules='all' cellpadding='10'>
@@ -50,8 +50,8 @@
         <p style="color:red;margin: 3px 0;">对账总笔数：236笔   &nbsp;&nbsp; &nbsp; &nbsp;     对账交易总金额：57657元</p>
         <div class='fsa' style='width:15%;'>
             <button class='bor-14'>导出</button>
-            <button class='bor-14' onclick='alrt(1)'>手工调帐</button>
-            <button class='bor-14' onclick='alrt(2)'>复核</button>
+            <button class='bor-14' onclick='alrt(0)'>手工调帐</button>
+            <button class='bor-14' onclick='alrt(1)'>复核</button>
         </div>
     </div>
     <table id="box" class="tableA w100pc mg-t-10" style="text-align: center;" border='1' rules='all' >
@@ -100,35 +100,31 @@
         </tr>
         @endforeach
     </table>
-    <div class='fsa'>
-        <p>每页<select id="selectY"></select>共8条/1页</p>
-        <p>
-            <span>首页</span>
-            <span> 上一页</span>
-            <input type="text" style='width:30px;' /> 
-            <span> 下一页 </span>
-            <span>尾页</span>
-        </p>
-    </div>
 </div>
 
 <div id='mov' style='display:none;'>
+<form method="POST" onsubmit="return validateForm();" action="{{url::route('pos.transaction.depositconfirm')}}">
+    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="status" id='status' value="">
     <table  width="50%" border="1" rules='all' cellpadding="10" class='txal fixed bg-fff' style='top:50%;left:30%;'>
+        @foreach($logs as $abnormal_transaction_log)
         <tr>
             <td>交易金额差额</td>
-            <td class='red'>867894764</td>
+            <td class=''> <input type="text" class='red w100pc txal' style='border:none;' name='amount' autocomplete="off" value='{{$abnormal_transaction_log->amount}}' /></td>
         </tr>
+        @endforeach
         <tr>
             <td >备注：</td>
-            <td ><textarea name="" id="" class='w100pc h100pc' style='border:none;' cols="100" rows="10"></textarea></td>
+            <td ><textarea name="value" id="" class='w100pc h100pc' style='border:none;' cols="100" rows="10"></textarea></td>
         </tr>
         <tr>
             <td colspan="2">
-                <button onclick='move()'>取消</button>
-                <button class='mg-l-100'>提交</button>    
+                <button type='button' onclick='move()'>取消</button>
+                <button type=submit class='mg-l-100' onclick=''>提交</button>    
             </td>
         </tr>
     </table>
+</form>
 </div>
 @stop
 
@@ -153,27 +149,39 @@ function val(e){
 
 function alrt(num){
     $('#mov').show()
+    // console.log('{{$prepayment->status}}')
+    if("{{$prepayment->status}}"==2){
+        alert('已完成复核')
+        move()
+        return false;
+    }
+    if(num==0){
+        $('#status').val('1')
+    }else{
+        $('#status').val('2')
+    }
 }
 
 function move(){
     $('#mov').hide()
 }
 
-// function forM(){
-//     // debugger
-//     var d = {};
-//     var t = $('form').serializeArray();
-//     $.each(t, function() {
-//         d[this.name] = this.value;
-//     });
-//     console.log(d)
-// }
-
-$(function(){
-    for(let i=10;i<100; i++){
-        $('#selectY').append(`<option value ="${i}">${i}</option>`)
+function validateForm(){
+    var d = {};
+    var t = $('form').serializeArray();
+    $.each(t, function() {
+        d[this.name] = this.value;
+    });
+    if(d.value==''){
+        alert('请填写备注');
+        return false;
     }
-})
+    if(d.amount==''){
+        alert('请填写金额')
+        return false;
+    }
+    return true;
+}
 
 </script> 
 
