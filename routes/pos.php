@@ -21,3 +21,8 @@ Route::any('transaction/depositconfirm','TransactionController@depositConfirm')-
 Route::any('transaction/payment','TransactionController@payment')->name('pos.transaction.payment');
 Route::any('transaction/withdrawconfirm','TransactionController@withdrawConfirm')->name('pos.transaction.withdrawconfirm');
 
+Route::any('transaction/outflow','TransactionController@outflow')->name('pos.transaction.outflow');
+Route::any('transaction/firstcheck','TransactionController@firstCheck')->name('pos.transaction.firstcheck');
+Route::any('transaction/recheck','TransactionController@reCheck')->name('pos.transaction.recheck');
+
+

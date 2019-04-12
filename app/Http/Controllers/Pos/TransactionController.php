@@ -76,4 +76,34 @@ class TransactionController extends Controller
         $logs = AbnormalTransactionLog::all();
     	return view('pos.tx.withdrawconfirm')->with("logs", $logs)->with('prepayments', $prepayments);;
     }
+
+    /**
+     * 批量结算
+     * @param  Request $req [description]
+     * @return [type]       [description]
+     */
+    public function outflow(Request $req)
+    {
+        exit("批量结算");
+    }
+
+    /**
+     * 初审
+     * @param  Request $req [description]
+     * @return [type]       [description]
+     */
+    public function firstCheck(Request $req)
+    {
+        exit("初审");
+    }
+
+    /**
+     * 复审
+     * @param  Request $req [description]
+     * @return [type]       [description]
+     */
+    public function reCheck(Request $req)
+    {
+        exit("复审");
+    }
 }
