@@ -220,6 +220,7 @@ desired effect
 <script src="/js/place.js"></script>
 <script src="/js/ajaxs.js"></script>
 <link href="/css/globle-px.css" rel="stylesheet">
+<link href="/css/class.css" rel="stylesheet">
 
 <!-- Optionally, you can add Slimscroll and FastClick plugins.
      Both of these plugins are recommended to enhance the

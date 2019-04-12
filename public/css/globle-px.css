@@ -17,6 +17,9 @@
   .w120px {
     width: 120px;
   }
+  .w80px {
+    width: 80px;
+  }
   .bold{
     font-weight: bold;
   }
@@ -40,6 +43,12 @@
   }
   .bor-14 {
     border-radius: 14px;
+  }
+  .bor-4 {
+    border-radius: 4px;
+  }
+  .bor-n {
+    border: none;
   }
   li {
     list-style: none;

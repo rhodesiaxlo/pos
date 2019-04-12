@@ -1,0 +1,22 @@
+.pos_index_tital{
+    background: skyblue;
+    padding: 10px 10px;
+    border-radius: 4px;
+}
+.pos_str_msg{
+    text-align: center;
+    display: inline-block;
+    width: 100px;
+    padding: 10px 0px;
+    border-radius: 4px;
+    background: #c74a4a;
+    color: white;
+    margin-bottom: 10px;
+}
+.pos_tr{
+    background: #45a2a2;
+    color: white;
+}
+.inputPlace::-webkit-input-placeholder{
+    padding-left: 4px;
+}
