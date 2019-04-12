@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Pos\AbnormalTransactionLog;
 use App\Models\Pos\Prepayment;
 use App\Models\Pos\OutflowLog;
+use App\Models\Pos\OutflowPrepayment;
+
 
 
 
@@ -70,6 +72,8 @@ class TransactionController extends Controller
      */
     public function withdrawConfirm(Request $req)
     {
-    	return view('pos.tx.withdrawconfirm');
+        $prepayments = OutflowPrepayment::all();
+        $logs = AbnormalTransactionLog::all();
+    	return view('pos.tx.withdrawconfirm')->with("logs", $logs)->with('prepayments', $prepayments);;
     }
 }

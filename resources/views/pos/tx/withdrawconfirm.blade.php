@@ -28,6 +28,14 @@
             <td>经办人</td>
             <td>复核人</td>
         </tr>
+        @foreach($logs as $abnormal_transaction_log)
+            <tr>
+                <td class='red'>{{$abnormal_transaction_log->amount}}</td>
+                <td>{{$abnormal_transaction_log->message}}</td>
+                <td>{{$abnormal_transaction_log->admin_name}}</td>
+                <td>{{$abnormal_transaction_log->confirm_name}}</td>
+            </tr>
+        @endforeach
         <tr>
             <td>566</td>
             <td>例：今日结账差额为57657元，其中5单为我方无此单，交易金额以第三方支付平台为准</td>
@@ -61,6 +69,38 @@
             <td>调账状态</td>
             <td>复核状态</td>
         </tr>
+                @foreach($prepayments as $prepayment)
+        <tr class='{{$prepayment->result_status!=0?"red":""}}'>
+            <td>{{$prepayment->serial_no}}</td>
+            <td>{{$prepayment->order_time}}</td>
+            <td>{{$prepayment->cpcc_time}}</td>
+            <td>{{$prepayment->store_name}}</td>
+            <td>{{$prepayment->store_code}}</td>
+            <td>{{$prepayment->order_amount}}</td>
+            <td>{{$prepayment->cpcc_amount}}</td>
+            @if($prepayment->result_status==0)
+            (<td>对账成功</td>)
+            @endif
+            @if($prepayment->result_status==1)
+            (<td>对账失败 金额不符</td>)
+            @endif
+            @if($prepayment->result_status==2)
+            (<td>平台无此订单</td>)
+            @endif
+            @if($prepayment->result_status==3)
+            (<td>中金无此订单</td>)
+            @endif
+            @if($prepayment->status==0)
+            (<td>待初审</td>)
+            @endif
+            @if($prepayment->status==1)
+            (<td>待复审</td>)
+            @endif
+            @if($prepayment->status==2)
+            (<td>审核完成</td>)
+            @endif
+        </tr>
+        @endforeach
     </table>
     <div class='fsa'>
         <p>每页<select id="selectY"></select>共8条/1页</p>

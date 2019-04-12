@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Prepayment extends Model
 {
     protected $table = "pos_prepayment";
-    protected $primaryKey = "local_id";
+    public $timestamps = false;
 
     /**
      * 和 pos_order 表 1 对 多关系

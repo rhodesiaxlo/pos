@@ -22,6 +22,10 @@ use App\Models\Pos\OrderGoods;
 use App\Models\Pos\ShiftLog;
 use App\Models\Pos\Bank;
 use App\Models\Pos\Region;
+use App\Models\Pos\ServerOrder;
+use App\Models\Pos\OutflowLog;
+use App\Models\Pos\Prepayment;
+
 
 use App\Models\Pos\CpccTxLog;
 use App\Models\Pos\CpccDownloadLog;
@@ -46,9 +50,25 @@ class ApiPosController extends Controller
     const SYNC_CATEGORY = 8;
 
     // 支付方式
-    // 订单状态
+    const PAYWAY_WECHAT = 11;
+    const PAYWAY_ALI = 21;
+    const PAYWAY_UNIPAY = 31;
+
     // 支付场景
+    const PAYMENTSCENE_BARCODE = 10;
+    const PAYMENTSCENE_WAVE = 20;
+    
+    // 订单状态
+    const ORDERSTATUS_UNKNOWN = 10;
+    const ORDERSTATUS_SUCCESS = 20;
+    const ORDERSTATUS_FAIL = 30;
+
     // 卡类型
+    const CARDTYPE_BALANCE = 10;
+    const CARDTYPE_DEPOSIT = 20;
+    const CARDTYPE_CREDIT = 30;
+    const CARDTYPE_UNKNOWN = 40;
+
 
 
    public function __construct()
@@ -185,7 +205,6 @@ class ApiPosController extends Controller
             return $this->ajaxSuccess($memberinfo, "success");
         }
 
-
         if(intval($type) == self::SYNC_CATEGORY)
         {
             // category
@@ -269,6 +288,12 @@ class ApiPosController extends Controller
         $limitPay        = $req->get("LimitPay");
         $notificationURL = $req->get("NotificationURL");
 
+        $ret = $this->generateOrder($institutionID, $orderNo, $paymentNo, $paymentWay, $paymentScene, $amount, $subject);
+        if($ret === false)
+        {
+            $this->ajaxFail([], 'server order generate failed, pls try again', 1000);
+        }
+
         // 组装 xml
         $xml1402 = config('xmltype.tx1402');
         $simpleXML= new \SimpleXMLElement($xml1402);
@@ -334,7 +359,6 @@ class ApiPosController extends Controller
                 return $this->ajaxSuccess($data, "success");
             }
         }
-
 
         return $this->ajaxFail([], 'not implement yet', 1000);
     }
@@ -871,7 +895,7 @@ class ApiPosController extends Controller
             return $this->ajaxFail([], "paymentNo can not be empty ", 1001);
         }
 
-        return true;
+        return true; 
     }
 
     /**
@@ -1263,6 +1287,14 @@ class ApiPosController extends Controller
             DB::beginTransaction();
             try{
                 foreach ($response['list'] as $key => $value) {
+                    // 去重
+                    $is_exist = CpccTxLog::where(['TxSn'=>$value['TxSn']])->first();
+                    if($is_exist !== null)
+                    {
+                        // go to next
+                        continue;
+                    }
+
                     $newrec = new CpccTxLog();
                     $newrec->TxType               =$value['TxType'];
                     $newrec->TxSn                 =$value['TxSn'];
@@ -1305,13 +1337,132 @@ class ApiPosController extends Controller
         // 写入数据库
     }
 
-    private function generatePrepayment($date)
+    /**
+     * 生成预处理宝
+     * @param  [type] $date [description]
+     * @return [type]       [description]
+     */
+    public function generatePrepayment($date)
     {
 
+        $qrytime = strtotime($date);
+
+
+        $orderlist = DB::select("select * from pos_server_order where 1");
+        $loglist = DB::select("select * from pos_cpcc_tx_log where 1");
+
+        $order_sn = array_column($orderlist, 'order_sn');
+        $txsn = array_column($loglist, 'TxSn');
+        $merge = array_merge($order_sn, $txsn);
+        $order_diff_log = array_diff($order_sn, $txsn);
+        $log_diff_order = array_diff($txsn, $order_sn);
+
+        if(sizeof($merge) == sizeof($order_sn))
+        {
+            // 没有差异
+        }
+
+
+        $ll = DB::select("SELECT
+            o.order_no, o.amount as o_amount,o.notify_time as o_notify_time, o.create_time as o_create_time,o.order_sn as o_serial_no,o.id as o_id,
+            l.TxAmount as l_amount, l.BankNotificationTime as l_notify_time,l.TxSn as l_serial_no,l.TxType as l_type,l.id as l_id
+                FROM pos_server_order as o
+            LEFT JOIN pos_cpcc_tx_log as l
+            ON o.order_sn = l.TxSn
+            where l.TxType=1402
+            UNION
+            SELECT
+            o.order_no, o.amount as o_amount,o.notify_time as o_notify_time, o.create_time as o_create_time,o.order_sn as serial_no,o.id as o_id,
+            l.TxAmount as l_amount, l.BankNotificationTime as l_notify_time,l.TxSn as l_serial_no,l.TxType as l_type,l.id as l_id
+            FROM pos_cpcc_tx_log as l
+            LEFT JOIN pos_server_order as o
+            ON o.order_sn = l.TxSn
+            where l.TxType=1402
+        ");
+
+        // 开启事务
+        DB::beginTransaction();
+        try{
+                foreach ($ll as $key => $value) {
+                    $tmppre = new Prepayment();
+                    $tmppre->check_date = "12345";
+                    $tmppre->serial_no = is_null($value->l_serial_no)?$value->o_serial_no:null;
+                    $tmppre->store_name = "待处理";
+                    $tmppre->store_code = $value->order_no;
+                    $tmppre->cpcc_amount = $value->l_amount;
+                    $tmppre->order_amount = $value->o_amount;
+                    $tmppre->result_status = 0;
+                    $tmppre->status = 0;
+                    $tmppre->order_time = $value->o_create_time;
+                    $tmppre->cpcc_time = $value->l_notify_time;
+                    $tmppre->cpcc_tx_log_id = $value->l_id;
+                    $tmppre->order_id = $value->o_id;
+                    $saveresult = $tmppre->save();
+                    if($saveresult === false)
+                    {
+                        throw new Exception("Error Processing Request", 1);
+                    }
+
+
+                }
+            DB::commit();
+            return $this->ajaxSuccess([], "read success");
+        } catch (Exception $e) {
+            DB::rollBack();
+            // 写日志
+            return $this->ajaxFail([], "read data fail", 1000);
+        }
+
+        // 差异性插入
+        if(sizeof($order_diff_log) > 0)
+        {
+            
+        }
+
+        if(sizeof($log_diff_order) > 0)
+        {
+            
+        }
+        
     }
 
-    private function generateOrder()
+    /**
+     * 预处理订单生成接口
+     * @param  Request $req [description]
+     * @return [type]       [description]
+     */
+    public function generatePreApi(Request $req)
     {
+        $date = $req->get('date');
+        if(empty($date))
+        {
+            return $this->ajaxFail([], "date can not be empty", 1000);
+        }
+
+        $ret = $this->generatePrepayment($date);
+        if($ret !== true){
+            return $ret;
+        }
+
+        // 生成预处理表
+        exit('生成预处理表');
+    }
+
+    /**
+     * 1402 接口生成服务器订单
+     * @return [type] [description]
+     */
+    private function generateOrder($institutionID, $orderNo, $paymentNo, $paymentWay, $paymentScene, $amount, $subject)
+    {
+        $serverorder = new ServerOrder();
+        $ServerOrder->order_no = $orderNo;
+        $ServerOrder->amount = $amount;
+        $ServerOrder->payment_way = $paymentWay;
+        $ServerOrder->order_sn = $paymentNo;
+        $ServerOrder->create_time = $orderNo;
+        $ServerOrder->status = 0;
+        $result = $serverorder->save();
+        return $result;
 
     }
 
@@ -1327,7 +1478,20 @@ class ApiPosController extends Controller
     private function notify1408($order_no, $serial_no, $status, $notify_time, $store_id)
     {
          Log::info('1402 异步回调 order_no {$order_no}  serial {$serial_no} status {$status} notify {$notify_time} store_id {$store_id}');
-        // 查找 server_order 里面的 seria_no 的订单，更新状态位
+         $rec = ServerOrder::where(['order_no'=>$order_no, "serial_no"=>$serial_no])->first();
+         if($rec === null)
+         {
+            Log::info('1402 异步回调 order_no {$order_no}  serial {$serial_no} status {$status} notify {$notify_time} store_id {$store_id}  record not found');
+            return;
+         }
+
+        $rec->status = $status;
+        $rec->notify_time = $notify_time;
+        $result = $rec->save();
+        if($result === false)
+        {
+            Log::info('1402 异步回调 order_no {$order_no}  serial {$serial_no} status {$status} notify {$notify_time} store_id {$store_id}  update server order failed');
+        }
     }
 
     /**
@@ -1336,7 +1500,28 @@ class ApiPosController extends Controller
      */
     private function notify1348($serial_no, $order_no, $amount, $status, $transafer_time)
     {
-         Log::info('1341 异步回调 serial_no {$serial_no}  order_no {$order_no} amount {$amount} status {$status} transafer_time {$transafer_time}');
+        $info = OutflowLog::where(['SerialNumber'=>$serial_no, 'OrderNo'=>$order_no])->first();
+        if($info === null)
+        {
+
+            Log::info('1341 异步回调 serial_no {$serial_no}  order_no {$order_no} amount {$amount} status {$status} transafer_time {$transafer_time} record not found');
+            return;
+        }
+
+        //update
+        if(abs($info->amount - $amount)>1)
+        {
+            Log::info('1341 异步回调 serial_no {$serial_no}  order_no {$order_no} amount {$amount} status {$status} transafer_time {$transafer_time} amount not match {$info->amount} vs ccps {$amount}');    
+        }
+
+        $info->status = $status;
+        $result = $info->save();
+        if($result === false)
+        {
+            Log::info('1341 异步回调 serial_no {$serial_no}  order_no {$order_no} amount {$amount} status {$status} transafer_time {$transafer_time} update failed');
+            return;    
+        }
+        Log::info('1341 异步回调 serial_no {$serial_no}  order_no {$order_no} amount {$amount} status {$status} transafer_time {$transafer_time} complted');
     }
 
 
