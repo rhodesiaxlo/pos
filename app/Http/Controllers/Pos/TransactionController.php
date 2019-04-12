@@ -94,7 +94,9 @@ class TransactionController extends Controller
      */
     public function firstCheck(Request $req)
     {
+        return view('pos.tx.dlgfirstcheck');
         exit("初审");
+
     }
 
     /**
@@ -104,6 +106,7 @@ class TransactionController extends Controller
      */
     public function reCheck(Request $req)
     {
+        return view('pos.tx.dlgrecheck');
         exit("复审");
     }
 }
