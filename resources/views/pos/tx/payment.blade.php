@@ -15,6 +15,7 @@
 
 <div class='bold f20'>POS商户应收款结算划出</div>
 <form action="{{url::route('pos.transaction.payment')}}" method="post">
+    <input type="hidden" name="_token" value="{{ csrf_token() }}">
     <div class='fsb' style='width:55%;'>
         <div>商家名称  <input type="text" name="storeName" id="name" /></div>
         <div>商家编号  <input type="text" name="storeCode" id="code" /></div>
@@ -137,12 +138,21 @@
             });
             var datas = JSON.stringify(list);
             console.log(datas)
-            let url='{{url::route('pos.transaction.payment')}}'
+            let url='/pos/transaction/outflow'
             let data={
-                checked:list
+                checked:datas
             }
-            ajaxGet(url,data,res=>{
-                debugger;
+            ajaxs(url,data,res=>{
+                if(res.code==1){
+                    $('#ok').hide()
+                    $('#eor').empty()
+                    $('#eor').show()
+                    $('#eor').append("<div class='txal w100pc bold' style='height:100px;line-height:100px;'>清算成功！</div>")
+                    $("#eor").fadeOut(3000);
+                }else{
+                    alert(res.message)
+                }
+               
             })
         }
         $("#all").click(function(){    

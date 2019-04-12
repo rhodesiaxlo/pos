@@ -50,8 +50,8 @@
         <p style="color:red;margin: 3px 0;">对账总笔数：236笔   &nbsp;&nbsp; &nbsp; &nbsp;     对账交易总金额：57657元</p>
         <div class='fsa' style='width:15%;'>
             <button class='bor-14'>导出</button>
-            <button class='bor-14' onclick='alrt(0)'>手工调帐</button>
-            <button class='bor-14' onclick='alrt(1)'>复核</button>
+            <button type='button' class='bor-14' onclick='return alrt(0)'>手工调帐</button>
+            <button type='button' class='bor-14' onclick='return alrt(1)'>复核</button>
         </div>
     </div>
     <table id="box" class="tableA w100pc mg-t-10" style="text-align: center;" border='1' rules='all' >
@@ -103,35 +103,39 @@
 </div>
 
 <div id='mov' style='display:none;'>
-<form method="POST" onsubmit="return validateForm();" action="{{url::route('pos.transaction.depositconfirm')}}">
-    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-    <input type="hidden" name="status" id='status' value="">
-    <table  width="50%" border="1" rules='all' cellpadding="10" class='txal fixed bg-fff' style='top:50%;left:30%;'>
-        @foreach($logs as $abnormal_transaction_log)
-        <tr>
-            <td>交易金额差额</td>
-            <td class=''> <input type="text" class='red w100pc txal' style='border:none;' name='amount' autocomplete="off" value='{{$abnormal_transaction_log->amount}}' /></td>
-        </tr>
-        @endforeach
-        <tr>
-            <td >备注：</td>
-            <td ><textarea name="value" id="" class='w100pc h100pc' style='border:none;' cols="100" rows="10"></textarea></td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <button type='button' onclick='move()'>取消</button>
-                <button type=submit class='mg-l-100' onclick=''>提交</button>    
-            </td>
-        </tr>
-    </table>
-</form>
+    <form method="POST" onsubmit="return validateForm();" action="{{url::route('pos.transaction.depositconfirm')}}">
+        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="status" id='status' value="">
+        <table  width="50%" border="1" rules='all' cellpadding="10" class='txal fixed bg-fff' style='top:50%;left:30%;'>
+            @foreach($logs as $abnormal_transaction_log)
+            <tr>
+                <td>交易金额差额</td>
+                <td class=''> <input type="text" class='red w100pc txal' style='border:none;' id='amount' name='amount' autocomplete="off" value='{{$abnormal_transaction_log->amount}}' /></td>
+            </tr>
+            @endforeach
+            <tr>
+                <td >备注：</td>
+                <td ><textarea name="value" id="msg" class='w100pc h100pc' style='border:none;' cols="100" rows="10" value=''>{{$abnormal_transaction_log->message}}</textarea></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <button type='button' onclick='return move()'>取消</button>
+                    <button type='button' onclick='return prepayment()' class='mg-l-100' onclick=''>提交</button>    
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<div class='fixed bg-fff' id='eor' style='width:26%; left:40%; top:50%; display:none;'>
+    <p class='txal bold w100pc' style='border-bottom:1px solid #999;'>警告</p>
 </div>
 @stop
 
 @section('js')
 <script>
 
-    
+   let nume; 
 $(function(){
     $('.date_picker').date_input();
 })
@@ -145,21 +149,74 @@ function val(e){
         alert('当前时间不可选择')
         $('.date_picker').val('')
     }
+
 }
 
 function alrt(num){
     $('#mov').show()
-    // console.log('{{$prepayment->status}}')
     if("{{$prepayment->status}}"==2){
         alert('已完成复核')
         move()
         return false;
-    }
+    }  
     if(num==0){
+        nume=0
+    }else{
+        nume=1
+    }
+}
+function prepayment(){
+    var csrf_token="{{ csrf_token() }}"
+    var amount=$('#amount').val()
+    var message=$('#msg').val()
+    var tx_type='1402'
+    if(nume==0){
         $('#status').val('1')
+        var url='/pos/transaction/firstcheck'
+        var data={
+            csrf_token,
+            amount,
+            tx_type,
+            message,
+            id:'{{$prepayment->id}}'?'{{$prepayment->id}}':0,
+        }
+        debugger
+        ajaxs(url,data,res=>{
+            console.log(res)
+            if(res.code==1){
+                $('#mov').hide()
+                $('#eor').empty()
+                $('#eor').show()
+                $('#eor').append("<div class='txal w100pc bold' style='height:100px;line-height:100px;'>初审成功</div>")
+                $("#eor").fadeOut(3000);
+            }else{
+                alert(res.message)
+            }
+        })
     }else{
         $('#status').val('2')
+        var url='/pos/transaction/firstcheck'
+        var data={
+            amount,
+            tx_type,
+            message,
+            id:'{{$prepayment->id}}',
+        }
+
+        ajaxs(url,data,res=>{
+            console.log(res)
+            if(res.code==1){
+                $('#mov').hide()
+                $('#eor').empty()
+                $('#eor').show()
+                $('#eor').append("<div class='txal w100pc bold' style='height:100px;line-height:100px;'>复审成功</div>")
+                $("#eor").fadeOut(3000);
+            }else{
+                alert(res.message)
+            }
+        })
     }
+
 }
 
 function move(){

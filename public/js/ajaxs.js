@@ -1,4 +1,5 @@
 function ajaxs(url,data,suc){
+	var url='http://pos.liucong.com'+url
 	$.ajax({
 		//async : true,
 		url,
@@ -32,12 +33,12 @@ function ajaxs(url,data,suc){
 			}
 		},
 		error:function(XMLHttpRequest, textStatus, errorThrown){
-			debugger
 			alert('请求超时，请检查当前网络状态，并刷新页面' + textStatus)
 		}
 	});
 }
 function ajaxGet(url,data,suc){
+	var url='http://pos.liucong.com'+url
 	$.ajax({
 		async : false,
 		url,
@@ -90,7 +91,7 @@ function timeLV(num){
 
 // 获取省市区
 function province(){
-	var url ='http://pos1.123.com/api/apipos/province'
+	var url ='/api/apipos/province'
 	var data={}
 	ajaxs(url,data,(res)=>{
 		// $('#province').empty()
@@ -100,7 +101,7 @@ function province(){
 	})
 }
 function citY(e){
-	var url ='http://pos1.123.com/api/apipos/city'
+	var url ='/api/apipos/city'
 	var data={
 		id:e
 	}
@@ -114,7 +115,7 @@ function citY(e){
 }
 
 function countY(e){
-	var url ='http://pos1.123.com/api/apipos/area'
+	var url ='/api/apipos/area'
 	var data={
 		id:e
 	}
@@ -128,7 +129,7 @@ function countY(e){
 
 // 获取开户行列表
 function newC(){
-	var url ='http://192.168.1.161/api/apipos/banklist'
+	var url ='/api/apipos/banklist'
 	var data={}
 	ajaxs(url,data,(res)=>{
 		$('#place').empty()

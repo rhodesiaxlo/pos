@@ -83,17 +83,21 @@
                 <input type="button" class="" onclick="$('#or').hide()" value='否' />
             </div>
         </div>
+        </form>   
+    <form class="" id='form' method="POST" action="{{url::route('pos.store.del')}}" >
+        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="local_id" id="local_id" value="{{$userinfo->local_id}}">
         <div class='fixed bg-fff' id='del' style='width:26%; left:40%;top:50%;display:none;'>
             <p class='txal bold w100pc' style='border-bottom:1px solid #999;'>警告</p>
             <div class='txal w100pc bold' style='height:100px;line-height:100px;'>
                 <p>确定删除店铺信息？</p>
             </div>
             <div class='fsa mg-b-10'>
-                <input type="button" onclick='dalList()' value="是" />
+                <input type="submit" onclick='' value="是" />
                 <input type="button" class="" onclick="$('#del').hide()" value='否' />
             </div>
         </div>
-    </form>       
+    </form>
 @stop
 
 @section('js')
@@ -139,10 +143,10 @@
             })
         }
 
-        let url1='http://192.168.1.161/api/apipos/banklist',data1={},msg1="{{$userinfo->bank_id}}",id1="place";
-        let url2='http://pos1.123.com/api/apipos/province',data2={},msg2="{{$userinfo->province_id}}",id2="province";
-        let url3='http://pos1.123.com/api/apipos/city',data3={id:"{{$userinfo->province_id}}"},msg3="{{$userinfo->city_id}}",id3="city";
-        let url4='http://pos1.123.com/api/apipos/area',data4={id:"{{$userinfo->city_id}}"},msg4="{{$userinfo->area_id}}",id4="county";
+        let url1='/api/apipos/banklist',data1={},msg1="{{$userinfo->bank_id}}",id1="place";
+        let url2='/api/apipos/province',data2={},msg2="{{$userinfo->province_id}}",id2="province";
+        let url3='/api/apipos/city',data3={id:"{{$userinfo->province_id}}"},msg3="{{$userinfo->city_id}}",id3="city";
+        let url4='/api/apipos/area',data4={id:"{{$userinfo->city_id}}"},msg4="{{$userinfo->area_id}}",id4="county";
         
         lv(url2,data2,msg2,id2)
         
