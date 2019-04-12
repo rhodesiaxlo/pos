@@ -45,7 +45,6 @@ class TransactionController extends Controller
     {
         $logs = AbnormalTransactionLog::all();
         $prepayments = Prepayment::all();
-        exit(json_encode($logs));
     	return view('pos.tx.depositconfirm')->with('logs', $logs)->with('prepayments', $prepayments);
     }
 
