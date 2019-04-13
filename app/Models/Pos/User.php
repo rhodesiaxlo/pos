@@ -51,6 +51,8 @@ class User extends Model
      */
     public static  function getRandomStoreCode()
     {
-            return "code_".strval(time());
+        //JM+7位数字
+        //ZY
+            return "JM".strval(time());
     }
 }

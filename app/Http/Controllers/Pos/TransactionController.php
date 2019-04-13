@@ -54,11 +54,12 @@ class TransactionController extends Controller
             {
                 // 报错
             }
-            $date = $tmp;
+            $date = $tmpdate;
         }
 
         // 
         $time = strtotime($date);
+        $search['date'] = $date;
         // 生成凌晨和午夜的时间段
         $drawn = date('Y-m-d 0:0:0', $time);
         $midnight = date('Y-m-d 23:59:59', $time);
@@ -70,9 +71,9 @@ class TransactionController extends Controller
         
         $prepayments = DB::table('pos_prepayment')->whereBetween('pos_prepayment.order_time',array($drawntimestamp, $midnighttimestamp))->get();
 
-$prepayments = [];
+        $prepayments = [];
         $logs = DB::table('pos_abnormal_transaction_log')->whereBetween('pos_abnormal_transaction_log.create_time',array($drawntimestamp, $midnighttimestamp))->first();
-    	return view('pos.tx.depositconfirm')->with('logs', $logs)->with('prepayments', $prepayments);
+    	return view('pos.tx.depositconfirm')->with('logs', $logs)->with('prepayments', $prepayments)->with('search', $search);
     }
 
     /**
