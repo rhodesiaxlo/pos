@@ -127,13 +127,15 @@
 
 @if(empty($logs))
 <input type="hidden" id="testvar"  value='99' />
-<input type="hidden" id="testid"  value='0' />
+<input type="hidden" id="textid"  value='0' />
 @endif
 
 @if(!empty($logs))
 <input type="hidden" id="testvar"  value='{{$logs->status}}' />
-<input type="hidden" id="testid"  value='{{$logs->id}}' />
+<input type="hidden" id="textid"  value='{{$logs->id}}' />
 @endif
+
+<input type="hidden" id="seachdate"  value='{{$seach->date}}' />
 
 <div class='fixed bg-fff' id='eor' style='width:26%; left:40%; top:50%; display:none;'>
     <p class='txal bold w100pc' style='border-bottom:1px solid #999;'>警告</p>
@@ -146,7 +148,8 @@
    let nume; 
 $(function(){
     $('.date_picker').date_input();
-    $('#date').val(date1())
+    var date=$('#seachdate').val()
+    $('#date').val(date)
 })
 function val(e){
     var start = new Date(new Date(new Date().toLocaleDateString()).getTime());//当天00:00
@@ -158,12 +161,10 @@ function val(e){
         alert('当前时间不可选择')
         $('.date_picker').val('')
     }
-    debugger
 }
 
 function alrt(num){
     $('#mov').show()
-    debugger
     var status=$('#testvar').val()
     if(status==2){
         alert('已完成复核')
@@ -176,14 +177,16 @@ function prepayment(){
     var amount=$('#amount').val()
     var message=$('#msg').val()
     var tx_type='1343'
+    var id=$('#textid').val()
     if(nume==0){
         var url='/pos/transaction/firstcheck'
         var data={
             amount,
             tx_type,
             message,
-            id:$('#textid').val(),
+            id,
         }
+        debugger
         ajaxs(url,data,res=>{
             if(res.code==1){
                 $('#mov').hide()
@@ -201,8 +204,9 @@ function prepayment(){
             amount,
             tx_type,
             message,
-            id:$('#textid').val(),
+            id,
         }
+        debugger
         ajaxs(url,data,res=>{
             if(res.code==1){
                 $('#mov').hide()

@@ -188,6 +188,7 @@ function prepayment(){
             message,
             id:$('#textid').val(),
         }
+        debugger
         ajaxs(url,data,res=>{
             if(res.code==1){
                 $('#mov').hide()
