@@ -43,7 +43,7 @@ class TransactionController extends Controller
      * @param  Request $req [description]
      * @return [type]       [description]
      */
-public function depositConfirm(Request $req)
+    public function depositConfirm(Request $req)
     {
         // 根据日期选择 prepayment , prepayment 里面有 log_id
         $date = date('Y-m-d',strtotime("-1 day"));
@@ -84,11 +84,31 @@ public function depositConfirm(Request $req)
      */
     public function payment(Request $req)
     {
+        // 根据日期选择 prepayment , prepayment 里面有 log_id
+        $date = date('Y-m-d',strtotime("-1 day"));
+        //$date = "2019-04-10";
         if($req->isMethod('POST'))
         {
-            exit(json_encode(['code'=>1,'message'=>'success']));
+            $tmpdate = $req->get('chatTime');
+            if(empty($tmpdate))
+            {
+                // 报错
+            }
+            $date = $tmpdate;
         }
-        $outflows = OutflowLog::all();
+
+        // 
+        $time = strtotime($date);
+        $search['date'] = $date;
+        // 生成凌晨和午夜的时间段
+        $drawn = date('Y-m-d 0:0:0', $time);
+        $midnight = date('Y-m-d 23:59:59', $time);
+
+        $drawntimestamp = strtotime($drawn);
+        $midnighttimestamp = strtotime($midnight);
+
+
+        $outflows = OutflowLog::where(['check_date'=>$date])->get();
     	return view('pos.tx.payment')->with('outflows', $outflows);
     }
 
@@ -158,6 +178,16 @@ $prepayments = [];
         if($req->isMethod('POST'))
         {
 
+            $id = $req->get('id');
+            $tx_type = $req->get('tx_type');
+            $message = $req->get('message');
+            $amount = $req->get('amount');
+            $check_date = $req->get('date');
+
+            if($id==0)
+            {
+                // 没有记录，创建新记录
+            }
             exit(json_encode(['code'=>1,'message'=>'success']));
         }
         return view('pos.tx.dlgfirstcheck');
