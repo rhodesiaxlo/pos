@@ -205,7 +205,7 @@ function prepayment(){
             message,
             id,
         }
-        debugger
+        
         ajaxs(url,data,res=>{
             if(res.code==1){
                 $('#mov').hide()
@@ -225,7 +225,7 @@ function prepayment(){
             message,
             id,
         }
-        debugger
+        
         ajaxs(url,data,res=>{
             if(res.code==1){
                 $('#mov').hide()

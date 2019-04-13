@@ -162,7 +162,7 @@ function val(e){
 
 function alrt(num){
     $('#mov').show()
-    debugger
+    
     var status=$('#testvar').val()
     if(status==2){
         alert('已完成复核')
@@ -188,7 +188,7 @@ function prepayment(){
             message,
             id:$('#textid').val(),
         }
-        debugger
+        
         ajaxs(url,data,res=>{
             if(res.code==1){
                 $('#mov').hide()
