@@ -6,8 +6,8 @@
 .pos_str_msg{
     text-align: center;
     display: inline-block;
-    width: 100px;
-    padding: 10px 0px;
+    /* width: 100px; */
+    padding: 10px 10px;
     border-radius: 4px;
     background: #c74a4a;
     color: white;

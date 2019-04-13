@@ -12,22 +12,22 @@
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
         <div>
             <p class='bg-skyblue white padd-tb-15 f17 pos_index_tital'>店铺信息</p>
-            <div class='fsb w100pc'  >
-                <p style='width:50%;'><span class='w120px dslb'> 店铺名称</span>  <input id='nameStort' name='nameStort' style='width:60%;' type="text" value='54' /></p>
+            <div class='fsb w100pc mg-t-15'  >
+                <p style='width:50%;'><span class='w120px dslb'> 店铺名称</span>  <input id='nameStort' name='nameStort' style='width:60%;' type="text" value='' /></p>
                 <div class='mg-b-10' style='width:50%;'> <span class='red'>*</span> 商家编号  <input  style='width:60%;' type="text" placeholder='无需填写，系统自动生成编码' value="{{$store_code}}" name="store_code" /></div>
             </div>
-            <div class='fsb mg-b-10'>
+            <div class='fsb mg-b-10 mg-t-15'>
                 <div class='w120px dslb'> 店铺地址  </div>
-                <div class='fsb fg2 mg-l-3'>
-                    <select style='width:15%;' onchange="citY(this.options[this.options.selectedIndex].value)" name="province" id="province"><option>省份</option></select>
-                    <select style='width:15%;' onchange="countY(this.options[this.options.selectedIndex].value)" name="city" id="city"><option>城市</option></select>
-                    <select style='width:15%;' name="county" id="county"><option>区</option></select>
-                    <input style='width:25%;' value='54' name='address' id='' type="text" placeholder='详细地址'>
+                <div class='fg2 mg-l-3'>
+                        <select class='' style='width:10%;' onchange="citY(this.options[this.options.selectedIndex].value)" name="province" id="province"><option>省份</option></select>
+                        <select class='mg-l-10' style='width:10%;' onchange="countY(this.options[this.options.selectedIndex].value)" name="city" id="city"><option>城市</option></select>
+                        <select class='mg-l-10' style='width:10%;' name="county" id="county"><option>区</option></select>
+                        <input class='mg-l-20' style='width:25%;' value='54' name='address' id='' type="text" placeholder='详细地址'>
                 </div>
                 
             </div>
-            <div class='fsb mg-b-10'>
-                <div class='w50pc'><span class='w120px dslb'> 营业执照编号</span>  <input name='number' value='54' type="text" class='w50pc' /></div>
+            <div class='fsb mg-b-10 mg-t-15'>
+                <div class='w50pc'><span class='w120px dslb'> 营业执照编号</span>  <input name='number' value='' type="text" class='w50pc' /></div>
                 <div class='w50pc'>
                     店铺状态 &nbsp
                     <label for="staus1">启用</label> 
@@ -38,25 +38,25 @@
             </div>
         </div>
         <div>
-            <p class='bg-skyblue white padd-tb-15 f17 pos_index_tital'>店主信息</p>
-            <div class='fsb mg-b-10'>
-                <div class='w50pc'> <span class='w120px dslb'>店主姓名</span> <input name='name' value='54' type="text" class='w50pc' /></div>
-                <div class='w50pc'> 联系方式  <input name='phone' value='54' type="text" class='w50pc' placeholder='' /></div>
+            <p class='bg-skyblue white padd-tb-15 f17 pos_index_tital mg-t-15'>店主信息</p>
+            <div class='fsb mg-b-10 mg-t-15'>
+                <div class='w50pc'> <span class='w120px dslb'>店主姓名</span> <input name='name' value='' type="text" class='w50pc' /></div>
+                <div class='w50pc'> 联系方式  <input name='phone' value='' type="text" class='w50pc' placeholder='' /></div>
             </div>
         </div>
         <div>
-            <p class='bg-skyblue white padd-tb-15 f17 pos_index_tital'>收款信息</p>
-            <div class='fsb  mg-b-10'>
-                <div class='w50pc'><span class='w120px dslb'> 收款账户名 </span> <input name='amuName' value='54' type="text" class='w50pc' /></div>
-                <div class='w50pc'> 收款账号  <input name='amuNum' value='54' type="text" class='w50pc' placeholder='' /></div>
+            <p class='bg-skyblue white padd-tb-15 f17 pos_index_tital mg-t-15'>收款信息</p>
+            <div class='fsb  mg-b-10 mg-t-15'>
+                <div class='w50pc'><span class='w120px dslb'> 收款账户名 </span> <input name='amuName' value='' type="text" class='w50pc' /></div>
+                <div class='w50pc'> 收款账号  <input name='amuNum' value='' type="text" class='w50pc' placeholder='' /></div>
             </div>
-            <div><span class='w120px dslb'>开户行</span><select style=';' class='w50pc mg-b-10' name="place" id="place" ></select></div>
+            <div class='mg-t-15'><span class='w120px dslb'>开户行</span><select style=';' class='w50pc mg-b-10' name="place" id="place" ></select></div>
         </div>
-        <div>
-            <p class='bg-skyblue white padd-tb-15 f17 pos_index_tital'>账号信息</p>
-            <div class='fsb mg-b-10'>
-                <div class='w50pc'> <span class='w120px dslb'>登录用户名</span>  <input type="text" value='54' name='username' class='w50pc' placeholder='文本'/></div>
-                <div class='w50pc'> 登录密码  <input type="text" value='54' name='userSub' class='w50pc' placeholder='数字、六位' /></div>
+        <div class='mg-t-15'>
+            <p class='bg-skyblue white padd-tb-15 f17 pos_index_tital '>账号信息</p>
+            <div class='fsb mg-b-10 mg-t-15'>
+                <div class='w50pc'> <span class='w120px dslb'>登录用户名</span>  <input type="text" value='' name='username' class='w50pc' placeholder='文本'/></div>
+                <div class='w50pc'> 登录密码  <input type="text" value='' name='userSub' class='w50pc' placeholder='数字、六位' /></div>
             </div>
         </div>
         

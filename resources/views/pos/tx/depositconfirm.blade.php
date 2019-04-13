@@ -14,19 +14,19 @@
 </style>
 
 <!-- <?php echo json_encode($prepayments); ?> -->
-<div class='bold f20'>POS收银交易对账</div>
+<div class='bold f20 pos_str_msg'>POS收银交易对账</div>
 <div>
-    <div style="font-size:18px;">查询条件</div>
+    <div style="font-size:18px;" class='pos_index_tital white'>查询条件</div>
     <div style="margin:10px 20px;">
         <span style="">交易日期</span>
-        <form class="" id='form' method="POST" action="{{url::route('pos.transaction.depositconfirm')}}" >
+        <form class="dslb mg-l-10" id='form' method="POST" action="{{url::route('pos.transaction.depositconfirm')}}" >
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
             <input onchange="val()" name='chatTime' style='height:30px;width:226px;' type="text" placeholder="" autocomplete="off" class="date_picker">
-            <button type='submit' onclick='' style='border-radius:14px;'>查询</button>
+            <button class='mg-l-10 w80px bor-n white bg-blue' type='submit' onclick='' style='border-radius:14px;'>查询</button>
         </form>
     </div>
     <table style="text-align: center;" class='w100pc' border='1' rules='all' cellpadding='10'>
-        <tr>
+        <tr class='pos_tr'>
             <td>交易金额差额</td>
             <td>备注</td>
             <td>经办人</td>
@@ -43,19 +43,19 @@
     </table>
 </div>
 <div style="margin-top:30px;">
-    <div style="font-size:18px;">查询结果</div>
+    <div style="font-size:18px;" class='pos_index_tital white'>查询结果</div>
     <p style="color:red;margin: 3px 0;">我方总笔数：238笔   &nbsp;&nbsp; &nbsp; &nbsp;     我方交易总金额：57689元</p>
     <p style="color:red;margin: 3px 0;">支付平台总笔数：236笔   &nbsp;&nbsp; &nbsp; &nbsp;     支付平台交易总金额：57657元</p>
     <div class='fsb'>
         <p style="color:red;margin: 3px 0;">对账总笔数：236笔   &nbsp;&nbsp; &nbsp; &nbsp;     对账交易总金额：57657元</p>
         <div class='fsa' style='width:15%;'>
-            <button class='bor-14'>导出</button>
-            <button type='button' class='bor-14' onclick='return alrt(0)'>手工调帐</button>
-            <button type='button' class='bor-14' onclick='return alrt(1)'>复核</button>
+            <button class='bor-14 mg-l-10 w80px bor-n white bg-blue'>导出</button>
+            <button type='button' class='bor-14 mg-l-10 w80px bor-n white bg-blue' onclick='return alrt(0)'>手工调帐</button>
+            <button type='button' class='bor-14 mg-l-10 w80px bor-n white bg-blue' onclick='return alrt(1)'>复核</button>
         </div>
     </div>
     <table id="box" class="tableA w100pc mg-t-10" style="text-align: center;" border='1' rules='all' >
-        <tr>
+        <tr class='pos_tr'>
             <td>流水号</td>
             <td>交易日期</td>
             <td>对账归属日期</td>
