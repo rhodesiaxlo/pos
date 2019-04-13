@@ -13,7 +13,6 @@
     }
 </style>
 
-<!-- <?php echo json_encode($prepayments); ?> -->
 <div class='bold f20 pos_str_msg'>POS收银交易对账</div>
 <div>
     <div style="font-size:18px;" class='pos_index_tital white'>查询条件</div>
@@ -46,7 +45,7 @@
         @endif
     </table>
 </div>
-<div style="margin-top:30px;">
+<!-- <div style="margin-top:30px;">
     <div style="font-size:18px;" class='pos_index_tital white'>查询结果</div>
     <p style="color:red;margin: 3px 0;">我方总笔数：238笔   &nbsp;&nbsp; &nbsp; &nbsp;     我方交易总金额：57689元</p>
     <p style="color:red;margin: 3px 0;">支付平台总笔数：236笔   &nbsp;&nbsp; &nbsp; &nbsp;     支付平台交易总金额：57657元</p>
@@ -57,7 +56,7 @@
             <button type='button' class='bor-14 mg-l-10 w80px bor-n white bg-blue' onclick='return alrt(0)'>手工调帐</button>
             <button type='button' class='bor-14 mg-l-10 w80px bor-n white bg-blue' onclick='return alrt(1)'>复核</button>
         </div>
-    </div>
+    </div> -->
     <table id="box" class="tableA w100pc mg-t-10" style="text-align: center;" border='1' rules='all' >
         <tr class='pos_tr'>
             <td>流水号</td>
@@ -81,25 +80,25 @@
             <td>{{$prepayment->order_amount}}</td>
             <td>{{$prepayment->cpcc_amount}}</td>
             @if($prepayment->result_status==0)
-            (<td>对账成功</td>)
+            <td>对账成功</td>
             @endif
             @if($prepayment->result_status==1)
-            (<td>对账失败 金额不符</td>)
+            <td>对账失败 金额不符</td>
             @endif
             @if($prepayment->result_status==2)
-            (<td>平台无此订单</td>)
+            <td>平台无此订单</td>
             @endif
             @if($prepayment->result_status==3)
-            (<td>中金无此订单</td>)
+            <td>中金无此订单</td>
             @endif
             @if($prepayment->status==0)
-            (<td>待初审</td>)
+            <td>待初审</td>
             @endif
             @if($prepayment->status==1)
-            (<td>待复审</td>)
+            <td>待复审</td>
             @endif
             @if($prepayment->status==2)
-            (<td>审核完成</td>)
+            <td>审核完成</td>
             @endif
         </tr>
         @endforeach
@@ -135,8 +134,8 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <button type='button' onclick='return move()'>取消</button>
-                        <button type='button' onclick='return prepayment()' class='mg-l-100' onclick=''>提交</button>    
+                        <button type='button' class="mg-l-100 w80px bor-n white " onclick='return move()'>取消</button>
+                        <button type='button' onclick='return prepayment()' class="mg-l-100 w80px bor-n white " style='background: #d83138;' onclick=''>提交</button>    
                     </td>
                 </tr>
             </table>
