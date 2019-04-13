@@ -137,7 +137,7 @@
 <input type="hidden" id="testvar"  value='{{$logs->status}}' />
 <input type="hidden" id="testid"  value='{{$logs->id}}' />
 @endif
-
+<input type="hidden" id="seachdate"  value="{{$search['date']}}" />
 @stop
 
 @section('js')
@@ -146,7 +146,8 @@
 let nume;
 $(function(){
     $('.date_picker').date_input();
-    $('#date').val(date1())
+    var date=$('#seachdate').val()
+    $('#date').val(date)
 })
 function val(e){
     var start = new Date(new Date(new Date().toLocaleDateString()).getTime());//当天00:00
@@ -178,17 +179,18 @@ function alrt(num){
 function prepayment(){
     var amount=$('#amount').val()
     var message=$('#msg').val()
+    var date=$('#date').val()
     var tx_type='1343'
     if(nume==0){
         $('#status').val('1')
         var url='/pos/transaction/firstcheck'
         var data={
+            date,
             amount,
             tx_type,
             message,
             id:$('#textid').val(),
         }
-        
         ajaxs(url,data,res=>{
             if(res.code==1){
                 $('#mov').hide()
@@ -204,6 +206,7 @@ function prepayment(){
         $('#status').val('2')
         var url='/pos/transaction/recheck'
         var data={
+            date,
             amount,
             tx_type,
             message,

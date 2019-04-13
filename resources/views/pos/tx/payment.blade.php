@@ -85,6 +85,7 @@
     <div class='fixed bg-fff' id='eor' style='width:26%; left:40%; top:50%; display:none;'>
         <p class='txal bold w100pc' style='border-bottom:1px solid #999;'>警告</p>
     </div>
+    <input type="hidden" id="seachdate"  value="{{$search['date']}}" />
 @stop
 @section('js')
 <script>
@@ -97,7 +98,8 @@
         $(function(){
             $('.date_picker').date_input();
             sele()
-            $('#date').val(date())
+            var date=$('#seachdate').val()
+            $('#date').val(date)
         })
         function sele(){
             $('#status').empty()
