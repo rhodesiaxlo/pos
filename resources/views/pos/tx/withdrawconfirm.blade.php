@@ -39,6 +39,9 @@
                 <td>{{$logs->confirm_name}}</td>
             </tr>
         @endif
+        @if(empty($logs))
+        <p> 没有数据</p>
+        @endif
     </table>
 </div>
 <div style="margin-top:30px;">
@@ -106,6 +109,7 @@
     <form method="POST" onsubmit="return validateForm();" action="{{url::route('pos.transaction.depositconfirm')}}">
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
         <input type="hidden" name="status" id='status' value="">
+        @if(!empty($logs))
         <table  width="50%" border="1" rules='all' cellpadding="10" class='txal fixed bg-fff' style='top:50%;left:30%;'>
             <tr>
                 <td>交易金额差额</td>
@@ -122,6 +126,25 @@
                 </td>
             </tr>
         </table>
+        @endif
+        @if(empty($logs))
+        <table  width="50%" border="1" rules='all' cellpadding="10" class='txal fixed bg-fff' style='top:50%;left:30%;'>
+            <tr>
+                <td>交易金额差额</td>
+                <td class=''> <input type="text" class='red w100pc txal' style='border:none;' id='amount' name='amount' autocomplete="off" value='0' /></td>
+            </tr>
+            <tr>
+                <td >备注：</td>
+                <td ><textarea name="value" id="msg" class='w100pc h100pc' style='border:none;' cols="100" rows="10"></textarea></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <button type='button' onclick='move()'>取消</button>
+                    <button type='button' onclick='return prepayment()' class='mg-l-100' onclick=''>提交</button>    
+                </td>
+            </tr>
+        </table>
+        @endif
     </form>
 </div>
 <div class='fixed bg-fff' id='eor' style='width:26%; left:40%; top:50%; display:none;'>
@@ -198,6 +221,7 @@ function prepayment(){
                 $('#eor').show()
                 $('#eor').append("<div class='txal w100pc bold' style='height:100px;line-height:100px;'>初审成功</div>")
                 $("#eor").fadeOut(3000);
+                window.location = "/pos/transaction/depositconfirm?date="+$('#seachdate').val();
             }else{
                 alert(res.message)
             }
@@ -220,6 +244,7 @@ function prepayment(){
                 $('#eor').show()
                 $('#eor').append("<div class='txal w100pc bold' style='height:100px;line-height:100px;'>复审成功</div>")
                 $("#eor").fadeOut(3000);
+                window.location = "/pos/transaction/depositconfirm?date="+$('#seachdate').val();
             }else{
                 alert(res.message)
             }

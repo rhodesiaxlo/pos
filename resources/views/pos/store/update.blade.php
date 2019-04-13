@@ -80,7 +80,7 @@
             </div>
             <div class='fsa mg-b-10'>
                 <input class="mg-l-10 w80px bor-n white " style='background: #d83138;' type="submit" value="是" />
-                <input class="mg-l-10 w80px bor-n white " style='' type="button" class="" onclick="$('#or').hide()" value='否' />
+                <input class="mg-l-10 w80px bor-n white " style='' type="button" class="" onclick="$('#or').slideToggle()" value='否' />
             </div>
         </div>
         </form>   
@@ -94,7 +94,7 @@
             </div>
             <div class='fsa mg-b-10'>
                 <input class="mg-l-10 w80px bor-n white " style='background: #d83138;' type="submit" onclick='' value="是" />
-                <input class="mg-l-10 w80px bor-n white " style='' type="button" class="" onclick="$('#del').hide()" value='否' />
+                <input class="mg-l-10 w80px bor-n white " style='' type="button" class="" onclick="$('#del').slideToggle()" value='否' />
             </div>
         </div>
     </form>
@@ -117,12 +117,12 @@
                 $("#eor").fadeOut(3000);
                 return false;
             } else {
-                $('#or').show()
+                $('#or').slideToggle()
             }
         }
 
         function delSub(){
-            $('#del').show()
+            $('#del').slideToggle()
         }
 
         function delyes(){

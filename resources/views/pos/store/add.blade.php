@@ -75,7 +75,7 @@
             </div>
             <div class='fsa mg-b-10'>
                 <input class="mg-l-10 w80px bor-n white " style='background: #d83138;' type="submit" value="是" />
-                <input class="mg-l-10 w80px bor-n white " type="button" class="" onclick="$('#or').hide()" value='否' />
+                <input class="mg-l-10 w80px bor-n white " type="button" class="" onclick="$('#or').slideToggle()" value='否' />
             </div>
         </div>
         <div class='fixed bg-fff pos_aler' id='del' style='width:26%; left:40%;top:50%;display:none;'>
@@ -85,7 +85,7 @@
             </div>
             <div class='fsa mg-b-10'>
                 <input class="mg-l-10 w80px bor-n white " style='background: #d83138;' type="button" onclick='return delyes()' value="是" />
-                <input class="mg-l-10 w80px bor-n white " type="button" class="" onclick="$('#del').hide()" value='否' />
+                <input class="mg-l-10 w80px bor-n white " type="button" class="" onclick="$('#del').slideToggle()" value='否' />
             </div>
         </div>
     </form>
@@ -110,12 +110,12 @@
                 $("#eor").fadeOut(3000);
                 return false;
             } else {
-                $('#or').show()
+                $('#or').slideToggle()
             }
         }
         // 点击取消
         function delSub(){
-            $('#del').show()
+            $('#del').slideToggle()
         }
         // 确认店铺添加
         function delyes(){
