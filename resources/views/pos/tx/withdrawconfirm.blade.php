@@ -31,14 +31,14 @@
             <td>经办人</td>
             <td>复核人</td>
         </tr>
-        @foreach($logs as $abnormal_transaction_log)
+        @if(!empty($logs))
             <tr>
-                <td class='red'>{{$abnormal_transaction_log->amount}}</td>
-                <td>{{$abnormal_transaction_log->message}}</td>
-                <td>{{$abnormal_transaction_log->admin_name}}</td>
-                <td>{{$abnormal_transaction_log->confirm_name}}</td>
+                <td class='red'>{{$logs->amount}}</td>
+                <td>{{$logs->message}}</td>
+                <td>{{$logs->admin_name}}</td>
+                <td>{{$logs->confirm_name}}</td>
             </tr>
-        @endforeach
+        @endif
     </table>
 </div>
 <div style="margin-top:30px;">
@@ -99,9 +99,6 @@
         </tr>
         @endforeach
     </table>
-    @if(!empty($prepayments))
-    
-    @endif;
     <div></div>
 </div>
 
@@ -110,15 +107,13 @@
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
         <input type="hidden" name="status" id='status' value="">
         <table  width="50%" border="1" rules='all' cellpadding="10" class='txal fixed bg-fff' style='top:50%;left:30%;'>
-            @foreach($logs as $abnormal_transaction_log)
             <tr>
                 <td>交易金额差额</td>
-                <td class=''> <input type="text" class='red w100pc txal' style='border:none;' id='amount' name='amount' autocomplete="off" value='{{$abnormal_transaction_log->amount}}' /></td>
+                <td class=''> <input type="text" class='red w100pc txal' style='border:none;' id='amount' name='amount' autocomplete="off" value='{{$logs->amount}}' /></td>
             </tr>
-            @endforeach
             <tr>
                 <td >备注：</td>
-                <td ><textarea name="value" id="msg" class='w100pc h100pc' style='border:none;' cols="100" rows="10">{{$abnormal_transaction_log->message}}</textarea></td>
+                <td ><textarea name="value" id="msg" class='w100pc h100pc' style='border:none;' cols="100" rows="10">{{$logs->message}}</textarea></td>
             </tr>
             <tr>
                 <td colspan="2">
@@ -150,8 +145,6 @@
 
 let nume;
 $(function(){
-    // {{$prepayments}}
-    debugger
     $('.date_picker').date_input();
 })
 function val(e){
@@ -195,7 +188,6 @@ function prepayment(){
             id:$('#textid').val(),
         }
         ajaxs(url,data,res=>{
-            // console.log(res)
             if(res.code==1){
                 $('#mov').hide()
                 $('#eor').empty()
