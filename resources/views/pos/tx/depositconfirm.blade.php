@@ -195,11 +195,13 @@ function alrt(num){
 function prepayment(){
     var amount=$('#amount').val()
     var message=$('#msg').val()
+    var date=$('#date').val()
     var tx_type='1343'
     var id=$('#textid').val()
     if(nume==0){
         var url='/pos/transaction/firstcheck'
         var data={
+            date,
             amount,
             tx_type,
             message,
@@ -220,6 +222,7 @@ function prepayment(){
     }else{
         var url='/pos/transaction/recheck'
         var data={
+            date,
             amount,
             tx_type,
             message,
