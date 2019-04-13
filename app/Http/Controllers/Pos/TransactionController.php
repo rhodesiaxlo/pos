@@ -10,8 +10,9 @@ use App\Models\Pos\Prepayment;
 use App\Models\Pos\OutflowLog;
 use App\Models\Pos\OutflowPrepayment;
 use DB;
-
-
+use Cache,Auth,Event;
+use Illuminate\Support\Facades\Session;
+use  App\Models\Admin\AdminUser;
 
 /**
  * 收银交易控制器
@@ -73,7 +74,8 @@ class TransactionController extends Controller
         $prepayments = DB::table('pos_prepayment')->whereBetween('pos_prepayment.order_time',array($drawntimestamp, $midnighttimestamp))->get();
 
         $prepayments = [];
-        $logs = DB::table('pos_abnormal_transaction_log')->whereBetween('pos_abnormal_transaction_log.create_time',array($drawntimestamp, $midnighttimestamp))->first();
+        // $logs = DB::table('pos_abnormal_transaction_log')->whereBetween('pos_abnormal_transaction_log.(month, day, year)',array($drawntimestamp, $midnighttimestamp))->first();
+        $logs = DB::table('pos_abnormal_transaction_log')->where(['check_date'=>$date])->first();
     	return view('pos.tx.depositconfirm')->with('logs', $logs)->with('prepayments', $prepayments)->with('search', $search);
     }
 
@@ -178,6 +180,9 @@ $prepayments = [];
         if($req->isMethod('POST'))
         {
 
+            $loginTokenName = Auth::guard('admin')->getName();
+            $operator=Session::get($loginTokenName);
+            $adminuser = AdminUser::find($operator);
             $id = $req->get('id');
             $tx_type = $req->get('tx_type');
             $message = $req->get('message');
@@ -187,6 +192,29 @@ $prepayments = [];
             if($id==0)
             {
                 // 没有记录，创建新记录
+                $tmp = new AbnormalTransactionLog();
+                $tmp->amount = $amount;
+                $tmp->check_date = $check_date;
+                $tmp->tx_type = $tx_type;
+                $tmp->message = $message;
+                $tmp->admin_id= $operator;
+                $tmp->admin_name = $adminuser->name;
+                $tmp->create_time = time();
+                $tmp->status = 1;
+
+                $tmp->save();
+            } else {
+                $tmpinfo = AbnormalTransactionLog::where(['id'=>$id])->first();
+                $tmpinfo->amount = $amount;
+                $tmpinfo->check_date = $check_date;
+                $tmpinfo->tx_type = $tx_type;
+                $tmpinfo->message = $message;
+                $tmpinfo->admin_id= $operator;
+                $tmpinfo->admin_name = $adminuser->name;
+                $tmpinfo->create_time = time();
+                $tmpinfo->status =2;
+
+                $tmpinfo->save();
             }
             exit(json_encode(['code'=>1,'message'=>'success']));
         }
@@ -204,9 +232,43 @@ $prepayments = [];
     {
         if($req->isMethod('POST'))
         {
+
+            $loginTokenName = Auth::guard('admin')->getName();
+            $operator=Session::get($loginTokenName);
+            $adminuser = AdminUser::find($operator);
+            $id = $req->get('id');
+            $tx_type = $req->get('tx_type');
+            $message = $req->get('message');
+            $amount = $req->get('amount');
+            $check_date = $req->get('date');
+
+            if($id==0)
+            {
+                // 没有记录，创建新记录
+                $tmp = new AbnormalTransactionLog();
+                $tmp->amount = $amount;
+                $tmp->check_date = $check_date;
+                $tmp->tx_type = $tx_type;
+                $tmp->message = $message;
+                $tmp->confirm_id= $operator;
+                $tmp->confirm_name = $adminuser->name;
+                $tmp->status = 2;
+
+                $tmp->save();
+            } else {
+                $tmpinfo = AbnormalTransactionLog::where(['id'=>$id])->first();
+                $tmpinfo->amount = $amount;
+                $tmpinfo->check_date = $check_date;
+                $tmpinfo->tx_type = $tx_type;
+                $tmpinfo->message = $message;
+                $tmpinfo->confirm_id= $operator;
+                $tmpinfo->confirm_name = $adminuser->name;
+                $tmpinfo->status = 2;
+                $tmpinfo->save();
+            }
             exit(json_encode(['code'=>1,'message'=>'success']));
         }
-        return view('pos.tx.dlgrecheck');
-        exit("复审");
+        return view('pos.tx.dlgfirstcheck');
+        exit("初审");
     }
 }
