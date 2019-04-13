@@ -48,6 +48,11 @@ class TransactionController extends Controller
     {
         // 根据日期选择 prepayment , prepayment 里面有 log_id
         $date = date('Y-m-d',strtotime("-1 day"));
+
+        $getdate = $req->get('date');
+        if(!empty($getdate))
+            $date = $getdate;
+        
         //$date = "2019-04-10";
         if($req->isMethod('POST'))
         {
@@ -123,6 +128,9 @@ class TransactionController extends Controller
     {
         // 根据日期选择 prepayment , prepayment 里面有 log_id
         $date = date('Y-m-d',strtotime("-1 day"));
+        $getdate = $req->get('date');
+        if(!empty($getdate))
+            $date = $getdate;
         //$date = "2019-04-10";
         if($req->isMethod('POST'))
         {
@@ -150,7 +158,7 @@ class TransactionController extends Controller
         
         $prepayments = DB::table('pos_prepayment')->whereBetween('pos_prepayment.order_time',array($drawntimestamp, $midnighttimestamp))->get();
 
-$prepayments = [];
+        $prepayments = [];
         //$logs = DB::table('pos_abnormal_transaction_log')->whereBetween('pos_abnormal_transaction_log.create_time',array($drawntimestamp, $midnighttimestamp))->first();
         $logs = DB::table('pos_abnormal_transaction_log')->where(['check_date'=>$date,'tx_type'=>1343])->first();
         
