@@ -34,7 +34,7 @@ class StoreController extends Controller
      */
     public function add(Request $req)
     {
-        if($req->isMethod('post'))
+        if($req->isMethod('POST'))
         {
             $loginTokenName = Auth::guard('admin')->getName();
             $operator=Session::get($loginTokenName);
@@ -80,7 +80,7 @@ class StoreController extends Controller
 
     public function edit(Request $req)
     {
-        if($req->isMethod('post'))
+        if($req->isMethod('POST'))
         {
             $local_id = $req->get('local_id');
             $userinfo = User::find($local_id);
@@ -120,7 +120,7 @@ class StoreController extends Controller
 
     public function del(Request $req)
     {
-        if($req->isMethod('post'))
+        if($req->isMethod('POST'))
         {
             // todo 
             $user_id = $req->get('local_id');

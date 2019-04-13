@@ -48,9 +48,9 @@ public function depositConfirm(Request $req)
         // 根据日期选择 prepayment , prepayment 里面有 log_id
         $date = date('Y-m-d',strtotime("-1 day"));
         //$date = "2019-04-10";
-        if($req->isMethod('post'))
+        if($req->isMethod('POST'))
         {
-            $tmpdate = $req->get('date');
+            $tmpdate = $req->get('chatTime');
             if(empty($tmpdate))
             {
                 // 报错
@@ -84,7 +84,7 @@ public function depositConfirm(Request $req)
      */
     public function payment(Request $req)
     {
-        if($req->isMethod('post'))
+        if($req->isMethod('POST'))
         {
             exit(json_encode(['code'=>1,'message'=>'success']));
         }
@@ -101,7 +101,7 @@ public function depositConfirm(Request $req)
     {
         // 根据日期选择 prepayment , prepayment 里面有 log_id
         $date = "2019-04-10";
-        if($req->isMethod('post'))
+        if($req->isMethod('POST'))
         {
             $tmpdate = $req->get('date');
             if(empty($tmpdate))
@@ -137,7 +137,7 @@ $prepayments = [];
      */
     public function outflow(Request $req)
     {
-        if($req->isMethod('post'))
+        if($req->isMethod('POST'))
         {
             exit(json_encode(['code'=>1,'message'=>'success']));
         }
@@ -151,7 +151,7 @@ $prepayments = [];
      */
     public function firstCheck(Request $req)
     {
-        if($req->isMethod('post'))
+        if($req->isMethod('POST'))
         {
 
             exit(json_encode(['code'=>1,'message'=>'success']));
@@ -168,7 +168,7 @@ $prepayments = [];
      */
     public function reCheck(Request $req)
     {
-        if($req->isMethod('post'))
+        if($req->isMethod('POST'))
         {
             exit(json_encode(['code'=>1,'message'=>'success']));
         }
