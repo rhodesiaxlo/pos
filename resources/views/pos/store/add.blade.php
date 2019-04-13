@@ -22,7 +22,7 @@
                         <select class='' style='width:10%;' onchange="citY(this.options[this.options.selectedIndex].value)" name="province" id="province"><option>省份</option></select>
                         <select class='mg-l-10' style='width:10%;' onchange="countY(this.options[this.options.selectedIndex].value)" name="city" id="city"><option>城市</option></select>
                         <select class='mg-l-10' style='width:10%;' name="county" id="county"><option>区</option></select>
-                        <input class='mg-l-20' style='width:25%;' value='54' name='address' id='' type="text" placeholder='详细地址'>
+                        <input class='mg-l-20' style='width:25%;' value='' name='address' id='' type="text" placeholder='详细地址'>
                 </div>
                 
             </div>
@@ -65,27 +65,27 @@
             <button type="button" onclick='delSub()' class="mg-l-10 w80px bor-n white bg-blue" >取消</button>
         </div>
         
-        <div class='fixed bg-fff' id='eor' style='width:26%; left:40%; top:50%; display:none;'>
-            <p class='txal bold w100pc' style='border-bottom:1px solid #999;'>警告</p>
+        <div class='fixed bg-fff bor-4' id='eor' style='width:26%; left:40%; top:50%; display:none;'>
+            <p class='txal bold w100pc pos_aler_title' style='border-bottom:1px solid #999;'>警告</p>
         </div>
-        <div class='fixed bg-fff' id='or' style='width:26%; left:40%;top:50%;display:none;'>
-            <p class='txal bold w100pc' style='border-bottom:1px solid #999;'>警告</p>
+        <div class='fixed bg-fff pos_aler' id='or' style='width:26%; left:40%;top:50%;display:none;'>
+            <p class='txal bold w100pc pos_aler_title' style='border-bottom:1px solid #999;'>警告</p>
             <div class='txal w100pc bold' style='height:100px;line-height:100px;'>
                 <p>确定新增店铺信息？</p>
             </div>
             <div class='fsa mg-b-10'>
-                <input type="submit" value="是" />
-                <input type="button" class="" onclick="$('#or').hide()" value='否' />
+                <input class="mg-l-10 w80px bor-n white " style='background: #d83138;' type="submit" value="是" />
+                <input class="mg-l-10 w80px bor-n white " type="button" class="" onclick="$('#or').hide()" value='否' />
             </div>
         </div>
-        <div class='fixed bg-fff' id='del' style='width:26%; left:40%;top:50%;display:none;'>
-            <p class='txal bold w100pc' style='border-bottom:1px solid #999;'>警告</p>
+        <div class='fixed bg-fff pos_aler' id='del' style='width:26%; left:40%;top:50%;display:none;'>
+            <p class='txal bold w100pc pos_aler_title' style=''>警告</p>
             <div class='txal w100pc bold' style='height:100px;line-height:100px;'>
                 <p>取消新增店铺信息？</p>
             </div>
             <div class='fsa mg-b-10'>
-                <input type="button" onclick='return delyes()' value="是" />
-                <input type="button" class="" onclick="$('#del').hide()" value='否' />
+                <input class="mg-l-10 w80px bor-n white " style='background: #d83138;' type="button" onclick='return delyes()' value="是" />
+                <input class="mg-l-10 w80px bor-n white " type="button" class="" onclick="$('#del').hide()" value='否' />
             </div>
         </div>
     </form>
@@ -106,7 +106,7 @@
             if (d.address==''||d.amuName==''||d.amuNum==''||d.area=='区'||d.city=='城市'||d.name==''||d.nameStort==''||d.number==''||d.phone==''||d.place=='where'||d.province=='省份'||d.staus==''||d.userSub==''||d.username=='') {
                 $('#eor').empty()
                 $('#eor').show()
-                $('#eor').append("<div class='txal w100pc bold' style='height:100px;line-height:100px;'>请填写完整信息！</div>")
+                $('#eor').append("<div class='txal w100pc bold white' style='height:100px;line-height:100px;background: #44b793;'>请填写完整信息！</div>")
                 $("#eor").fadeOut(3000);
                 return false;
             } else {

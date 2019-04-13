@@ -1,5 +1,5 @@
 function ajaxs(url,data,suc){
-	var url='http://pos.liucong.com'+url
+	var url=url
 	$.ajax({
 		//async : true,
 		url,
@@ -38,7 +38,7 @@ function ajaxs(url,data,suc){
 	});
 }
 function ajaxGet(url,data,suc){
-	var url='http://pos.liucong.com'+url
+	var url=url
 	$.ajax({
 		async : false,
 		url,
@@ -140,10 +140,21 @@ function newC(){
 }
 
 function date(){
-	var date=new Date()
-	var year=date.getFullYear()
-	var mouth=date.getMonth()+1
-	var day=date.getDate()
-	var today=`${year}-${mouth}-${day}`
-	return today
+	var yest1 = new Date(new Date(new Date().toLocaleDateString()).getTime()-24*60*60*1000-24*60*60*1000);//前前天00:00
+	var year=yest1.getFullYear()
+	var mouth=yest1.getMonth()+1
+	var day=yest1.getDate()
+	var yestoday1=`${year}-${mouth}-${day}`
+
+	return yestoday1
+}
+
+function date1(){
+	var yest = new Date(new Date(new Date().toLocaleDateString()).getTime()-24*60*60*1000);//前天00:00
+	var year=yest.getFullYear()
+	var mouth=yest.getMonth()+1
+	var day=yest.getDate()
+	var yestoday=`${year}-${mouth}-${day}`
+
+	return yestoday
 }

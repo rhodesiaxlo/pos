@@ -21,7 +21,7 @@
         <span style="">交易日期</span>
         <form class="dslb mg-l-10" id='form' method="POST" action="{{url::route('pos.transaction.depositconfirm')}}" >
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
-            <input onchange="val()" name='chatTime' style='height:30px;width:226px;' type="text" placeholder="" autocomplete="off" class="date_picker">
+            <input onchange="val()" id='date' name='chatTime' style='height:30px;width:226px;' type="text" placeholder="" autocomplete="off" class="date_picker">
             <button class='mg-l-10 w80px bor-n white bg-blue' type='submit' onclick='' style='border-radius:14px;'>查询</button>
         </form>
     </div>
@@ -32,14 +32,12 @@
             <td>经办人</td>
             <td>复核人</td>
         </tr>
-      
-            <tr>
-                <td class='red'>{{$logs->amount}}</td>
-                <td>{{$logs->message}}</td>
-                <td>{{$logs->admin_name}}</td>
-                <td>{{$logs->confirm_name}}</td>
-            </tr>
-   
+        <tr>
+            <td class='red'>{{$logs->amount}}</td>
+            <td>{{$logs->message}}</td>
+            <td>{{$logs->admin_name}}</td>
+            <td>{{$logs->confirm_name}}</td>
+        </tr>
     </table>
 </div>
 <div style="margin-top:30px;">
@@ -148,6 +146,7 @@
    let nume; 
 $(function(){
     $('.date_picker').date_input();
+    $('#date').val(date1())
 })
 function val(e){
     var start = new Date(new Date(new Date().toLocaleDateString()).getTime());//当天00:00
@@ -159,7 +158,7 @@ function val(e){
         alert('当前时间不可选择')
         $('.date_picker').val('')
     }
-
+    debugger
 }
 
 function alrt(num){

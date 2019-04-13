@@ -18,12 +18,13 @@
     <input type="hidden" name="_token" value="{{ csrf_token() }}">
     <div class='pos_index_tital white'>
         <div class='fsb ' style='width:55%;'>
-            <div>商家名称  <input type="text" name="storeName" id="name" /></div>
-            <div>商家编号  <input type="text" name="storeCode" id="code" /></div>
-            <div>应结算日期  <input id='date' name='date' onchange="val()" style='height:30px;width:226px;' type="text" placeholder="" autocomplete="off" class="date_picker"></div>
-            <div>结算状态  <select name="status" id="status"></select></div>
+            <div>商家名称  <input class='bor-n bor-4 mg-l-3 ' style='color: black;' type="text" name="storeName" id="name" /></div>
+            <div>商家编号  <input class='bor-n bor-4 mg-l-3 ' style='color: black;' type="text" name="storeCode" id="code" /></div>
+            <div>应结算日期<input  id='date' name='date ' onchange="val()" style='height:;width:226px;color: black;' type="text" placeholder="" autocomplete="off" class='date_picker bor-n bor-4 mg-l-3' ></div>
+            <div>结算状态  <select class='bor-n bor-4 mg-l-3 black' name="status" id="status"></select></div>
         </div>
     </div>
+    <!-- <input onchange="val()" name='chatTime' style='height:30px;width:226px;' type="text" placeholder="" autocomplete="off" class="date_picker"> -->
     <div>
         <button type='submit' class='bor-14 mg-15 w80px bor-n white bg-blue'>查询</button>
         <span id='clear' class=' bor-14 mg-15 dslb txal w80px bor-n white bg-blue' style='' onclick="" >重置</span>
