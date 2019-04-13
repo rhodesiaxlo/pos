@@ -99,7 +99,9 @@
         </tr>
         @endforeach
     </table>
+    @if(!empty($prepayments))
     
+    @endif;
     <div></div>
 </div>
 
@@ -130,6 +132,17 @@
 <div class='fixed bg-fff' id='eor' style='width:26%; left:40%; top:50%; display:none;'>
     <p class='txal bold w100pc' style='border-bottom:1px solid #999;'>警告</p>
 </div>
+
+@if(empty($logs))
+<input type="hidden" id="testvar"  value='99' />
+<input type="hidden" id="testid"  value='0' />
+@endif
+
+@if(!empty($logs))
+<input type="hidden" id="testvar"  value='{{$logs->status}}' />
+<input type="hidden" id="testid"  value='{{$logs->id}}' />
+@endif
+
 @stop
 
 @section('js')
@@ -137,6 +150,8 @@
 
 let nume;
 $(function(){
+    // {{$prepayments}}
+    debugger
     $('.date_picker').date_input();
 })
 function val(e){
@@ -153,7 +168,9 @@ function val(e){
 
 function alrt(num){
     $('#mov').show()
-    if("{{$prepayment->status}}"==2){
+    debugger
+    var status=$('#testvar').val()
+    if(status==2){
         alert('已完成复核')
         move()
         return false;
@@ -175,7 +192,7 @@ function prepayment(){
             amount,
             tx_type,
             message,
-            id:0,
+            id:$('#textid').val(),
         }
         ajaxs(url,data,res=>{
             // console.log(res)
@@ -191,12 +208,12 @@ function prepayment(){
         })
     }else{
         $('#status').val('2')
-        var url='/pos/transaction/firstcheck'
+        var url='/pos/transaction/recheck'
         var data={
             amount,
             tx_type,
             message,
-            id:'{{$prepayment->id}}',
+            id:$('#textid').val(),
         }
         ajaxs(url,data,res=>{
             // console.log(res)
