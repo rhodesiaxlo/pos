@@ -100,16 +100,20 @@ public function depositConfirm(Request $req)
     public function withdrawConfirm(Request $req)
     {
         // 根据日期选择 prepayment , prepayment 里面有 log_id
-        $date = "2019-04-10";
+        $date = date('Y-m-d',strtotime("-1 day"));
+        //$date = "2019-04-10";
         if($req->isMethod('POST'))
         {
-            $tmpdate = $req->get('date');
+            $tmpdate = $req->get('chatTime');
             if(empty($tmpdate))
             {
                 // 报错
             }
-            $date = $tmp;
+            $date = $tmpdate;
         }
+
+        // 
+        $search['date'] = $date;
 
         // 
         $time = strtotime($date);
