@@ -13,26 +13,28 @@
     }
 </style>
 
-<div class='bold f20'>POS商户应收款结算划出</div>
-<form action="{{url::route('pos.transaction.payment')}}" method="post">
+<div class='bold f20 pos_str_msg'>POS商户应收款结算划出</div>
+<form class='' action="{{url::route('pos.transaction.payment')}}" method="post">
     <input type="hidden" name="_token" value="{{ csrf_token() }}">
-    <div class='fsb' style='width:55%;'>
-        <div>商家名称  <input type="text" name="storeName" id="name" /></div>
-        <div>商家编号  <input type="text" name="storeCode" id="code" /></div>
-        <div>应结算日期  <input id='date' name='date' onchange="val()" style='height:30px;width:226px;' type="text" placeholder="" autocomplete="off" class="date_picker"></div>
-        <div>结算状态  <select name="status" id="status"></select></div>
+    <div class='pos_index_tital white'>
+        <div class='fsb ' style='width:55%;'>
+            <div>商家名称  <input type="text" name="storeName" id="name" /></div>
+            <div>商家编号  <input type="text" name="storeCode" id="code" /></div>
+            <div>应结算日期  <input id='date' name='date' onchange="val()" style='height:30px;width:226px;' type="text" placeholder="" autocomplete="off" class="date_picker"></div>
+            <div>结算状态  <select name="status" id="status"></select></div>
+        </div>
     </div>
     <div>
-        <button type='submit' class='bor-14 mg-15'>查询</button>
-        <span id='clear' class='bg-skyblue bor-14 mg-15 dslb white txal' style='width:50px;' onclick="" >重置</span>
+        <button type='submit' class='bor-14 mg-15 w80px bor-n white bg-blue'>查询</button>
+        <span id='clear' class=' bor-14 mg-15 dslb txal w80px bor-n white bg-blue' style='' onclick="" >重置</span>
     </div>
 </form>
-    <div class='bg-gray txalE'>
-        <button type='button' class='bor-14 mg-15 ' style=''>导出</button>
-        <button type='button' onclick='al()' class='bor-14 mg-15 bg-skyblue white' style=''>结算（划出）</button>
+    <div class='txalE pos_index_tital white'>
+        <button type='button' class='bor-14 mg-l-10 w80px bor-n bg-blue' style=''>导出</button>
+        <button type='button' onclick='al()' class='bor-14 mg-l-10 w125px bor-n bg-blue' style=''>结算（划出）</button>
     </div>
     <table id="box" class="tableA f12 w100pc mg-t-10" style="text-align: center;" border='1' rules='all' >
-        <tr>
+        <tr class='pos_tr'>
             <td><input id='all' type="checkbox" name="" value=""  /></td>
             <td>商家名称</td>
             <td>商家编号</td>

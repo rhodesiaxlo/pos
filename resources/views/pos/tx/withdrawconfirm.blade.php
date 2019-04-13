@@ -13,19 +13,19 @@
     }
 </style>
 
-<div class='bold f20'>POS商户应收款结算（划出）对账</div>
+<div class='bold f20 pos_str_msg'>POS商户应收款结算（划出）对账</div>
 <div>
-    <div style="font-size:18px;">查询条件</div>
+    <div style="font-size:18px;"  class='pos_index_tital white'>查询条件</div>
     <div style="margin:10px 20px;">
         <span style="">交易日期</span>
-        <form class="" id='form' method="POST" action="{{url::route('pos.transaction.depositconfirm')}}" >
+        <form class="dslb mg-l-10" id='form' method="POST" action="{{url::route('pos.transaction.depositconfirm')}}" >
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
             <input onchange="val()" name='chatTime' style='height:30px;width:226px;' type="text" placeholder="" autocomplete="off" class="date_picker">
-            <button type='submit' onclick='' style='border-radius:14px;'>查询</button>
+            <button class='mg-l-10 w80px bor-n white bg-blue' type='submit' onclick='' style='border-radius:14px;'>查询</button>
         </form>
     </div>
     <table style="text-align: center;" class='w100pc' border='1' rules='all' cellpadding='10'>
-        <tr>
+        <tr class='pos_tr'>
             <td>交易金额差额</td>
             <td>备注</td>
             <td>经办人</td>
@@ -48,13 +48,13 @@
     <div class='fsb'>
         <p style="color:red;margin: 3px 0;">对账总笔数：236笔   &nbsp;&nbsp; &nbsp; &nbsp;     对账交易总金额：57657元</p>
         <div class='fsa' style='width:15%;'>
-            <button class='bor-14'>导出</button>
-            <button class='bor-14' onclick='alrt(0)'>手工调帐</button>
-            <button class='bor-14' onclick='alrt(1)'>复核</button>
+            <button class='bor-14 mg-l-10 w80px bor-n white bg-blue'>导出</button>
+            <button class='bor-14 mg-l-10 w80px bor-n white bg-blue' onclick='alrt(0)'>手工调帐</button>
+            <button class='bor-14 mg-l-10 w80px bor-n white bg-blue' onclick='alrt(1)'>复核</button>
         </div>
     </div>
     <table id="box" class="tableA w100pc mg-t-10" style="text-align: center;" border='1' rules='all' >
-        <tr>
+        <tr class='pos_tr'>
             <td>流水号</td>
             <td>交易日期</td>
             <td>对账归属日期</td>
@@ -99,7 +99,9 @@
         </tr>
         @endforeach
     </table>
+    @if(!empty($prepayments))
     
+    @endif;
     <div></div>
 </div>
 
@@ -130,6 +132,17 @@
 <div class='fixed bg-fff' id='eor' style='width:26%; left:40%; top:50%; display:none;'>
     <p class='txal bold w100pc' style='border-bottom:1px solid #999;'>警告</p>
 </div>
+
+@if(empty($logs))
+<input type="hidden" id="testvar"  value='99' />
+<input type="hidden" id="testid"  value='0' />
+@endif
+
+@if(!empty($logs))
+<input type="hidden" id="testvar"  value='{{$logs->status}}' />
+<input type="hidden" id="testid"  value='{{$logs->id}}' />
+@endif
+
 @stop
 
 @section('js')
@@ -137,6 +150,8 @@
 
 let nume;
 $(function(){
+    // {{$prepayments}}
+    debugger
     $('.date_picker').date_input();
 })
 function val(e){
@@ -153,7 +168,9 @@ function val(e){
 
 function alrt(num){
     $('#mov').show()
-    if("{{$prepayment->status}}"==2){
+    debugger
+    var status=$('#testvar').val()
+    if(status==2){
         alert('已完成复核')
         move()
         return false;
@@ -175,7 +192,7 @@ function prepayment(){
             amount,
             tx_type,
             message,
-            id:0,
+            id:$('#textid').val(),
         }
         ajaxs(url,data,res=>{
             // console.log(res)
@@ -191,12 +208,12 @@ function prepayment(){
         })
     }else{
         $('#status').val('2')
-        var url='/pos/transaction/firstcheck'
+        var url='/pos/transaction/recheck'
         var data={
             amount,
             tx_type,
             message,
-            id:'{{$prepayment->id}}',
+            id:$('#textid').val(),
         }
         ajaxs(url,data,res=>{
             // console.log(res)

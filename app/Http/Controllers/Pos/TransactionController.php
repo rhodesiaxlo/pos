@@ -71,7 +71,7 @@ class TransactionController extends Controller
         $prepayments = DB::table('pos_prepayment')->whereBetween('pos_prepayment.order_time',array($drawntimestamp, $midnighttimestamp))->get();
 
 $prepayments = [];
-        $logs = DB::table('pos_abnormal_transaction_log')->whereBetween('pos_abnormal_transaction_log.create_time',array($drawntimestamp, $midnighttimestamp))->get();
+        $logs = DB::table('pos_abnormal_transaction_log')->whereBetween('pos_abnormal_transaction_log.create_time',array($drawntimestamp, $midnighttimestamp))->first();
     	return view('pos.tx.depositconfirm')->with('logs', $logs)->with('prepayments', $prepayments);
     }
 

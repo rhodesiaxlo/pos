@@ -14,48 +14,48 @@
 </style>
 
 <!-- <?php echo json_encode($prepayments); ?> -->
-<div class='bold f20'>POS收银交易对账</div>
+<div class='bold f20 pos_str_msg'>POS收银交易对账</div>
 <div>
-    <div style="font-size:18px;">查询条件</div>
+    <div style="font-size:18px;" class='pos_index_tital white'>查询条件</div>
     <div style="margin:10px 20px;">
         <span style="">交易日期</span>
-        <form class="" id='form' method="POST" action="{{url::route('pos.transaction.depositconfirm')}}" >
+        <form class="dslb mg-l-10" id='form' method="POST" action="{{url::route('pos.transaction.depositconfirm')}}" >
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
             <input onchange="val()" name='chatTime' style='height:30px;width:226px;' type="text" placeholder="" autocomplete="off" class="date_picker">
-            <button type='submit' onclick='' style='border-radius:14px;'>查询</button>
+            <button class='mg-l-10 w80px bor-n white bg-blue' type='submit' onclick='' style='border-radius:14px;'>查询</button>
         </form>
     </div>
     <table style="text-align: center;" class='w100pc' border='1' rules='all' cellpadding='10'>
-        <tr>
+        <tr class='pos_tr'>
             <td>交易金额差额</td>
             <td>备注</td>
             <td>经办人</td>
             <td>复核人</td>
         </tr>
-        @foreach($logs as $abnormal_transaction_log)
+      
             <tr>
-                <td class='red'>{{$abnormal_transaction_log->amount}}</td>
-                <td>{{$abnormal_transaction_log->message}}</td>
-                <td>{{$abnormal_transaction_log->admin_name}}</td>
-                <td>{{$abnormal_transaction_log->confirm_name}}</td>
+                <td class='red'>{{$logs->amount}}</td>
+                <td>{{$logs->message}}</td>
+                <td>{{$logs->admin_name}}</td>
+                <td>{{$logs->confirm_name}}</td>
             </tr>
-        @endforeach
+   
     </table>
 </div>
 <div style="margin-top:30px;">
-    <div style="font-size:18px;">查询结果</div>
+    <div style="font-size:18px;" class='pos_index_tital white'>查询结果</div>
     <p style="color:red;margin: 3px 0;">我方总笔数：238笔   &nbsp;&nbsp; &nbsp; &nbsp;     我方交易总金额：57689元</p>
     <p style="color:red;margin: 3px 0;">支付平台总笔数：236笔   &nbsp;&nbsp; &nbsp; &nbsp;     支付平台交易总金额：57657元</p>
     <div class='fsb'>
         <p style="color:red;margin: 3px 0;">对账总笔数：236笔   &nbsp;&nbsp; &nbsp; &nbsp;     对账交易总金额：57657元</p>
         <div class='fsa' style='width:15%;'>
-            <button class='bor-14'>导出</button>
-            <button type='button' class='bor-14' onclick='return alrt(0)'>手工调帐</button>
-            <button type='button' class='bor-14' onclick='return alrt(1)'>复核</button>
+            <button class='bor-14 mg-l-10 w80px bor-n white bg-blue'>导出</button>
+            <button type='button' class='bor-14 mg-l-10 w80px bor-n white bg-blue' onclick='return alrt(0)'>手工调帐</button>
+            <button type='button' class='bor-14 mg-l-10 w80px bor-n white bg-blue' onclick='return alrt(1)'>复核</button>
         </div>
     </div>
     <table id="box" class="tableA w100pc mg-t-10" style="text-align: center;" border='1' rules='all' >
-        <tr>
+        <tr class='pos_tr'>
             <td>流水号</td>
             <td>交易日期</td>
             <td>对账归属日期</td>
@@ -107,15 +107,14 @@
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
         <input type="hidden" name="status" id='status' value="">
         <table  width="50%" border="1" rules='all' cellpadding="10" class='txal fixed bg-fff' style='top:50%;left:30%;'>
-            @foreach($logs as $abnormal_transaction_log)
             <tr>
                 <td>交易金额差额</td>
-                <td class=''> <input type="text" class='red w100pc txal' style='border:none;' id='amount' name='amount' autocomplete="off" value='{{$abnormal_transaction_log->amount}}' /></td>
+                <td class=''> <input type="text" class='red w100pc txal' style='border:none;' id='amount' name='amount' autocomplete="off" value='{{$logs->amount}}' /></td>
             </tr>
-            @endforeach
+            @endforeac
             <tr>
                 <td >备注：</td>
-                <td ><textarea name="value" id="msg" class='w100pc h100pc' style='border:none;' cols="100" rows="10" value=''>{{$abnormal_transaction_log->message}}</textarea></td>
+                <td ><textarea name="value" id="msg" class='w100pc h100pc' style='border:none;' cols="100" rows="10" value=''>{{$logs->message}}</textarea></td>
             </tr>
             <tr>
                 <td colspan="2">
@@ -126,6 +125,17 @@
         </table>
     </form>
 </div>
+
+
+@if(empty($logs))
+<input type="hidden" id="testvar"  value='99' />
+<input type="hidden" id="testid"  value='0' />
+@endif
+
+@if(!empty($logs))
+<input type="hidden" id="testvar"  value='{{$logs->status}}' />
+<input type="hidden" id="testid"  value='{{$logs->id}}' />
+@endif
 
 <div class='fixed bg-fff' id='eor' style='width:26%; left:40%; top:50%; display:none;'>
     <p class='txal bold w100pc' style='border-bottom:1px solid #999;'>警告</p>
@@ -154,35 +164,28 @@ function val(e){
 
 function alrt(num){
     $('#mov').show()
-    if("{{$prepayment->status}}"==2){
+    debugger
+    var status=$('#testvar').val()
+    if(status==2){
         alert('已完成复核')
         move()
         return false;
-    }  
-    if(num==0){
-        nume=0
-    }else{
-        nume=1
-    }
+    };
+    num==0?nume=0:nume=1;
 }
 function prepayment(){
-    var csrf_token="{{ csrf_token() }}"
     var amount=$('#amount').val()
     var message=$('#msg').val()
-    var tx_type='1402'
+    var tx_type='1343'
     if(nume==0){
-        $('#status').val('1')
         var url='/pos/transaction/firstcheck'
         var data={
-            csrf_token,
             amount,
             tx_type,
             message,
-            id:'{{$prepayment->id}}'?'{{$prepayment->id}}':0,
+            id:$('#textid').val(),
         }
-        debugger
         ajaxs(url,data,res=>{
-            console.log(res)
             if(res.code==1){
                 $('#mov').hide()
                 $('#eor').empty()
@@ -194,17 +197,14 @@ function prepayment(){
             }
         })
     }else{
-        $('#status').val('2')
-        var url='/pos/transaction/firstcheck'
+        var url='/pos/transaction/recheck'
         var data={
             amount,
             tx_type,
             message,
-            id:'{{$prepayment->id}}',
+            id:$('#textid').val(),
         }
-
         ajaxs(url,data,res=>{
-            console.log(res)
             if(res.code==1){
                 $('#mov').hide()
                 $('#eor').empty()

@@ -7,13 +7,13 @@
 @section('pageDesc','DashBoard')
 
 @section('content')
-    <div class='f18 bold mg-bt-15' style="">编辑</div>
+    <div class='f18 bold mg-bt-15 pos_str_msg' style="">编辑</div>
     <form class="" id='form' method="POST" action="{{url::route('pos.store.edit')}}" >
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
         <input type="hidden" name="local_id" id="local_id" value="{{$userinfo->local_id}}">
 
         <div>
-            <p class='bg-gray padd-tb-15 f17'>店铺信息</p>
+            <p class='bg-skyblue white padd-tb-15 f17 pos_index_tital'>店铺信息</p>
             <div class='fsb w100pc'  >
                 <p style='width:50%;'><span class='w120px dslb'> 店铺名称</span>  <input id='nameStort' name='nameStort' style='width:60%;' type="text" value='{{$userinfo->store_name}}' /></p>
                 <div class='mg-b-10' style='width:50%;'> <span class='red'>*</span> 商家编号  <input  style='width:60%;' type="text" placeholder='无需填写，系统自动生成编码'  value="{{$userinfo->store_code}}" /></div>
@@ -42,14 +42,14 @@
             </div>
         </div>
         <div>
-            <p class='bg-gray padd-tb-15 f17'>店主信息</p>
+            <p class='bg-skyblue white padd-tb-15 f17 pos_index_tital'>店主信息</p>
             <div class='fsb mg-b-10'>
                 <div class='w50pc'> <span class='w120px dslb'>店主姓名</span> <input name='name' value='{{$userinfo->realname}}' type="text" class='w50pc' /></div>
                 <div class='w50pc'> 联系方式  <input name='phone' value='{{$userinfo->phone}}' type="text" class='w50pc' placeholder='' /></div>
             </div>
         </div>
         <div>
-            <p class='bg-gray padd-tb-15 f17'>收款信息</p>
+            <p class='bg-skyblue white padd-tb-15 f17 pos_index_tital'>收款信息</p>
             <div class='fsb  mg-b-10'>
                 <div class='w50pc'><span class='w120px dslb'> 收款账户名 </span> <input name='account_name' value='{{$userinfo->account_name}}' type="text" class='w50pc' /></div>
                 <div class='w50pc'> 收款账号  <input name='account_no' value='{{$userinfo->account_no}}' type="text" class='w50pc' placeholder='' /></div>
@@ -57,7 +57,7 @@
             <div><span class='w120px dslb'>开户行</span><select style=';' class='w50pc mg-b-10' name="place" id="place" ></select></div>
         </div>
         <div>
-            <p class='bg-gray padd-tb-15 f17'>账号信息</p>
+            <p class='bg-skyblue white padd-tb-15 f17 pos_index_tital'>账号信息</p>
             <div class='fsb mg-b-10'>
                 <div class='w50pc'> <span class='w120px dslb'>登录用户名</span>  <input type="text" value='{{$userinfo->uname}}' name='uname' class='w50pc' placeholder='文本'/></div>
                 <div class='w50pc'> 登录密码  <input type="text" value='{{$userinfo->uname}}' name='password' class='w50pc' placeholder='数字、六位' /></div>
@@ -65,9 +65,9 @@
         </div>
         
         <div class='fsa'>
-            <button type="button" onclick='beforeSub()' class="">修改</button>
-            <button type="button" onclick='delSub()' class="" >删除</button>
-            <button type="button" onclick='return delyes()' class="" >取消</button>
+            <button type="button" onclick='beforeSub()' class="mg-l-10 w80px bor-n white bg-blue">修改</button>
+            <button type="button" onclick='delSub()' class="mg-l-10 w80px bor-n white bg-blue" >删除</button>
+            <button type="button" onclick='return delyes()' class="mg-l-10 w80px bor-n white bg-blue" >取消</button>
         </div>
         
         <div class='fixed bg-fff' id='eor' style='width:26%; left:40%; top:50%; display:none;'>
