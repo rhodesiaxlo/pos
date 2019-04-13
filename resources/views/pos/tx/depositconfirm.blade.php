@@ -32,12 +32,18 @@
             <td>经办人</td>
             <td>复核人</td>
         </tr>
+        @if(!empty($logs))
         <tr>
             <td class='red'>{{$logs->amount}}</td>
             <td>{{$logs->message}}</td>
             <td>{{$logs->admin_name}}</td>
             <td>{{$logs->confirm_name}}</td>
         </tr>
+        @endif
+
+        @if(empty($logs))
+        <p> 没有数据</p>
+        @endif
     </table>
 </div>
 <div style="margin-top:30px;">
@@ -107,12 +113,25 @@
         <table  width="50%" border="1" rules='all' cellpadding="10" class='txal fixed bg-fff' style='top:50%;left:30%;'>
             <tr>
                 <td>交易金额差额</td>
+                @if(!empty($logs))
                 <td class=''> <input type="text" class='red w100pc txal' style='border:none;' id='amount' name='amount' autocomplete="off" value='{{$logs->amount}}' /></td>
+                @endif
+
+                @if(empty($logs))
+                <td class=''> <input type="text" class='red w100pc txal' style='border:none;' id='amount' name='amount' autocomplete="off" value='0' /></td>
+                @endif
             </tr>
             @endforeac
             <tr>
                 <td >备注：</td>
+
+                @if(!empty($logs))
                 <td ><textarea name="value" id="msg" class='w100pc h100pc' style='border:none;' cols="100" rows="10" value=''>{{$logs->message}}</textarea></td>
+                @endif
+
+                @if(empty($logs))
+                <td ><textarea name="value" id="msg" class='w100pc h100pc' style='border:none;' cols="100" rows="10" value=''></textarea></td>
+                @endif
             </tr>
             <tr>
                 <td colspan="2">
@@ -135,7 +154,7 @@
 <input type="hidden" id="textid"  value='{{$logs->id}}' />
 @endif
 
-<input type="hidden" id="seachdate"  value='{{$seach->date}}' />
+<input type="hidden" id="seachdate"  value="{{$search['date']}}" />
 
 <div class='fixed bg-fff' id='eor' style='width:26%; left:40%; top:50%; display:none;'>
     <p class='txal bold w100pc' style='border-bottom:1px solid #999;'>警告</p>

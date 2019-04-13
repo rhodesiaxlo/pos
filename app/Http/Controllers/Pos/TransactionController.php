@@ -43,10 +43,11 @@ class TransactionController extends Controller
      * @param  Request $req [description]
      * @return [type]       [description]
      */
-    public function depositConfirm(Request $req)
+public function depositConfirm(Request $req)
     {
         // 根据日期选择 prepayment , prepayment 里面有 log_id
-        $date = "2019-04-10";
+        $date = date('Y-m-d',strtotime("-1 day"));
+        //$date = "2019-04-10";
         if($req->isMethod('post'))
         {
             $tmpdate = $req->get('date');
