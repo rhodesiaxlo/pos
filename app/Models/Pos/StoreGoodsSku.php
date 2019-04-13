@@ -11,6 +11,7 @@ class StoreGoodsSku extends Model
 {
     protected $table = "pos_store_goods_sku";
     protected $primaryKey = "local_id";
+    public $timestamps = false;
 
 
     public function category()

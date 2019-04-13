@@ -6,5 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class OutflowLog extends Model
 {
-     protected $table = "pos_outflow_log";
+    protected $table = "pos_outflow_log";
+    public $timestamps = false;
 }

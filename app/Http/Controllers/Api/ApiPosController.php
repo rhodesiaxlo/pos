@@ -1137,7 +1137,60 @@ class ApiPosController extends Controller
      */
     public function syncMember(Request $req)
     {
-        return $this->ajaxFail([], 'not implement yet', 1000);
+        $data = $req->get('data');
+        $store_code = $req->get('store_code');
+        DB::beginTransaction();
+        try {
+            foreach ($data as $key => $value) {
+                // 去重
+                $is_exist = Member::where(['store_code'=>$store_code,'uname'=>$value['uname']])->first();
+                if(is_null($is_exist))
+                {
+                    $tmpuser                    = new Member;
+                    $tmpuser->id                = $value['id'];
+                    $tmpuser->uname             = $value['uname'];
+                    $tmpuser->phone             = $value['phone'];
+                    $tmpuser->store_code        = $store_code;
+                    //$tmpuser->idcard            = $value['idcard'];
+                    $tmpuser->deleted           = $value['deleted'];
+                    $tmpuser->birthday          = $value['birthday'];
+                    $tmpuser->discount          = $value['discount'];
+                    $tmpuser->total_consumption = $value['total_consumption'];
+                    $tmpuser->total_order       = $value['total_order'];
+
+                    $ret = $tmpuser->save();
+                    if($ret === false)
+                    {
+                        throw new Exception(" save members record failed", 1);
+                    }    
+                } else {
+                    $is_exist->id                = $value['id'];
+                    $is_exist->uname             = $value['uname'];
+                    $is_exist->phone             = $value['phone'];
+                    $is_exist->idcard            = $value['idcard'];
+                    $is_exist->store_code        = $store_code;
+                    $is_exist->deleted           = $value['deleted'];
+                    $is_exist->birthday          = $value['birthday'];
+                    $is_exist->discount          = $value['discount'];
+                    $is_exist->total_consumption = $value['total_consumption'];
+                    $is_exist->total_order       = $value['total_order'];
+                    $ret = $is_exist->save();
+                    if($ret === false)
+                    {
+                        throw new Exception(" update members record failed", 1);
+                    }
+                }
+
+            }
+            DB::commit();
+            $size = sizeof($data);
+            return $this->ajaxSuccess([], "save members data success, {$size} records saved");
+        } catch (Exception $e) {
+            DB::rollBack();
+            return $this->ajaxFail([], $e->getMessage(), 1000);
+            
+        }
+
     }
 
     /**
@@ -1147,11 +1200,55 @@ class ApiPosController extends Controller
      */
     public function syncUser(Request $req)
     {
+        $data = $req->get('data');
         $store_code = $req->get('store_code');
+        DB::beginTransaction();
+        try {
+            foreach ($data as $key => $value) {
+                // 去重
+                $is_exist = User::where(['store_code'=>$store_code,'uname'=>$value['uname']])->first();
+                if(is_null($is_exist))
+                {
+                    $tmpuser             = new User;
+                    $tmpuser->id         = $value['id'];
+                    $tmpuser->uname      = $value['uname'];
+                    $tmpuser->password   = $value['password'];
+                    $tmpuser->store_code = $store_code;
+                    $tmpuser->rank       = $value['rank'];
+                    $tmpuser->deleted    = $value['deleted'];
+                    $tmpuser->is_active  = $value['deleted'];
+                    $ret = $tmpuser->save();
+                    if($ret === false)
+                    {
+                        throw new Exception(" save user record failed", 1);
+                    }    
+                } else {
+                    $is_exist->id         = $value['id'];
+                    $is_exist->uname      = $value['uname'];
+                    $is_exist->password   = $value['password'];
+                    $is_exist->rank       = $value['rank'];
+                    $is_exist->store_code = $store_code;
+                    $is_exist->deleted    = $value['deleted'];
+                    $is_exist->is_active  = $value['deleted'];
+                    $ret = $is_exist->save();
+                    if($ret === false)
+                    {
+                        throw new Exception(" update user record failed", 1);
+                    }
+                }
 
+            }
+            DB::commit();
+            $size = sizeof($data);
+            return $this->ajaxSuccess([], "save user data success, {$size} records saved");
+        } catch (Exception $e) {
+            DB::rollBack();
+            return $this->ajaxFail([], $e->getMessage(), 1000);
+            
+        }
         //  解析参数
         
-        return $this->ajaxFail([], 'not implement yet', 1000);
+        return true;
     }
 
     public function syncGoodsSku(Request $req)
@@ -1179,16 +1276,187 @@ class ApiPosController extends Controller
      */
     public function syncOrder(Request $req)
     {
-        return $this->ajaxFail([], 'not implement yet', 1000);
+        $data = $req->get('data');
+        $store_code = $req->get('store_code');
+        DB::beginTransaction();
+        try {
+            foreach ($data as $key => $value) {
+                // 去重
+                $is_exist = Order::where(['store_code'=>$store_code,'order_sn'=>$value['order_sn']])->first();
+                if(is_null($is_exist))
+                {
+                    $tmpuser                   = new Order;
+                    $tmpuser->id               = $value['id'];
+                    $tmpuser->order_sn         = $value['order_sn'];
+                    $tmpuser->create_time      = $value['createTime'];
+                    $tmpuser->status           = $value['status'];
+                    $tmpuser->pay_type         = $value['pay_type'];
+                    $tmpuser->uid              = $value['uid'];
+                    $tmpuser->store_code       = $store_code;
+                    // $tmpuser->user_name        = $value['user_name'];
+                    $tmpuser->mid              = $value['mid'];
+                    $tmpuser->total_price      = $value['total_price'];
+                    $tmpuser->discount_rate    = $value['discount_rate'];
+                    $tmpuser->receivable_price = $value['receivable_price'];
+                    $tmpuser->practical_price  = $value['practical_price'];
+                    $tmpuser->total_num        = $value['total_num'];
+                    $tmpuser->refund_time      = $value['refund_time'];
+                    $tmpuser->deleted          = $value['deleted'];
+
+
+                    $ret = $tmpuser->save();
+                    if($ret === false)
+                    {
+                        throw new Exception(" save members record failed", 1);
+                    }    
+                } else {
+                    $is_exist->id               = $value['id'];
+                    $is_exist->order_sn         = $value['order_sn'];
+                    $is_exist->create_time      = $value['createTime'];
+                    $is_exist->status           = $value['status'];
+                    $is_exist->pay_type         = $value['pay_type'];
+                    $is_exist->uid              = $value['uid'];
+                    $is_exist->store_code       = $store_code;
+                    // $is_exist->user_name        = $value['user_name'];
+                    $is_exist->mid              = $value['mid'];
+                    $is_exist->total_price      = $value['total_price'];
+                    $is_exist->discount_rate    = $value['discount_rate'];
+                    $is_exist->receivable_price = $value['receivable_price'];
+                    $is_exist->practical_price  = $value['practical_price'];
+                    $is_exist->total_num        = $value['total_num'];
+                    $is_exist->refund_time      = $value['refund_time'];
+                    $is_exist->deleted          = $value['deleted'];
+                    $ret = $is_exist->save();
+                    if($ret === false)
+                    {
+                        throw new Exception(" update members record failed", 1);
+                    }
+                }
+
+            }
+            DB::commit();
+            $size = sizeof($data);
+            return $this->ajaxSuccess([], "save members data success, {$size} records saved");
+        } catch (Exception $e) {
+            DB::rollBack();
+            return $this->ajaxFail([], $e->getMessage(), 1000);
+            
+        }
+
+        return true;
     }
 
     public function syncOrderGoods(Request $req)
     {
-        return $this->ajaxFail([], 'not implement yet', 1000);
+        $data = $req->get('data');
+        $store_code = $req->get('store_code');
+        DB::beginTransaction();
+        try {
+            foreach ($data as $key => $value) {
+                // 去重
+                $is_exist = OrderGoods::where(['store_code'=>$store_code,'goods_sn'=>$value['goods_sn']])->first();
+                if(is_null($is_exist))
+                {
+                    $tmpuser                     = new Order;
+                    $tmpuser->id                 = $value['id'];
+                    $tmpuser->order_id           = $value['ogid'];
+                    // $tmpuser->goods_id        = $value['goods_id'];
+                    // $tmpuser->goods_sn        = $value['goods_sn'];
+                    $tmpuser->goods_num          = $value['goods_num'];
+                    $tmpuser->goods_price        = $value['goods_price'];
+                    $tmpuser->subtotal_price     = $value['subtotal_price'];
+                    // $tmpuser->discounts_price = $value['discounts_price'];
+                    $tmpuser->deleted            = $value['deleted'];
+                    $tmpuser->store_code         = $store_code;
+
+                    $ret = $tmpuser->save();
+                    if($ret === false)
+                    {
+                        throw new Exception(" save members record failed", 1);
+                    }    
+                } else {
+                    $is_exist->id                 = $value['id'];
+                    $is_exist->order_id           = $value['ogid'];
+                    // $is_exist->goods_id        = $value['goods_id'];
+                    // $is_exist->goods_sn        = $value['goods_sn'];
+                    $is_exist->goods_num          = $value['goods_num'];
+                    $is_exist->goods_price        = $value['goods_price'];
+                    $is_exist->subtotal_price     = $value['subtotal_price'];
+                    // $is_exist->discounts_price = $value['discounts_price'];
+                    $is_exist->deleted            = $value['deleted'];
+                    $is_exist->store_code         = $store_code;
+
+                    $ret = $is_exist->save();
+                    if($ret === false)
+                    {
+                        throw new Exception(" update members record failed", 1);
+                    }
+                }
+
+            }
+            DB::commit();
+            $size = sizeof($data);
+            return $this->ajaxSuccess([], "save members data success, {$size} records saved");
+        } catch (Exception $e) {
+            DB::rollBack();
+            return $this->ajaxFail([], $e->getMessage(), 1000);
+            
+        }
+
+        return true;
     }
 
     public function syncShiftLog(Request $req)
     {
+        $data = $req->get('data');
+        $store_code = $req->get('store_code');
+        DB::beginTransaction();
+        try {
+            foreach ($data as $key => $value) {
+                // 去重
+                $is_exist = ShiftLog::where(['store_code'=>$store_code,'id'=>$value['id']])->first();
+                if(is_null($is_exist))
+                {
+                    $tmpuser              = new ShiftLog;
+                    $tmpuser->id          = $value['id'];
+                    $tmpuser->uid         = $value['ogid'];
+                    $tmpuser->shifts_code = $value['goods_num'];
+                    $tmpuser->start_time  = $value['goods_price'];
+                    $tmpuser->end_time    = $value['subtotal_price'];
+                    $tmpuser->store_code  = $store_code;
+
+                    $ret = $tmpuser->save();
+                    if($ret === false)
+                    {
+                        throw new Exception(" save members record failed", 1);
+                    }    
+                } else {
+                    $is_exist->id          = $value['id'];
+                    $is_exist->uid         = $value['uid'];
+                    $is_exist->shifts_code = $value['shifts_code'];
+                    $is_exist->start_time  = $value['start_time'];
+                    $is_exist->end_time    = $value['end_time'];
+                    $is_exist->store_code  = $store_code;
+
+                    $ret = $is_exist->save();
+                    if($ret === false)
+                    {
+                        throw new Exception(" update members record failed", 1);
+                    }
+                }
+
+            }
+            DB::commit();
+            $size = sizeof($data);
+            return $this->ajaxSuccess([], "save members data success, {$size} records saved");
+        } catch (Exception $e) {
+            DB::rollBack();
+            return $this->ajaxFail([], $e->getMessage(), 1000);
+            
+        }
+
+        return true;
+
         return $this->ajaxFail([], 'not implement yet', 1000);
     }
 
@@ -1200,9 +1468,10 @@ class ApiPosController extends Controller
     public function syncData(Request $req)
     {
 
-
+        
         $store_code = $req->get('store_code');
         $type = $req->get('type');
+        $data = $req->get('data');
 
         if(empty($store_code))
         {
@@ -1225,40 +1494,46 @@ class ApiPosController extends Controller
         }
 
         // store_code 不存在
-        $is_exist = User::where(['store_code'=>$store_code])->first();
+        $is_exist = User::where(['store_code'=>$store_code, 'deleted'=>0])->get();
         if(empty($is_exist))
         {
             return $this->ajaxFail([], 'store not found', 1004);   
         }
 
+        $ret = false;
         switch (intval($type)) {
-            case slef::SYNC_USER:
-                return $this->syncUser($req);
+            case self::SYNC_USER:
+                $ret =  $this->syncUser($req);
                 break;
-            case slef::SYNC_MEMBER:
-                return $this->syncMember($req);
+            case self::SYNC_MEMBER:
+                $ret =  $this->syncMember($req);
                 break;
-            case slef::SYNC_GOODSSKU:
-                return $this->syncGoodsSku($req);
+            case self::SYNC_GOODSSKU:
+                $ret =  $this->syncGoodsSku($req);
                 break;
-            case slef::SYNC_GOODS:
-                return $this->syncGoods($req);
+            case self::SYNC_GOODS:
+                $ret =  $this->syncGoods($req);
                 break;
-            case slef::SYNC_ORDER:
-                return $this->syncOrder($req);
+            case self::SYNC_ORDER:
+                $ret = $this->syncOrder($req);
                 break;
-            case slef::SYNC_ORDERGOODS:
-                return $this->syncOrderGoods($req);
+            case self::SYNC_ORDERGOODS:
+                $ret =  $this->syncOrderGoods($req);
                 break;
-            case slef::SYNC_SHIFTLOG:
-                return $this->syncShiftLog($req);
+            case self::SYNC_SHIFTLOG:
+                $ret = $this->syncShiftLog($req);
                 break;
             default:
                 # code...
                 break;
         }
 
-        return $this->ajaxFail([], 'not implement yet', 1000);
+        if($ret !== true)
+        {
+            return $ret;
+        }
+
+        return $this->ajaxSuccess([], 'success');
     }
 
     /**

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Category extends Model
 {
     protected $table = "pos_category";
-
+    public $timestamps = false;
     public function goodsSkus()
     {
     	$this->hasMany('App\Models\GoodsSkus', 'cat_id');

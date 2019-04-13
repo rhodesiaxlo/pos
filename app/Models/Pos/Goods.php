@@ -11,15 +11,16 @@ class Goods extends Model
 {
     protected $table = "pos_goods";
     protected $primaryKey = "local_id";
+    public $timestamps = false;
 
     /**
      * 和 store_goods_sku 多 对 1 关系
      * @return [type] [description]
      */
-    public function goodsSku()
-    {
-    	return $this->belongsTo('App\Models\Pos\StoreGoodsSku', 'skuid', 'id');
-    }
+    // public function goodsSku()
+    // {
+    // 	return $this->belongsTo('App\Models\Pos\StoreGoodsSku', 'skuid', 'id');
+    // }
 
     public function user()
     {

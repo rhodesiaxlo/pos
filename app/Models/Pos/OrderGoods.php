@@ -8,6 +8,7 @@ class OrderGoods extends Model
 {
     protected $table = "pos_order_goods";
     protected $primaryKey = "local_id";
+    public $timestamps = false;
 
     /**
      * pos_order 多 对 1 关系

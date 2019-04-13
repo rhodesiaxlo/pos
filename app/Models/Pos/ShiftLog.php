@@ -8,6 +8,7 @@ class ShiftLog extends Model
 {
     protected $table = "pos_shift_log";
     protected $primaryKey = "local_id";
+    public $timestamps = false;
 
     public function cashier()
     {

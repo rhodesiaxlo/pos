@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     protected $table = "pos_order";
+    public $timestamps = false;
     protected $primaryKey = "local_id";
 
     /**
