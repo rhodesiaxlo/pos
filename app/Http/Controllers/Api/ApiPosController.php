@@ -385,7 +385,7 @@ class ApiPosController extends Controller
         $limitPay        = $req->get("LimitPay");
         $notificationURL = $req->get("NotificationURL");
 
-        $store_name = $req->get("store_name");
+        //$store_name = $req->get("store_name");
 
         if(empty($institutionID))
         {
@@ -428,10 +428,10 @@ class ApiPosController extends Controller
             return $this->ajaxFail([]," subject can not be empty", 1007);
         }
 
-        if(empty($store_name))
-        {
-            return $this->ajaxFail([]," store_name can not be empty", 1008);
-        }
+        // if(empty($store_name))
+        // {
+        //     return $this->ajaxFail([]," store_name can not be empty", 1008);
+        // }
 
         return true;
     }
@@ -1704,7 +1704,6 @@ class ApiPosController extends Controller
     public function pullBillFromCcpc(Request $req)
     {
         $date = $req->get('date');
-        $date = '2019-03-29';
         if(empty($date))
         {
             return $this->ajaxFail([], "date can not be empty", 1000);
@@ -1733,27 +1732,46 @@ class ApiPosController extends Controller
                     if($is_exist !== null)
                     {
                         // go to next
-                        continue;
-                    }
+                        $is_exist->TxType               =$value['TxType'];
+                        $is_exist->TxSn                 =$value['TxSn'];
+                        $is_exist->TxAmount             =$value['TxAmount'];
+                        $is_exist->InstitutionAmount    =$value['InstitutionAmount'];
+                        $is_exist->PaymentAmount        =$value['PaymentAmount'];
+                        $is_exist->PayerFee             =$value['PayerFee'];
+                        $is_exist->BankNotificationTime =$value['BankNotificationTime'];
+                        $is_exist->check_date           =$date;
+                        $is_exist->InstitutionFee       =$value['InstitutionFee'];
+                        $is_exist->SplitType            =$value['SplitType'];
+                        $save_result = $is_exist->save();
+                        if($save_result === false)
+                        {
+                            throw new Exception("save error", 1);
+                        } else {
 
-                    $newrec = new CpccTxLog();
-                    $newrec->TxType               =$value['TxType'];
-                    $newrec->TxSn                 =$value['TxSn'];
-                    $newrec->TxAmount             =$value['TxAmount'];
-                    $newrec->InstitutionAmount    =$value['InstitutionAmount'];
-                    $newrec->PaymentAmount        =$value['PaymentAmount'];
-                    $newrec->PayerFee             =$value['PayerFee'];
-                    $newrec->BankNotificationTime =$value['BankNotificationTime'];
-                    $newrec->check_date           =$date;
-                    $newrec->InstitutionFee       =$value['InstitutionFee'];
-                    $newrec->SplitType            =$value['SplitType'];
-                    $save_result = $newrec->save();
-                    if($save_result === false)
-                    {
-                        throw new Exception("save error", 1);
+                        }
+
                     } else {
+                        $newrec = new CpccTxLog();
+                        $newrec->TxType               =$value['TxType'];
+                        $newrec->TxSn                 =$value['TxSn'];
+                        $newrec->TxAmount             =$value['TxAmount'];
+                        $newrec->InstitutionAmount    =$value['InstitutionAmount'];
+                        $newrec->PaymentAmount        =$value['PaymentAmount'];
+                        $newrec->PayerFee             =$value['PayerFee'];
+                        $newrec->BankNotificationTime =$value['BankNotificationTime'];
+                        $newrec->check_date           =$date;
+                        $newrec->InstitutionFee       =$value['InstitutionFee'];
+                        $newrec->SplitType            =$value['SplitType'];
+                        $save_result = $newrec->save();
+                        if($save_result === false)
+                        {
+                            throw new Exception("save error", 1);
+                        } else {
 
+                        }
                     }
+
+
 
                 }
 
@@ -1764,7 +1782,7 @@ class ApiPosController extends Controller
                 // 生成 prepayment 
                 $this->generatePrepayment($date);
 
-                return $this->ajaxSuccess([], "read success");
+                return $this->ajaxSuccess([], "read success, {$total} records");
             } catch (Exception $e) {
                 DB::rollBack();
                 // 写日志
@@ -1822,34 +1840,54 @@ class ApiPosController extends Controller
                     $is_exist = Prepayment::where(['serial_no'=>$value->l_serial_no])->first();
                     if($is_exist !==null)
                     {
-                        continue;
-                    }
-                    // Prepayment::
-                    $tmppre = new Prepayment();
-                    $tmppre->check_date = "12345";
-                    // exit(json_encode($value->o_serial_no));
-                    $tmppre->serial_no = $value->o_serial_no;
-                    // exit($tmppre->seria_no);
-                    $tmppre->store_name = "待处理1";
-                    $tmppre->store_code = $value->order_no;
-                    $tmppre->cpcc_amount = $value->l_amount;
-                    $tmppre->order_amount = $value->o_amount;
-                    if(abs($value->l_amount - $value->o_amount) > 1)
-                    {
-                        $tmppre->result_status = self::CHECK_NUMBERNOTMATCH;
+                        $is_exist->check_date = $date;
+                        $is_exist->serial_no = $value->o_serial_no;
+                        $is_exist->store_name = "待处理2";
+                        $is_exist->store_code = $value->order_no;
+                        $is_exist->cpcc_amount = $value->l_amount;
+                        $is_exist->order_amount = $value->o_amount;
+                        if(abs($value->l_amount - $value->o_amount) > 1)
+                        {
+                            $is_exist->result_status = self::CHECK_NUMBERNOTMATCH;
+                        } else {
+                            $is_exist->result_status = self::CHECK_SUCCESS;
+                        }
+                        $is_exist->status = 0;
+                        $is_exist->order_time = $value->o_create_time;
+                        $is_exist->cpcc_time = $value->l_notify_time;
+                        $is_exist->cpcc_tx_log_id = $value->l_id;
+                        $is_exist->order_id = $value->o_id;
+                        $saveresult = $is_exist->save();
+                        if($saveresult === false)
+                        {
+                            throw new Exception("Error Processing Request", 1);
+                        }
                     } else {
-                        $tmppre->result_status = self::CHECK_SUCCESS;
+                        $tmppre = new Prepayment();
+                        $tmppre->check_date = $date;
+                        $tmppre->serial_no = $value->o_serial_no;
+                        $tmppre->store_name = "待处理2";
+                        $tmppre->store_code = $value->order_no;
+                        $tmppre->cpcc_amount = $value->l_amount;
+                        $tmppre->order_amount = $value->o_amount;
+                        if(abs($value->l_amount - $value->o_amount) > 1)
+                        {
+                            $tmppre->result_status = self::CHECK_NUMBERNOTMATCH;
+                        } else {
+                            $tmppre->result_status = self::CHECK_SUCCESS;
+                        }
+                        $tmppre->status = 0;
+                        $tmppre->order_time = $value->o_create_time;
+                        $tmppre->cpcc_time = $value->l_notify_time;
+                        $tmppre->cpcc_tx_log_id = $value->l_id;
+                        $tmppre->order_id = $value->o_id;
+                        $saveresult = $tmppre->save();
+                        if($saveresult === false)
+                        {
+                            throw new Exception("Error Processing Request", 1);
+                        }    
                     }
-                    $tmppre->status = 0;
-                    $tmppre->order_time = $value->o_create_time;
-                    $tmppre->cpcc_time = $value->l_notify_time;
-                    $tmppre->cpcc_tx_log_id = $value->l_id;
-                    $tmppre->order_id = $value->o_id;
-                    $saveresult = $tmppre->save();
-                    if($saveresult === false)
-                    {
-                        throw new Exception("Error Processing Request", 1);
-                    }
+                    
 
 
                 }
@@ -1871,9 +1909,9 @@ class ApiPosController extends Controller
                         $orderinfo = ServerOrder::where(['order_sn'=>$value])->first();
 
                         $tmppre = new Prepayment();
-                        $tmppre->check_date = "12345";
+                        $tmppre->check_date = $date;
                         $tmppre->serial_no = $orderinfo->order_sn;
-                        $tmppre->store_name = "待处理";
+                        $tmppre->store_name = "orderoly";
                         $tmppre->store_code = $orderinfo->order_no;
                         $tmppre->cpcc_amount = 0;
                         $tmppre->order_amount = $orderinfo->amount;
@@ -1898,29 +1936,49 @@ class ApiPosController extends Controller
                         $is_exist = Prepayment::where(['serial_no'=>$value])->first();
                         if($is_exist !==null)
                         {
-                            continue;
+                            $loginfo = CpccTxLog::where(['TxSn'=>$value])->first();
+
+                            $is_exist->check_date = $date;
+                            $is_exist->serial_no = $loginfo->TxSn;
+                            $is_exist->store_name = "log_only";
+                            $is_exist->store_code = "xxxx";
+                            $is_exist->cpcc_amount = $loginfo->TxAmount;
+                            $is_exist->order_amount = 0;
+                            $is_exist->result_status = self::CHECK_ORDERNOT;
+                            $is_exist->status = 0;
+                            $is_exist->order_time = 0;
+                            $is_exist->cpcc_time = $loginfo->BankNotificationTime;
+                            $is_exist->cpcc_tx_log_id = $loginfo->id;
+                            $is_exist->order_id = 0;
+                            $saveresult = $is_exist->save();
+                            if($saveresult === false)
+                            {
+                                throw new Exception("Error Processing Request", 1);
+                            }  
+                        } else {
+                            $loginfo = CpccTxLog::where(['TxSn'=>$value])->first();
+
+                            $tmppre = new Prepayment();
+                            $tmppre->check_date = $date;
+                            $tmppre->serial_no = $loginfo->TxSn;
+                            $tmppre->store_name = "log_only";
+                            $tmppre->store_code = "xxxx";
+                            $tmppre->cpcc_amount = $loginfo->TxAmount;
+                            $tmppre->order_amount = 0;
+                            $tmppre->result_status = self::CHECK_ORDERNOT;
+                            $tmppre->status = 0;
+                            $tmppre->order_time = 0;
+                            $tmppre->cpcc_time = $loginfo->BankNotificationTime;
+                            $tmppre->cpcc_tx_log_id = $loginfo->id;
+                            $tmppre->order_id = 0;
+                            $saveresult = $tmppre->save();
+                            if($saveresult === false)
+                            {
+                                throw new Exception("Error Processing Request", 1);
+                            }    
                         }
 
-                        $loginfo = CpccTxLog::where(['TxSn'=>$value])->first();
-
-                        $tmppre = new Prepayment();
-                        $tmppre->check_date = "12345";
-                        $tmppre->serial_no = $loginfo->TxSn;
-                        $tmppre->store_name = "待处理";
-                        $tmppre->store_code = "xxxx";
-                        $tmppre->cpcc_amount = $loginfo->TxAmount;
-                        $tmppre->order_amount = 0;
-                        $tmppre->result_status = self::CHECK_ORDERNOT;
-                        $tmppre->status = 0;
-                        $tmppre->order_time = 0;
-                        $tmppre->cpcc_time = $loginfo->BankNotificationTime;
-                        $tmppre->cpcc_tx_log_id = $loginfo->id;
-                        $tmppre->order_id = 0;
-                        $saveresult = $tmppre->save();
-                        if($saveresult === false)
-                        {
-                            throw new Exception("Error Processing Request", 1);
-                        }
+                        
                     }
                 }
 
@@ -2117,12 +2175,12 @@ class ApiPosController extends Controller
     private function generateOrder($institutionID, $orderNo, $paymentNo, $paymentWay, $paymentScene, $amount, $subject)
     {
         $serverorder = new ServerOrder();
-        $ServerOrder->order_no = $orderNo;
-        $ServerOrder->amount = $amount;
-        $ServerOrder->payment_way = $paymentWay;
-        $ServerOrder->order_sn = $paymentNo;
-        $ServerOrder->create_time = $orderNo;
-        $ServerOrder->status = 0;
+        $serverorder->order_no = $orderNo;
+        $serverorder->amount = $amount;
+        $serverorder->payment_way = $paymentWay;
+        $serverorder->order_sn = $paymentNo;
+        $serverorder->create_time = $orderNo;
+        $serverorder->status = 0;
         $result = $serverorder->save();
         return $result;
 
@@ -2237,7 +2295,7 @@ class ApiPosController extends Controller
         return $ret;
     }
 
-    private function cfcatx_transfer($message,$signature, $is_json){ 
+    private function cfcatx_transfer($message,$signature, $is_json=false){ 
         $post_data = array();
         $post_data['message'] = $message;
         $post_data['signature'] = $signature;

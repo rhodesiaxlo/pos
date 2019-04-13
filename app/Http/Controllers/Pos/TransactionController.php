@@ -52,7 +52,7 @@ class TransactionController extends Controller
         $getdate = $req->get('date');
         if(!empty($getdate))
             $date = $getdate;
-        
+
         //$date = "2019-04-10";
         if($req->isMethod('POST'))
         {
@@ -76,9 +76,10 @@ class TransactionController extends Controller
 
         //exit(" drawn = {$drawn} midnight = {$midnight}");
         
-        $prepayments = DB::table('pos_prepayment')->whereBetween('pos_prepayment.order_time',array($drawntimestamp, $midnighttimestamp))->get();
+        //$prepayments = DB::table('pos_prepayment')->whereBetween('pos_prepayment.order_time',array($drawntimestamp, $midnighttimestamp))->get();
+        $prepayments = DB::table('pos_prepayment')->where(['check_date'=>$date])->get();
 
-        $prepayments = [];
+
         // $logs = DB::table('pos_abnormal_transaction_log')->whereBetween('pos_abnormal_transaction_log.(month, day, year)',array($drawntimestamp, $midnighttimestamp))->first();
         $logs = DB::table('pos_abnormal_transaction_log')->where(['check_date'=>$date,'tx_type'=>1402])->first();
     	return view('pos.tx.depositconfirm')->with('logs', $logs)->with('prepayments', $prepayments)->with('search', $search);
@@ -93,6 +94,11 @@ class TransactionController extends Controller
     {
         // 根据日期选择 prepayment , prepayment 里面有 log_id
         $date = date('Y-m-d',strtotime("-1 day"));
+
+        $getdate = $req->get('date');
+        if(!empty($getdate))
+            $date = $getdate;
+
         //$date = "2019-04-10";
         if($req->isMethod('POST'))
         {
@@ -116,7 +122,7 @@ class TransactionController extends Controller
 
 
         $outflows = OutflowLog::where(['check_date'=>$date])->get();
-    	return view('pos.tx.payment')->with('outflows', $outflows);
+    	return view('pos.tx.payment')->with('outflows', $outflows)->with('search', $search);
     }
 
     /**
