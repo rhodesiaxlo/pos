@@ -46,15 +46,23 @@
 </div>
 <div style="margin-top:30px;">
     <div style="font-size:18px;" class='pos_index_tital white'>查询结果</div>
-    <p style="color:red;margin: 3px 0;">我方总笔数：238笔   &nbsp;&nbsp; &nbsp; &nbsp;     我方交易总金额：57689元</p>
-    <p style="color:red;margin: 3px 0;">支付平台总笔数：236笔   &nbsp;&nbsp; &nbsp; &nbsp;     支付平台交易总金额：57657元</p>
-    <div class='fsb'>
-        <p style="color:red;margin: 3px 0;">对账总笔数：236笔   &nbsp;&nbsp; &nbsp; &nbsp;     对账交易总金额：57657元</p>
-        <div class='fsa' style='width:15%;'>
-            <button class='bor-14 mg-l-10 w80px bor-n white bg-blue'>导出</button>
-            <button class='bor-14 mg-l-10 w80px bor-n white bg-blue' onclick='alrt(0)'>手工调帐</button>
-            <button class='bor-14 mg-l-10 w80px bor-n white bg-blue' onclick='alrt(1)'>复核</button>
-        </div>
+    <div class='bg-000 bor-4 mg-bt-10' style=''> 
+        @if(!empty($logs))
+        <p style="color:red;margin: 3px 0;">&nbsp;&nbsp; &nbsp; &nbsp;<span class='dslb w200px'>我方总笔数：{{$logs->order_num}}笔</span>   &nbsp;&nbsp; &nbsp; &nbsp;     <span class=''>我方交易总金额：{{$logs->order_total/100}}元</span></p>
+        <p style="color:red;margin: 3px 0;">&nbsp;&nbsp; &nbsp; &nbsp;<span class='dslb w200px'>支付平台总笔数：{{$logs->log_num}}笔</span>   &nbsp;&nbsp; &nbsp; &nbsp;     <span class=''>支付平台交易总金额：{{$logs->log_total/100}}元</span></p>
+        <p style="color:red;margin: 3px 0;">&nbsp;&nbsp; &nbsp; &nbsp;<span class='dslb w200px'>对账总笔数：{{$logs->log_num}}笔</span>   &nbsp;&nbsp; &nbsp; &nbsp;     <span class=''>对账交易总金额：{{$logs->log_total/100}}元</span></p>
+        @endif
+
+        @if(empty($logs))
+        <p style="color:red;margin: 3px 0;">&nbsp;&nbsp; &nbsp; &nbsp;<span class='dslb w200px'>我方总笔数：0笔    </span>   &nbsp;&nbsp; &nbsp; &nbsp;    <span class=''> 我方交易总金额：0元    </span></p>
+        <p style="color:red;margin: 3px 0;">&nbsp;&nbsp; &nbsp; &nbsp;<span class='dslb w200px'>支付平台总笔数：0笔</span>   &nbsp;&nbsp; &nbsp; &nbsp;    <span class=''> 支付平台交易总金额：0元</span> </p>
+        <p style="color:red;margin: 3px 0;">&nbsp;&nbsp; &nbsp; &nbsp;<span class='dslb w200px'>对账总笔数：0笔    </span>   &nbsp;&nbsp; &nbsp; &nbsp;    <span class=''> 对账交易总金额：0元    </span> </p>
+        @endif
+    </div>
+    <div class='flex jc-end' style=''>
+        <button class='bor-14 mg-l-10 w80px bor-n white bg-blue'>导出</button>
+        <button class='bor-14 mg-l-10 w80px bor-n white bg-blue' onclick='alrt(0)'>手工调帐</button>
+        <button class='bor-14 mg-l-10 w80px bor-n white bg-blue' onclick='alrt(1)'>复核</button>
     </div>
     <table id="box" class="tableA w100pc mg-t-10" style="text-align: center;" border='1' rules='all' >
         <tr class='pos_tr'>
