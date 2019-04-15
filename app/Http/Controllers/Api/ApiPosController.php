@@ -111,19 +111,19 @@ class ApiPosController extends Controller
 
         if(empty($name))
         {
-            return $this->ajaxFail([], "name can not be empty", 1000);
+            return $this->ajaxFail(null, "name can not be empty", 1000);
         }
         
         // 密码不能为空
         if(empty($password))
         {
-            return $this->ajaxFail([], "password can not be empty", 1001);
+            return $this->ajaxFail(null, "password can not be empty", 1001);
         }
         
         // device_no 不能为空
         if(empty($device_no))
         {
-            return $this->ajaxFail([], "device_no can not be empty", 1002);
+            return $this->ajaxFail(null, "device_no can not be empty", 1002);
         }
 
         $where['uname'] = $name;
@@ -132,17 +132,17 @@ class ApiPosController extends Controller
         $result = User::where($where)->first();
         if(empty($result))
         {
-            return $this->ajaxFail([], 'name and password conbination incorrect, please try again', 1003);
+            return $this->ajaxFail(null, 'name and password conbination incorrect, please try again', 1003);
         }
 
         if(intval($result['rank'])!==0)
         {
-            return $this->ajaxFail([], 'account illegal', 1006);
+            return $this->ajaxFail(null, 'account illegal', 1006);
         }
 
         if(!empty($result->device_no) &&trim($result->device_no) != trim($device_no))
         {
-            return $this->ajaxFail([], 'device_no not match , please contract custerm service to unbinding', 1004);
+            return $this->ajaxFail(null, 'device_no not match , please contract custerm service to unbinding', 1004);
         }
 
         // 登录成功，设备硬件号匹配完成
@@ -152,7 +152,7 @@ class ApiPosController extends Controller
             $result->device_no = $device_no;
             if($result->save() === false)
             {
-                return $this->ajaxFail([], 'device_no currently empty ,bingding with no success', 1005);
+                return $this->ajaxFail(null, 'device_no currently empty ,bingding with no success', 1005);
             }
 
             $tmp[] = $result;
@@ -177,17 +177,17 @@ class ApiPosController extends Controller
         $type = $req->get('type');
         if(empty($store_code))
         {
-            return $this->ajaxFail([], "store_code can not be empty", 1000);
+            return $this->ajaxFail(null, "store_code can not be empty", 1000);
         }
 
         if(empty($type))
         {
-            return $this->ajaxFail([], "type can not be empty", 1002);
+            return $this->ajaxFail(null, "type can not be empty", 1002);
         }
 
         if(intval($type)===false || intval($type)> self::SYNC_CATEGORY || intval($type) < self::SYNC_USER)
         {
-            return $this->ajaxFail([], "type value illegal", 1003);
+            return $this->ajaxFail(null, "type value illegal", 1003);
         }
 
         // 需要同步的信息
@@ -197,7 +197,7 @@ class ApiPosController extends Controller
 
         if(empty($userinfo[0]))
         {
-            return $this->ajaxFail([], "store not found", 1001);   
+            return $this->ajaxFail(null, "store not found", 1001);   
         }
         if(intval($type) == self::SYNC_USER)
         {
@@ -297,7 +297,7 @@ class ApiPosController extends Controller
         $ret = $this->generateOrder($institutionID, $orderNo, $paymentNo, $paymentWay, $paymentScene, $amount, $subject);
         if($ret === false)
         {
-            $this->ajaxFail([], 'server order generate failed, pls try again', 1000);
+            $this->ajaxFail(null, 'server order generate failed, pls try again', 1000);
         }
 
         // 组装 xml
@@ -331,7 +331,7 @@ class ApiPosController extends Controller
         if($ok!=1)
         {
             // 验证签名失败
-            $this->ajaxFail([], "验签失败", 9999);
+            $this->ajaxFail(null, "验签失败", 9999);
         }
         else
         {  
@@ -344,7 +344,7 @@ class ApiPosController extends Controller
             $msg = (string)$simpleXML->Head->Message;
             if($code !=2000)
             {
-                return $this->ajaxFail([], $msg, $code);
+                return $this->ajaxFail(null, $msg, $code);
             } else {
                 $data = [];
                 $data['txcode']               = 1402;
@@ -362,11 +362,29 @@ class ApiPosController extends Controller
                 $data['ResponseCode']         = (string)$simpleXML->Body->ResponseCode;
                 $data['ResponseMessage']      = (string)$simpleXML->Body->ResponseMessage;
                 $data['Fee']                  = (string)$simpleXML->Body->Fee;
+
+                // 订单状态更新
+                $serverorderinfo = ServerOrder::where(['order_sn' => $data['PaymentNo']])->first();
+                if(is_null($serverorderinfo))
+                {
+                    // 写入日志， server_order 订单信息写入没有找到
+                    Log::info("1402 同步回调 order_no {$data['PaymentNo']}  的 server_order 信息没有找到");
+                    
+                } else {
+                    $serverorderinfo->status = $data['Status'];
+                    $saveresult = $serverorderinfo->save();
+                    if(false === $saveresult)
+                    {
+                        // 保存时报，写日志
+                        Log::info("1402 同步回调 order_no {$data['PaymentNo']}  的 server_order status {$data['Status']} 状态更细失败");
+                        
+                    }
+                }   
                 return $this->ajaxSuccess($data, "success");
             }
         }
 
-        return $this->ajaxFail([], 'not implement yet', 1000);
+        return $this->ajaxFail(null, 'not implement yet', 1000);
     }
 
     private function cpcc1402Validate(Request $req)
@@ -389,48 +407,48 @@ class ApiPosController extends Controller
 
         if(empty($institutionID))
         {
-            return $this->ajaxFail([]," institutionID can not be empty", 1000);
+            return $this->ajaxFail(null," institutionID can not be empty", 1000);
         }
 
         if(empty($orderNo))
         {
-            return $this->ajaxFail([]," orderNo can not be empty", 1001);
+            return $this->ajaxFail(null," orderNo can not be empty", 1001);
         }
 
         if(empty($paymentNo))
         {
-            return $this->ajaxFail([]," paymentNo can not be empty", 1002);
+            return $this->ajaxFail(null," paymentNo can not be empty", 1002);
         }
 
         if(empty($paymentWay))
         {
-            return $this->ajaxFail([]," paymentWay can not be empty", 1003);
+            return $this->ajaxFail(null," paymentWay can not be empty", 1003);
         }
 
         
         if(empty($paymentScene))
         {
-            return $this->ajaxFail([]," paymentScene can not be empty", 1004);
+            return $this->ajaxFail(null," paymentScene can not be empty", 1004);
         }
 
         if(empty($authCode))
         {
-            return $this->ajaxFail([]," authCode can not be empty", 1005);
+            return $this->ajaxFail(null," authCode can not be empty", 1005);
         }
 
         if(empty($amount))
         {
-            return $this->ajaxFail([]," amount can not be empty", 1006);
+            return $this->ajaxFail(null," amount can not be empty", 1006);
         }
 
         if(empty($subject))
         {
-            return $this->ajaxFail([]," subject can not be empty", 1007);
+            return $this->ajaxFail(null," subject can not be empty", 1007);
         }
 
         // if(empty($store_name))
         // {
-        //     return $this->ajaxFail([]," store_name can not be empty", 1008);
+        //     return $this->ajaxFail(null," store_name can not be empty", 1008);
         // }
 
         return true;
@@ -481,7 +499,7 @@ class ApiPosController extends Controller
         // if($ok!=1)
         // {
         //     // 验证签名失败
-        //     $this->ajaxFail([], "验签失败", 9999);
+        //     $this->ajaxFail(null, "验签失败", 9999);
         // }
         // else
         // {  
@@ -496,7 +514,7 @@ class ApiPosController extends Controller
 
         //     if($code !=2000)
         //     {
-        //         return $this->ajaxFail([], $msg, $code);
+        //         return $this->ajaxFail(null, $msg, $code);
         //     } else {
         //         $data = [];
         //         if($total > 1)
@@ -524,7 +542,7 @@ class ApiPosController extends Controller
         //     }
         // }
 
-        // return $this->ajaxFail([], 'not implement yet', 1000);
+        // return $this->ajaxFail(null, 'not implement yet', 1000);
     }
 
     private function fun1811($institution, $date, $pageno, $pagecount, $is_json)
@@ -550,7 +568,7 @@ class ApiPosController extends Controller
         if($ok!=1)
         {
             // 验证签名失败
-            $this->ajaxFail([], "验签失败", 9999);
+            $this->ajaxFail(null, "验签失败", 9999);
         }
         else
         {  
@@ -565,12 +583,12 @@ class ApiPosController extends Controller
             // if($cur_total ==0)
             // {
             //     // 当前查询没有记录，终止 
-            //     $this->ajaxFail([], "query end", 666666);
+            //     $this->ajaxFail(null, "query end", 666666);
             // }
 
             if($code !=2000)
             {
-                return $this->ajaxFail([], $msg, $code);
+                return $this->ajaxFail(null, $msg, $code);
             } else {
                 $ret = [];
                 $ret['total'] = $total;
@@ -609,7 +627,7 @@ class ApiPosController extends Controller
         }
 
         return true;
-        //return $this->ajaxFail([], 'not implement yet', 1000);
+        //return $this->ajaxFail(null, 'not implement yet', 1000);
     }
 
 
@@ -622,22 +640,22 @@ class ApiPosController extends Controller
 
         if(empty($institutionID))
         {
-            return $this->ajaxFail([], "institutionID can not be empty", 1000);
+            return $this->ajaxFail(null, "institutionID can not be empty", 1000);
         }
 
         if(empty($date))
         {
-            return $this->ajaxFail([], "date can not be empty", 1000);
+            return $this->ajaxFail(null, "date can not be empty", 1000);
         }
 
         if(empty($pageno))
         {
-            return $this->ajaxFail([], "pageno can not be empty", 1000);
+            return $this->ajaxFail(null, "pageno can not be empty", 1000);
         }
 
         if(empty($countperpage))
         {
-            return $this->ajaxFail([], "CountPerPage can not be empty", 1000);
+            return $this->ajaxFail(null, "CountPerPage can not be empty", 1000);
         }
 
         return true;
@@ -703,7 +721,7 @@ class ApiPosController extends Controller
         if($ok!=1)
         {
             // 验证签名失败
-            $this->ajaxFail([], "验签失败", 9999);
+            $this->ajaxFail(null, "验签失败", 9999);
         }
         else
         {  
@@ -714,20 +732,41 @@ class ApiPosController extends Controller
             $code =(string) $simpleXML->Head->Code;
             $msg = (string)$simpleXML->Head->Message;
 
+            $flowinfo = OutflowLog::where(['SerialNumber'=>$serialNumber])->first();
+            if(is_null($flowinfo))
+            {
+                    // 没有找到对应的 outflow 记录
+                    Log::info("1341 同步回调 SerialNumber {$serialNumber}  的 outflowinfo 信息没有找到");
+                    
+            }
 
             if($code !=2000)
             {
-                return $this->ajaxFail([], $msg, $code);
+                return $this->ajaxFail(null, $msg, $code);
             } else {
                 $data = [];
                 $data['txname'] = $txCode;
                 $data['desc'] = $txName;
+
+            
+                if(!is_null($flowinfo))
+                {
+                    $flowinfo->status = 1;
+                    $saveresult = $flowinfo->save();
+                    if(false === $saveresult)
+                    {
+                        // 记录日志，保存失败
+                        Log::info("1341 同步回调 SerialNumber {$serialNumber}  2000 状态信息更新失败");
+                        
+                    }
+                }
+
                 
                 return $this->ajaxSuccess($data, "success");
             }
         }
 
-        return $this->ajaxFail([], 'not implement yet', 1000);
+        return $this->ajaxFail(null, 'not implement yet', 1000);
     }
 
     private function cpcc1341Validate(Request $req)
@@ -749,57 +788,57 @@ class ApiPosController extends Controller
 
         if(empty($institutionID))
         {
-            return $this->ajaxFail([]," institutionID can not be empty", 1000);
+            return $this->ajaxFail(null," institutionID can not be empty", 1000);
         }
 
         if(empty($serialNumber))
         {
-            return $this->ajaxFail([]," serialNumber can not be empty", 1000);
+            return $this->ajaxFail(null," serialNumber can not be empty", 1000);
         }
 
         if(empty($orderNo))
         {
-            return $this->ajaxFail([]," orderNo can not be empty", 1000);
+            return $this->ajaxFail(null," orderNo can not be empty", 1000);
         }
 
         if(empty($amount))
         {
-            return $this->ajaxFail([]," amount can not be empty", 1000);
+            return $this->ajaxFail(null," amount can not be empty", 1000);
         }
 
         if(empty($accountType))
         {
-            return $this->ajaxFail([]," accountType can not be empty", 1000);
+            return $this->ajaxFail(null," accountType can not be empty", 1000);
         }
 
         if(empty($bankID))
         {
-            return $this->ajaxFail([]," bankID can not be empty", 1000);
+            return $this->ajaxFail(null," bankID can not be empty", 1000);
         }
 
         if(empty($accountName))
         {
-            return $this->ajaxFail([]," accountName can not be empty", 1000);
+            return $this->ajaxFail(null," accountName can not be empty", 1000);
         }
 
         if(empty($accountNumber))
         {
-            return $this->ajaxFail([]," accountNumber can not be empty", 1000);
+            return $this->ajaxFail(null," accountNumber can not be empty", 1000);
         }
 
         if(empty($branchName))
         {
-            return $this->ajaxFail([]," branchName can not be empty", 1000);
+            return $this->ajaxFail(null," branchName can not be empty", 1000);
         }
 
         if(empty($province))
         {
-            return $this->ajaxFail([]," province can not be empty", 1000);
+            return $this->ajaxFail(null," province can not be empty", 1000);
         }
 
         if(empty($city))
         {
-            return $this->ajaxFail([]," city can not be empty", 1000);
+            return $this->ajaxFail(null," city can not be empty", 1000);
         }
 
         return true;
@@ -839,7 +878,7 @@ class ApiPosController extends Controller
         if($ok!=1)
         {
             // 验证签名失败
-            $this->ajaxFail([], "验签失败", 9999);
+            $this->ajaxFail(null, "验签失败", 9999);
         } else {  
             $simpleXML= new \SimpleXMLElement($plainText);    
             $txName="二维码支付订单查询";
@@ -850,7 +889,7 @@ class ApiPosController extends Controller
 
             if($code !=2000)
             {
-                return $this->ajaxFail([], $msg, $code);
+                return $this->ajaxFail(null, $msg, $code);
             } else {
                 $data = [];
                 $data['txname'] = $txCode;
@@ -893,12 +932,12 @@ class ApiPosController extends Controller
 
         if(empty($institutionID))
         {
-            return $this->ajaxFail([], "institutionID can not be empty ", 1000);
+            return $this->ajaxFail(null, "institutionID can not be empty ", 1000);
         }
 
         if(empty($paymentNo))
         {
-            return $this->ajaxFail([], "paymentNo can not be empty ", 1001);
+            return $this->ajaxFail(null, "paymentNo can not be empty ", 1001);
         }
 
         return true; 
@@ -1205,7 +1244,7 @@ class ApiPosController extends Controller
             return $this->ajaxSuccess([], "save members data success,{$total} processed , {$save_count} records saved,{$update_count} updated, {$size} input ");
         } catch (Exception $e) {
             DB::rollBack();
-            return $this->ajaxFail([], $e->getMessage(), 1000);
+            return $this->ajaxFail(null, $e->getMessage(), 1000);
             
         }
 
@@ -1278,7 +1317,7 @@ class ApiPosController extends Controller
             return $this->ajaxSuccess([], "save user data success, {$total} processed , {$save_count} records saved,{$update_count} updated, {$size} input ");
         } catch (Exception $e) {
             DB::rollBack();
-            return $this->ajaxFail([], $e->getMessage(), 1000);
+            return $this->ajaxFail(null, $e->getMessage(), 1000);
             
         }
         //  解析参数
@@ -1288,7 +1327,7 @@ class ApiPosController extends Controller
 
     public function syncGoodsSku(Request $req)
     {
-        return $this->ajaxFail([], "api depricated !");
+        return $this->ajaxFail(null, "api depricated !");
         return true;
     }
 
@@ -1374,7 +1413,7 @@ class ApiPosController extends Controller
             return $this->ajaxSuccess([], "save goods data success, {$total} processed , {$save_count} records saved,{$update_count} updated, {$size} input ");
         } catch (Exception $e) {
             DB::rollBack();
-            return $this->ajaxFail([], $e->getMessage(), 1000);
+            return $this->ajaxFail(null, $e->getMessage(), 1000);
             
         }
         //  解析参数
@@ -1470,7 +1509,7 @@ class ApiPosController extends Controller
             return $this->ajaxSuccess([], "save orders data success, {$total} processed , {$save_count} records saved,{$update_count} updated, {$size} input ");
         } catch (Exception $e) {
             DB::rollBack();
-            return $this->ajaxFail([], $e->getMessage(), 1000);
+            return $this->ajaxFail(null, $e->getMessage(), 1000);
             
         }
 
@@ -1545,7 +1584,7 @@ class ApiPosController extends Controller
             return $this->ajaxSuccess([], "save order goods data success,  {$total} processed , {$save_count} records saved,{$update_count} updated, {$size} input ");
         } catch (Exception $e) {
             DB::rollBack();
-            return $this->ajaxFail([], $e->getMessage(), 1000);
+            return $this->ajaxFail(null, $e->getMessage(), 1000);
             
         }
 
@@ -1610,13 +1649,13 @@ class ApiPosController extends Controller
             return $this->ajaxSuccess([], "save shiftlog  data success, {$total} processed , {$save_count} records saved,{$update_count} updated, {$size} input ");
         } catch (Exception $e) {
             DB::rollBack();
-            return $this->ajaxFail([], $e->getMessage(), 1000);
+            return $this->ajaxFail(null, $e->getMessage(), 1000);
             
         }
 
         return true;
 
-        return $this->ajaxFail([], 'not implement yet', 1000);
+        return $this->ajaxFail(null, 'not implement yet', 1000);
     }
 
     /**
@@ -1634,30 +1673,30 @@ class ApiPosController extends Controller
 
         if(empty($store_code))
         {
-            return $this->ajaxFail([], 'store_code can not be empty', 1000);
+            return $this->ajaxFail(null, 'store_code can not be empty', 1000);
         }
 
         if(empty($type))
         {
-            return $this->ajaxFail([], 'type can not be empty, 1 user, 2 member, 3 goods_sku 4 goods, 5 order 6 order goods, 7 shift log', 1001);
+            return $this->ajaxFail(null, 'type can not be empty, 1 user, 2 member, 3 goods_sku 4 goods, 5 order 6 order goods, 7 shift log', 1001);
         }
 
         if(intval($type) === false)
         {
-            return $this->ajaxFail([], 'type variable type illegal', 1002);   
+            return $this->ajaxFail(null, 'type variable type illegal', 1002);   
         }
 
 
         if( intval($type)<1 || intval($type)>7)
         {
-            return $this->ajaxFail([], 'type value type illegal', 1003);        
+            return $this->ajaxFail(null, 'type value type illegal', 1003);        
         }
 
         // store_code 不存在
         $is_exist = User::where(['store_code'=>$store_code, 'deleted'=>0])->get();
         if(empty($is_exist))
         {
-            return $this->ajaxFail([], 'store not found', 1004);   
+            return $this->ajaxFail(null, 'store not found', 1004);   
         }
 
         $ret = false;
@@ -1706,7 +1745,7 @@ class ApiPosController extends Controller
         $date = $req->get('date');
         if(empty($date))
         {
-            return $this->ajaxFail([], "date can not be empty", 1000);
+            return $this->ajaxFail(null, "date can not be empty", 1000);
         }
 
         //遍历数据，至 error_code = 666666
@@ -1786,7 +1825,7 @@ class ApiPosController extends Controller
             } catch (Exception $e) {
                 DB::rollBack();
                 // 写日志
-                return $this->ajaxFail([], "read data fail", 1000);
+                return $this->ajaxFail(null, "read data fail", 1000);
             }
                      
         }
@@ -1987,7 +2026,7 @@ class ApiPosController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             // 写日志
-            return $this->ajaxFail([], "read data fail", 1000);
+            return $this->ajaxFail(null, "read data fail", 1000);
         }
         
     }
@@ -1997,7 +2036,7 @@ class ApiPosController extends Controller
         $date = $req->get('date');
         if(empty($date))
         {
-            return $this->ajaxFail([], "date can not be empty", 1000);
+            return $this->ajaxFail(null, "date can not be empty", 1000);
         }
 
 
@@ -2141,7 +2180,7 @@ class ApiPosController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             // 写日志
-            return $this->ajaxFail([], "read data fail", 1000);
+            return $this->ajaxFail(null, "read data fail", 1000);
         }
 
     }
@@ -2156,7 +2195,7 @@ class ApiPosController extends Controller
         $date = $req->get('date');
         if(empty($date))
         {
-            return $this->ajaxFail([], "date can not be empty", 1000);
+            return $this->ajaxFail(null, "date can not be empty", 1000);
         }
 
         $ret = $this->generatePrepayment($date);
@@ -2423,7 +2462,7 @@ class ApiPosController extends Controller
         $id = $req->get('id');
         if(empty($id))
         {
-            return $this->ajaxFail([], "province id can not be empty",1000);
+            return $this->ajaxFail(null, "province id can not be empty",1000);
         }
 
         $city = Region::where(['parent_id'=>$id])->get();
@@ -2440,7 +2479,7 @@ class ApiPosController extends Controller
         $id = $req->get('id');
         if(empty($id))
         {
-            return $this->ajaxFail([], "city id can not be empty", 1000);
+            return $this->ajaxFail(null, "city id can not be empty", 1000);
         }
 
         $city = Region::where(['parent_id'=>$id])->get();

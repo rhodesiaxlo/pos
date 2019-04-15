@@ -377,6 +377,12 @@
   .bg-red-1{
     background-color: #FF1744;
   }
+  .bg-red-2{
+    background-color:#c75454;
+  }
+  .bg_green_1{
+    background-color: #44b793;
+  }
   /* flex布局 */
   .flex {
     display: flex;

@@ -90,9 +90,9 @@
 @section('js')
 <script>
         let selectName=[
-            {name:'全部'},
-            {name:'已结算'},
-            {name:'未结算'}
+            {name:'全部',status:0,},
+            {name:'已结算',status:1,},
+            {name:'未结算',status:2,}
         ]
 
         $(function(){
@@ -104,7 +104,7 @@
         function sele(){
             $('#status').empty()
             for(let i of selectName){
-                $('#status').append(`<option value ="${i.name}">${i.name}</option>`)
+                $('#status').append(`<option value ="${i.status}">${i.name}</option>`)
             }
         }
         function val(e){
@@ -126,10 +126,11 @@
                 }
             });
             if(list.length==0){
-                $('#eor').empty()
-                $('#eor').show()
-                $('#eor').append("<div class='txal w100pc bold' style='height:100px;line-height:100px;'>请先选择要清算的账单</div>")
-                $("#eor").fadeOut(3000);
+                // $('#eor').empty()
+                // $('#eor').show()
+                // $('#eor').append("<div class='txal w100pc bold' style='height:100px;line-height:100px;'>请先选择要清算的账单</div>")
+                // $("#eor").fadeOut(3000);
+                eeor('请先选择要清算的账单','bg-red-2')
             }else{
                 $('#ok').show()
             }
