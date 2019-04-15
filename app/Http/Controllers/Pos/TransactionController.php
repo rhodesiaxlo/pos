@@ -217,7 +217,11 @@ class TransactionController extends Controller
                 $tmp->create_time = time();
                 $tmp->status = 1;
 
-                $tmp->save();
+                $saveresult = $tmp->save();
+                if(false === $saveresult)
+                {
+                    exit(json_encode(['code'=>0, 'message'=>'保存失败']));
+                }
             } else {
                 $tmpinfo = AbnormalTransactionLog::where(['id'=>$id])->first();
                 $tmpinfo->amount = $amount;
@@ -229,7 +233,11 @@ class TransactionController extends Controller
                 $tmpinfo->create_time = time();
                 $tmpinfo->status =1;
 
-                $tmpinfo->save();
+                $saveresult = $tmpinfo->save();
+                if(false === $saveresult)
+                {
+                    exit(json_encode(['code'=>0, 'message'=>'保存失败']));
+                }
             }
             exit(json_encode(['code'=>1,'message'=>'success']));
         }
@@ -269,7 +277,12 @@ class TransactionController extends Controller
                 $tmp->confirm_name = $adminuser->name;
                 $tmp->status = 2;
 
-                $tmp->save();
+                $saveresult = $tmp->save();
+                if(false === $saveresult)
+                {
+                    exit(json_encode(['code'=>0, 'message'=>'保存失败']));
+                }
+
             } else {
                 $tmpinfo = AbnormalTransactionLog::where(['id'=>$id])->first();
                 $tmpinfo->amount = $amount;
@@ -279,7 +292,11 @@ class TransactionController extends Controller
                 $tmpinfo->confirm_id= $operator;
                 $tmpinfo->confirm_name = $adminuser->name;
                 $tmpinfo->status = 2;
-                $tmpinfo->save();
+                $saveresult = $tmpinfo->save();
+                if(false === $saveresult)
+                {
+                    exit(json_encode(['code'=>0, 'message'=>'保存失败']));
+                }
             }
             exit(json_encode(['code'=>1,'message'=>'success']));
         }

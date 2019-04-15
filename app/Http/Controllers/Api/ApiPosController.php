@@ -25,6 +25,9 @@ use App\Models\Pos\Region;
 use App\Models\Pos\ServerOrder;
 use App\Models\Pos\OutflowLog;
 use App\Models\Pos\Prepayment;
+use App\Models\Pos\AbnormalTransactionLog;
+
+
 
 
 use App\Models\Pos\CpccTxLog;
@@ -1861,6 +1864,13 @@ class ApiPosController extends Controller
         }
 
 
+        $order_num = 0;
+        $order_total = 0.0;
+        $log_num = 0;
+        $log_total = 0.0;
+        $delta = 0;
+
+
         $ll = DB::select("SELECT
             o.order_no, o.amount as o_amount,o.notify_time as o_notify_time, o.create_time as o_create_time,o.order_sn as o_serial_no,o.id as o_id,
             l.TxAmount as l_amount, l.BankNotificationTime as l_notify_time,l.TxSn as l_serial_no,l.TxType as l_type,l.id as l_id
@@ -1877,6 +1887,13 @@ class ApiPosController extends Controller
                 foreach ($ll as $key => $value) {
                     // 去重
                     $is_exist = Prepayment::where(['serial_no'=>$value->l_serial_no])->first();
+
+                    // 统计金额数量
+                    $order_num +=1;
+                    $log_num +=1;
+                    $order_total += $value->o_amount;
+                    $log_total += $value->l_amount;
+
                     if($is_exist !==null)
                     {
                         $is_exist->check_date = $date;
@@ -1885,6 +1902,9 @@ class ApiPosController extends Controller
                         $is_exist->store_code = $value->order_no;
                         $is_exist->cpcc_amount = $value->l_amount;
                         $is_exist->order_amount = $value->o_amount;
+
+
+
                         if(abs($value->l_amount - $value->o_amount) > 1)
                         {
                             $is_exist->result_status = self::CHECK_NUMBERNOTMATCH;
@@ -1909,6 +1929,7 @@ class ApiPosController extends Controller
                         $tmppre->store_code = $value->order_no;
                         $tmppre->cpcc_amount = $value->l_amount;
                         $tmppre->order_amount = $value->o_amount;
+
                         if(abs($value->l_amount - $value->o_amount) > 1)
                         {
                             $tmppre->result_status = self::CHECK_NUMBERNOTMATCH;
@@ -1940,13 +1961,20 @@ class ApiPosController extends Controller
                         // 去重
                         
                         $is_exist = Prepayment::where(['serial_no'=>$value])->first();
+
                         if($is_exist !==null)
                         {
                             continue;
                         }
 
+                        // 根据id 查找 Order 信息
                         $orderinfo = ServerOrder::where(['order_sn'=>$value])->first();
 
+                        // 统计 order 信息
+                        $order_num +=1;
+                        $order_total += $orderinfo->amount;
+
+                        unset($tmppre);
                         $tmppre = new Prepayment();
                         $tmppre->check_date = $date;
                         $tmppre->serial_no = $orderinfo->order_sn;
@@ -1973,9 +2001,14 @@ class ApiPosController extends Controller
                     foreach ($log_diff_order as $key => $value) {
                         // 去重
                         $is_exist = Prepayment::where(['serial_no'=>$value])->first();
+                        $loginfo = CpccTxLog::where(['TxSn'=>$value])->first();
+
+                        // 统计 log 信息
+                        $log_num +=1;
+                        $log_total +=$loginfo->TxAmount;
+
                         if($is_exist !==null)
                         {
-                            $loginfo = CpccTxLog::where(['TxSn'=>$value])->first();
 
                             $is_exist->check_date = $date;
                             $is_exist->serial_no = $loginfo->TxSn;
@@ -1995,8 +2028,7 @@ class ApiPosController extends Controller
                                 throw new Exception("Error Processing Request", 1);
                             }  
                         } else {
-                            $loginfo = CpccTxLog::where(['TxSn'=>$value])->first();
-
+                            unset($tmppre);
                             $tmppre = new Prepayment();
                             $tmppre->check_date = $date;
                             $tmppre->serial_no = $loginfo->TxSn;
@@ -2020,6 +2052,32 @@ class ApiPosController extends Controller
                         
                     }
                 }
+
+            // 生成 order 记录条数， log 记录条数， order 记录金额 log 记录金额 差额 order-log
+            $delta = $order_total - $log_total;
+            $is_log_exist = AbnormalTransactionLog::where(['check_date' => $date,'tx_type'=>1402])->first();
+            if(!is_null($is_log_exist))
+            {
+                $is_log_exist->log_num = $log_num;
+                $is_log_exist->log_total = $log_total;
+                $is_log_exist->order_num = $order_num;
+                $is_log_exist->order_total = $order_total;
+                $is_log_exist->amount = $order_total - $log_total;
+
+                $is_log_exist->save();
+
+            } else {
+                $tmp_log = new AbnormalTransactionLog();
+                $tmp_log->check_date = $date;
+                $tmp_log->tx_type = 1402;
+                $tmp_log->log_num = $log_num;
+                $tmp_log->log_total = $log_total;
+                $tmp_log->order_num = $order_num;
+                $tmp_log->amount = $order_total - $log_total;
+                $tmp_log->order_total = $order_total;
+                $tmp_log->create_time = time();
+                $tmp_log->save();
+            }
 
             DB::commit();
             return $this->ajaxSuccess([], "read success");
@@ -2218,7 +2276,7 @@ class ApiPosController extends Controller
         $serverorder->amount = $amount;
         $serverorder->payment_way = $paymentWay;
         $serverorder->order_sn = $paymentNo;
-        $serverorder->create_time = $orderNo;
+        $serverorder->create_time = time();
         $serverorder->status = 0;
         $result = $serverorder->save();
         return $result;
