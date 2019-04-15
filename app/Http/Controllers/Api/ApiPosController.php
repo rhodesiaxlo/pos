@@ -764,7 +764,7 @@ class ApiPosController extends Controller
                     }
                 }
 
-                
+                Log::info("1341 同步成功");
                 return $this->ajaxSuccess($data, "success");
             }
         }

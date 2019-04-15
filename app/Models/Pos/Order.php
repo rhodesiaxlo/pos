@@ -51,9 +51,9 @@ class Order extends Model
      * 生成随机订单编号
      * @return [type] [description]
      */
-    public function getRandomOrderSn()
+    public static function getRandomOrderSn($code=1402)
     {
         // to do 
-        return "ordersn_".strval(time());
+        return $code."_".strval(time()).rand(1000,9999);
     }
 }
