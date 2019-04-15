@@ -123,7 +123,7 @@
                 <tr>
                     <td>交易金额差额</td>
                     @if(!empty($logs))
-                    <td class=''> <input type="text" class='red w100pc txal' style='border:none;outline: none;' id='amount' name='amount' autocomplete="off" value='{{$logs->amount}}' /></td>
+                    <td class=''> <input type="text" class='red w100pc txal' style='border:none;outline: none;' id='amount' name='amount' autocomplete="off" value='{{$logs->amount/100}}' /></td>
                     @endif
 
                     @if(empty($logs))
