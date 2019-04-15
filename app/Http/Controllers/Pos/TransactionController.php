@@ -105,7 +105,7 @@ class TransactionController extends Controller
         //$date = "2019-04-10";
         if($req->isMethod('POST'))
         {
-            $tmpdate = $req->get('date_');
+            $tmpdate = $req->get('date');
             if(empty($tmpdate))
             {
                 // 报错
