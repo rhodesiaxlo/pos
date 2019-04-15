@@ -26,14 +26,14 @@
     </div>
     <table style="text-align: center;" class='w100pc' border='1' rules='all' cellpadding='10'>
         <tr class='pos_tr'>
-            <td>交易金额差额</td>
+            <td>交易金额差额(单位：元)</td>
             <td>备注</td>
             <td>经办人</td>
             <td>复核人</td>
         </tr>
         @if(!empty($logs))
         <tr>
-            <td class='red'>{{$logs->amount}}</td>
+            <td class='red'>{{$logs->amount/100}}</td>
             <td>{{$logs->message}}</td>
             <td>{{$logs->admin_name}}</td>
             <td>{{$logs->confirm_name}}</td>
