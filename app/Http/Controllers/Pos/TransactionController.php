@@ -227,7 +227,7 @@ class TransactionController extends Controller
                 $tmpinfo->admin_id= $operator;
                 $tmpinfo->admin_name = $adminuser->name;
                 $tmpinfo->create_time = time();
-                $tmpinfo->status =2;
+                $tmpinfo->status =1;
 
                 $tmpinfo->save();
             }
