@@ -225,6 +225,8 @@ class TransactionController extends Controller
                 {
                     // 出错，记录日志
                     Log::info("结算出错， 出错信息 {$json_str['message']}");
+                    $tmpoutflow->message = $json_str['message'];
+                    $tmpoutflow->save();
                     exit(json_encode(['code'=>1,'message'=>"结算出错， 出错信息 {$json_str['message']}"]));
                 }else{
                     $tmpoutflow->status = 1;
