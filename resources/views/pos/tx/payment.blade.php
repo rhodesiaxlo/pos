@@ -20,7 +20,7 @@
         <div class='fsb ' style='width:55%;'>
             <div>商家名称  <input class='bor-n bor-4 mg-l-3 ' style='color: black;' type="text" name="storeName" id="name" /></div>
             <div>商家编号  <input class='bor-n bor-4 mg-l-3 ' style='color: black;' type="text" name="storeCode" id="code" /></div>
-            <div class='gray'><span class='white'>应结算日期</span><input  id='date' name='date ' onchange="val()" style='height:;width:226px;color: black;' type="text" placeholder="" autocomplete="off" class='date_picker bor-n bor-4 mg-l-3 ' ></div>
+            <div class='gray'><span class='white'>应结算日期</span><input  id='date' name='date' onchange="val()" style='height:;width:226px;color: black;' type="text" placeholder="" autocomplete="off" class='date_picker bor-n bor-4 mg-l-3 ' ></div>
             <div>结算状态  <select class='bor-n bor-4 mg-l-3 black' name="status" id="status"></select></div>
         </div>
     </div>
@@ -60,13 +60,13 @@
             <td>{{$out->AccountNumber}}</td>
             <td>{{$out->AccountName}}</td>
             @if($out->status==0)
-            (<td>初始化</td>)
+            <td>初始化</td>
             @endif
             @if($out->status==1)
-            (<td>成功</td>)
+            <td>成功</td>
             @endif
             @if($out->status==2)
-            (<td>失败</td>)
+            <td>失败</td>
             @endif
             <td>{{$out->create_time}}</td>
         </tr>
