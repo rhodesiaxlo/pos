@@ -47,10 +47,19 @@
 </div>
 <div style="margin-top:30px;">
     <div style="font-size:18px;" class='pos_index_tital white'>查询结果</div>
+    @if(!empty($logs))
     <p style="color:red;margin: 3px 0;">我方总笔数：{{$logs->order_num}}笔   &nbsp;&nbsp; &nbsp; &nbsp;     我方交易总金额：{{$logs->order_total/100}}元</p>
     <p style="color:red;margin: 3px 0;">支付平台总笔数：{{$logs->log_num}}笔   &nbsp;&nbsp; &nbsp; &nbsp;     支付平台交易总金额：{{$logs->log_total/100}}元</p>
     <div class='fsb'>
         <p style="color:red;margin: 3px 0;">对账总笔数：{{$logs->log_num}}笔   &nbsp;&nbsp; &nbsp; &nbsp;     对账交易总金额：{{$logs->log_total/100}}元</p>
+    @endif
+
+    @if(empty（$logs)
+    <p style="color:red;margin: 3px 0;">我方总笔数：0笔   &nbsp;&nbsp; &nbsp; &nbsp;     我方交易总金额：0元</p>
+    <p style="color:red;margin: 3px 0;">支付平台总笔数：0笔   &nbsp;&nbsp; &nbsp; &nbsp;     支付平台交易总金额：0元</p>
+    <div class='fsb'>
+        <p style="color:red;margin: 3px 0;">对账总笔数：0笔   &nbsp;&nbsp; &nbsp; &nbsp;     对账交易总金额：0元</p>
+    @endif
         <div class='fsa' style='width:15%;'>
             <button class='bor-14 mg-l-10 w80px bor-n white bg-blue'>导出</button>
             <button type='button' class='bor-14 mg-l-10 w80px bor-n white bg-blue' onclick='return alrt(0)'>手工调帐</button>
