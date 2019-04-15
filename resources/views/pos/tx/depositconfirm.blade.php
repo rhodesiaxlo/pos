@@ -47,10 +47,10 @@
 </div>
 <div style="margin-top:30px;">
     <div style="font-size:18px;" class='pos_index_tital white'>查询结果</div>
-    <p style="color:red;margin: 3px 0;">我方总笔数：238笔   &nbsp;&nbsp; &nbsp; &nbsp;     我方交易总金额：57689元</p>
-    <p style="color:red;margin: 3px 0;">支付平台总笔数：236笔   &nbsp;&nbsp; &nbsp; &nbsp;     支付平台交易总金额：57657元</p>
+    <p style="color:red;margin: 3px 0;">我方总笔数：{{$logs->order_num}}笔   &nbsp;&nbsp; &nbsp; &nbsp;     我方交易总金额：{{$logs->order_total/100}}元</p>
+    <p style="color:red;margin: 3px 0;">支付平台总笔数：{{$logs->log_num}}笔   &nbsp;&nbsp; &nbsp; &nbsp;     支付平台交易总金额：{{$logs->log_total/100}}元</p>
     <div class='fsb'>
-        <p style="color:red;margin: 3px 0;">对账总笔数：236笔   &nbsp;&nbsp; &nbsp; &nbsp;     对账交易总金额：57657元</p>
+        <p style="color:red;margin: 3px 0;">对账总笔数：{{$logs->log_num}}笔   &nbsp;&nbsp; &nbsp; &nbsp;     对账交易总金额：{{$logs->log_total/100}}元</p>
         <div class='fsa' style='width:15%;'>
             <button class='bor-14 mg-l-10 w80px bor-n white bg-blue'>导出</button>
             <button type='button' class='bor-14 mg-l-10 w80px bor-n white bg-blue' onclick='return alrt(0)'>手工调帐</button>
@@ -77,8 +77,8 @@
             <td>{{$prepayment->cpcc_time}}</td>
             <td>{{$prepayment->store_name}}</td>
             <td>{{$prepayment->store_code}}</td>
-            <td>{{$prepayment->order_amount}}</td>
-            <td>{{$prepayment->cpcc_amount}}</td>
+            <td>{{$prepayment->order_amount/100}}</td>
+            <td>{{$prepayment->cpcc_amount/100}}</td>
             @if($prepayment->result_status==0)
             <td>对账成功</td>
             @endif
