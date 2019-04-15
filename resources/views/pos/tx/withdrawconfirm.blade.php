@@ -18,7 +18,7 @@
     <div style="font-size:18px;"  class='pos_index_tital white'>查询条件</div>
     <div style="margin:10px 20px;">
         <span style="">交易日期</span>
-        <form class="dslb mg-l-10" id='form' method="POST" action="{{url::route('pos.transaction.depositconfirm')}}" >
+        <form class="dslb mg-l-10" id='form' method="POST" action="{{url::route('pos.transaction.withdrawconfirm')}}" >
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
             <input onchange="val()" id='date' name='chatTime' style='height:30px;width:226px;' type="text" placeholder="" autocomplete="off" class="date_picker">
             <button class='mg-l-10 w80px bor-n white bg-blue' type='submit' onclick='' style='border-radius:14px;'>查询</button>
@@ -45,7 +45,7 @@
     </table>
 </div>
 <div style="margin-top:30px;">
-    <div style="font-size:18px;">查询结果</div>
+    <div style="font-size:18px;" class='pos_index_tital white'>查询结果</div>
     <p style="color:red;margin: 3px 0;">我方总笔数：238笔   &nbsp;&nbsp; &nbsp; &nbsp;     我方交易总金额：57689元</p>
     <p style="color:red;margin: 3px 0;">支付平台总笔数：236笔   &nbsp;&nbsp; &nbsp; &nbsp;     支付平台交易总金额：57657元</p>
     <div class='fsb'>
@@ -113,16 +113,16 @@
         <table  width="50%" border="1" rules='all' cellpadding="10" class='txal fixed bg-fff' style='top:50%;left:30%;'>
             <tr>
                 <td>交易金额差额</td>
-                <td class=''> <input type="text" class='red w100pc txal' style='border:none;' id='amount' name='amount' autocomplete="off" value='{{$logs->amount}}' /></td>
+                <td class=''> <input type="text" class='red w100pc txal' style='border:none;outline: none;' id='amount' name='amount' autocomplete="off" value='{{$logs->amount}}' /></td>
             </tr>
             <tr>
                 <td >备注：</td>
-                <td ><textarea name="value" id="msg" class='w100pc h100pc' style='border:none;' cols="100" rows="10">{{$logs->message}}</textarea></td>
+                <td ><textarea name="value" id="msg" class='w100pc h100pc' style='border:none;outline: none;' cols="100" rows="10">{{$logs->message}}</textarea></td>
             </tr>
             <tr>
                 <td colspan="2">
-                    <button type='button' onclick='move()'>取消</button>
-                    <button type='button' onclick='return prepayment()' class='mg-l-100' onclick=''>提交</button>    
+                    <button type='button' class="mg-l-100 w80px bor-n white " onclick='move()'>取消</button>
+                    <button type='button' onclick='return prepayment()' class="mg-l-100 w80px bor-n white " style='background: #d83138;' onclick=''>提交</button>    
                 </td>
             </tr>
         </table>
@@ -131,16 +131,16 @@
         <table  width="50%" border="1" rules='all' cellpadding="10" class='txal fixed bg-fff' style='top:50%;left:30%;'>
             <tr>
                 <td>交易金额差额</td>
-                <td class=''> <input type="text" class='red w100pc txal' style='border:none;' id='amount' name='amount' autocomplete="off" value='0' /></td>
+                <td class=''> <input type="text" class='red w100pc txal' style='border:none;outline: none;' id='amount' name='amount' autocomplete="off" value='0' /></td>
             </tr>
             <tr>
                 <td >备注：</td>
-                <td ><textarea name="value" id="msg" class='w100pc h100pc' style='border:none;' cols="100" rows="10"></textarea></td>
+                <td ><textarea name="value" id="msg" class='w100pc h100pc' style='border:none;outline: none;' cols="100" rows="10"></textarea></td>
             </tr>
             <tr>
                 <td colspan="2">
-                    <button type='button' onclick='move()'>取消</button>
-                    <button type='button' onclick='return prepayment()' class='mg-l-100' onclick=''>提交</button>    
+                    <button type='button' class="mg-l-100 w80px bor-n white " onclick='move()'>取消</button>
+                    <button type='button' onclick='return prepayment()' class="mg-l-100 w80px bor-n white " style='background: #d83138;' onclick=''>提交</button>    
                 </td>
             </tr>
         </table>
@@ -179,18 +179,17 @@ function val(e){
     var date=new Date($('.date_picker').val())
     var tod=Date.parse(date)
     if(tod>=yest){
-        alert('当前时间不可选择')
+        eeor('当前时间不可选择','bg-red-2')
         $('.date_picker').val('')
     }
 }
 
 function alrt(num){
     $('#mov').show()
-    
     var status=$('#testvar').val()
     if(status==2){
-        alert('已完成复核')
         move()
+        eeor('已完成复核','bg-red-2')
         return false;
     }
     if(num==0){
@@ -204,6 +203,17 @@ function prepayment(){
     var message=$('#msg').val()
     var date=$('#date').val()
     var tx_type='1343'
+    var id=$('#testid').val()
+    if(message==''){
+        // alert('请填写备注');
+        eeor('请填写备注','bg-red-2')
+        return false;
+    }
+    if(amount==''){
+        // alert('请填写金额')
+        eeor('请填写金额','bg-red-2')
+        return false;
+    }
     if(nume==0){
         $('#status').val('1')
         var url='/pos/transaction/firstcheck'
@@ -212,16 +222,13 @@ function prepayment(){
             amount,
             tx_type,
             message,
-            id:$('#textid').val(),
+            id,
         }
         ajaxs(url,data,res=>{
             if(res.code==1){
-                $('#mov').hide()
-                $('#eor').empty()
-                $('#eor').show()
-                $('#eor').append("<div class='txal w100pc bold' style='height:100px;line-height:100px;'>初审成功</div>")
-                $("#eor").fadeOut(3000);
-                window.location = "/pos/transaction/depositconfirm?date="+$('#seachdate').val();
+                move()
+                eeor('初审成功','bg_green_1')
+                window.location = "/pos/transaction/withdrawconfirm?date="+$('#seachdate').val();
             }else{
                 alert(res.message)
             }
@@ -234,23 +241,18 @@ function prepayment(){
             amount,
             tx_type,
             message,
-            id:$('#textid').val(),
+            id,
         }
         ajaxs(url,data,res=>{
-            // console.log(res)
             if(res.code==1){
-                $('#mov').hide()
-                $('#eor').empty()
-                $('#eor').show()
-                $('#eor').append("<div class='txal w100pc bold' style='height:100px;line-height:100px;'>复审成功</div>")
-                $("#eor").fadeOut(3000);
-                window.location = "/pos/transaction/depositconfirm?date="+$('#seachdate').val();
+                move()
+                eeor('复审成功','bg_green_1')
+                window.location = "/pos/transaction/withdrawconfirm?date="+$('#seachdate').val();
             }else{
                 alert(res.message)
             }
         })
     }
-
 }
 
 function move(){

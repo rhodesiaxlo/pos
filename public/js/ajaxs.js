@@ -158,3 +158,10 @@ function date1(){
 
 	return yestoday
 }
+
+function eeor(e,c){
+    $('#eor').empty()
+    $('#eor').show()
+    $('#eor').append(`<div class='txal w100pc bold white ${c}' style='height:100px;line-height:100px;'>${e}</div>`)
+    $("#eor").fadeOut(3000);
+}
