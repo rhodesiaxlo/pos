@@ -47,24 +47,24 @@
 </div>
 <div style="margin-top:30px;">
     <div style="font-size:18px;" class='pos_index_tital white'>查询结果</div>
-    @if(!empty($logs))
-    <p style="color:red;margin: 3px 0;">我方总笔数：{{$logs->order_num}}笔   &nbsp;&nbsp; &nbsp; &nbsp;     我方交易总金额：{{$logs->order_total/100}}元</p>
-    <p style="color:red;margin: 3px 0;">支付平台总笔数：{{$logs->log_num}}笔   &nbsp;&nbsp; &nbsp; &nbsp;     支付平台交易总金额：{{$logs->log_total/100}}元</p>
-    <div class='fsb'>
-        <p style="color:red;margin: 3px 0;">对账总笔数：{{$logs->log_num}}笔   &nbsp;&nbsp; &nbsp; &nbsp;     对账交易总金额：{{$logs->log_total/100}}元</p>
-    @endif
+    <div class='bg-000 bor-4 mg-bt-10' style=''> 
+        @if(!empty($logs))
+        <p style="color:red;margin: 3px 0;">&nbsp;&nbsp; &nbsp; &nbsp;<span class='dslb w200px'>我方总笔数：{{$logs->order_num}}笔</span>   &nbsp;&nbsp; &nbsp; &nbsp;     <span class=''>我方交易总金额：{{$logs->order_total/100}}元</span></p>
+        <p style="color:red;margin: 3px 0;">&nbsp;&nbsp; &nbsp; &nbsp;<span class='dslb w200px'>支付平台总笔数：{{$logs->log_num}}笔</span>   &nbsp;&nbsp; &nbsp; &nbsp;     <span class=''>支付平台交易总金额：{{$logs->log_total/100}}元</span></p>
+        <p style="color:red;margin: 3px 0;">&nbsp;&nbsp; &nbsp; &nbsp;<span class='dslb w200px'>对账总笔数：{{$logs->log_num}}笔</span>   &nbsp;&nbsp; &nbsp; &nbsp;     <span class=''>对账交易总金额：{{$logs->log_total/100}}元</span></p>
+        @endif
 
-    @if(empty($logs))
-    <p style="color:red;margin: 3px 0;">我方总笔数：0笔   &nbsp;&nbsp; &nbsp; &nbsp;     我方交易总金额：0元</p>
-    <p style="color:red;margin: 3px 0;">支付平台总笔数：0笔   &nbsp;&nbsp; &nbsp; &nbsp;     支付平台交易总金额：0元</p>
-    <div class='fsb'>
-        <p style="color:red;margin: 3px 0;">对账总笔数：0笔   &nbsp;&nbsp; &nbsp; &nbsp;     对账交易总金额：0元</p>
-    @endif
-        <div class='fsa' style='width:15%;'>
-            <button class='bor-14 mg-l-10 w80px bor-n white bg-blue'>导出</button>
-            <button type='button' class='bor-14 mg-l-10 w80px bor-n white bg-blue' onclick='return alrt(0)'>手工调帐</button>
-            <button type='button' class='bor-14 mg-l-10 w80px bor-n white bg-blue' onclick='return alrt(1)'>复核</button>
-        </div>
+        @if(empty($logs))
+        <p style="color:red;margin: 3px 0;">&nbsp;&nbsp; &nbsp; &nbsp;<span class='dslb w200px'>我方总笔数：0笔    </span>   &nbsp;&nbsp; &nbsp; &nbsp;    <span class=''> 我方交易总金额：0元    </span></p>
+        <p style="color:red;margin: 3px 0;">&nbsp;&nbsp; &nbsp; &nbsp;<span class='dslb w200px'>支付平台总笔数：0笔</span>   &nbsp;&nbsp; &nbsp; &nbsp;    <span class=''> 支付平台交易总金额：0元</span> </p>
+        <p style="color:red;margin: 3px 0;">&nbsp;&nbsp; &nbsp; &nbsp;<span class='dslb w200px'>对账总笔数：0笔    </span>   &nbsp;&nbsp; &nbsp; &nbsp;    <span class=''> 对账交易总金额：0元    </span> </p>
+        @endif
+    </div>
+
+    <div class='flex jc-end' style='width:;'>
+        <button class='bor-14 mg-l-10 w80px bor-n white bg-blue'>导出</button>
+        <button type='button' class='bor-14 mg-l-10 w80px bor-n white bg-blue' onclick='return alrt(0)'>手工调帐</button>
+        <button type='button' class='bor-14 mg-l-10 w80px bor-n white bg-blue' onclick='return alrt(1)'>复核</button>
     </div>
     <table id="box" class="tableA w100pc mg-t-10" style="text-align: center;" border='1' rules='all' >
         <tr class='pos_tr'>
@@ -149,7 +149,6 @@
                 </tr>
             </table>
         </div>
-        
     </form>
 </div>
 
@@ -210,12 +209,10 @@ function prepayment(){
     var tx_type='1402'
     var id=$('#textid').val()
     if(message==''){
-        // alert('请填写备注');
         eeor('请填写备注','bg-red-2')
         return false;
     }
     if(amount==''){
-        // alert('请填写金额')
         eeor('请填写金额','bg-red-2')
         return false;
     }
@@ -246,7 +243,6 @@ function prepayment(){
             message,
             id,
         }
-        
         ajaxs(url,data,res=>{
             if(res.code==1){
                 move()
