@@ -54,7 +54,7 @@
         <p style="color:red;margin: 3px 0;">对账总笔数：{{$logs->log_num}}笔   &nbsp;&nbsp; &nbsp; &nbsp;     对账交易总金额：{{$logs->log_total/100}}元</p>
     @endif
 
-    @if(empty（$logs)
+    @if(empty($logs))
     <p style="color:red;margin: 3px 0;">我方总笔数：0笔   &nbsp;&nbsp; &nbsp; &nbsp;     我方交易总金额：0元</p>
     <p style="color:red;margin: 3px 0;">支付平台总笔数：0笔   &nbsp;&nbsp; &nbsp; &nbsp;     支付平台交易总金额：0元</p>
     <div class='fsb'>
