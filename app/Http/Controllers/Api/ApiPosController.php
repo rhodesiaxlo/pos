@@ -1031,7 +1031,7 @@ class ApiPosController extends Controller
                 $seria_no    = (string)$simpleXML->Body->PaymentNo;
                 $status      = (string)$simpleXML->Body->Status;
                 $notify_time = (string)$simpleXML->Body->BankNotificationTime;
-                $store_id    = (string)$simpleXML->Body->StoreID;
+                $store_id    = (string)$simpleXML->Body->PaymentWay;
                 $this->notify1408($order_no, $seria_no, $status, $notify_time, $store_id);
                 //以下为演示代码
                 $txName =  "市场订单O2O支付状态变更通知";
@@ -2699,6 +2699,13 @@ class ApiPosController extends Controller
          $rec = ServerOrder::where(['order_no'=>$order_no, "order_sn"=>$serial_no])->first();
          if($rec === null)
          {
+            $newserverorder = new ServerOrder();
+            $newserverorder->order_no = $order_no;
+            $newserverorder->order_sn = $serial_no;
+            $newserverorder->payment_way = $store_id;
+            $newserverorder->notify_time = $notify_time;
+            $newserverorder->create_time = time();
+            $newserverorder->save();
             Log::info("1402 异步回调 order_no {$order_no}  serial {$serial_no} status {$status} notify {$notify_time} store_id {$store_id}  record not found");
             return;
          }
@@ -2721,7 +2728,6 @@ class ApiPosController extends Controller
         $info = OutflowLog::where(['SerialNumber'=>$serial_no, 'OrderNo'=>$order_no])->first();
         if($info === null)
         {
-
             Log::info("1341 异步回调 serial_no {$serial_no}  order_no {$order_no} amount {$amount} status {$status} transafer_time {$transafer_time} record not found");
             return;
         }
