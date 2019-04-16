@@ -1382,7 +1382,7 @@ class ApiPosController extends Controller
                 {
                     $tmpuser                    = new Goods;
                     $tmpuser->id                = $value['id'];
-                    $tmpuser->cid               = $value['cat_id'];
+                    $tmpuser->cat_id             = $value['cat_id'];
                     $tmpuser->goods_name        = $value['goods_name'];
                     $tmpuser->goods_sn          = $value['goods_sn'];
                     $tmpuser->cost_price        = $value['cost_price'];
@@ -1404,9 +1404,6 @@ class ApiPosController extends Controller
                     $tmpuser->deleted           = $value['deleted'];
                     $tmpuser->store_code        = $store_code;
 
-
-
-
                     $ret = $tmpuser->save();
                     if($ret === false)
                     {
@@ -1416,7 +1413,7 @@ class ApiPosController extends Controller
                 } else {
 
                     $is_exist->id                = $value['id'];
-                    $is_exist->cid               = $value['cat_id'];
+                    $is_exist->cat_id              = $value['cat_id'];
                     $is_exist->goods_name        = $value['goods_name'];
                     $is_exist->goods_sn          = $value['goods_sn'];
                     $is_exist->cost_price        = $value['cost_price'];
@@ -2699,7 +2696,7 @@ class ApiPosController extends Controller
     private function notify1408($order_no, $serial_no, $status, $notify_time, $store_id)
     {
          Log::info("1402 异步回调 order_no {$order_no}  serial {$serial_no} status {$status} notify {$notify_time} store_id {$store_id}");
-         $rec = ServerOrder::where(['order_no'=>$order_no, "serial_no"=>$serial_no])->first();
+         $rec = ServerOrder::where(['order_no'=>$order_no, "order_sn"=>$serial_no])->first();
          if($rec === null)
          {
             Log::info("1402 异步回调 order_no {$order_no}  serial {$serial_no} status {$status} notify {$notify_time} store_id {$store_id}  record not found");
