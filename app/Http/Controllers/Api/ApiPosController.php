@@ -1032,7 +1032,7 @@ class ApiPosController extends Controller
                 $status      = (string)$simpleXML->Body->Status;
                 $notify_time = (string)$simpleXML->Body->BankNotificationTime;
                 $store_id    = (string)$simpleXML->Body->StoreID;
-                $this->notify1408($order_no, $seria_no, $status, $notify_timem, $store_id);
+                $this->notify1408($order_no, $seria_no, $status, $notify_time, $store_id);
                 //以下为演示代码
                 $txName =  "市场订单O2O支付状态变更通知";
             } else if ($txCode=="1455") {
