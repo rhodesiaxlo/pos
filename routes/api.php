@@ -42,6 +42,9 @@ Route::group(['namespace' => 'Api','middleware' => ['api']], function () {
     Route::match(['get','post'],'apipos/ccpc1410','ApiPosController@ccpc1410')->name('api.apipos.ccpc1410');
     Route::match(['get','post'],'apipos/ccpc1408','ApiPosController@ccpc1408')->name('api.apipos.ccpc1408');
 
+    Route::match(['get','post'],'apipos/getskugoods','ApiPosController@getSkuGoods')->name('api.apipos.getskugoods');
+    
+
     //回调接口
     Route::match(['get','post'],'apipos/ccpcnotify','ApiPosController@ccpcNotify')->name('api.apipos.ccpcnotify');
     Route::match(['get','post'],'apipos/pullbillfromccpc','ApiPosController@pullBillFromCcpc')->name('api.apipos.pullbillfromccpc');

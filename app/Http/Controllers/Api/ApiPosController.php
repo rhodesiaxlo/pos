@@ -25,6 +25,11 @@ use App\Models\Pos\Region;
 use App\Models\Pos\ServerOrder;
 use App\Models\Pos\OutflowLog;
 use App\Models\Pos\Prepayment;
+use App\Models\Pos\Postpayment;
+use App\Models\Pos\GoodsSku;
+
+
+
 use App\Models\Pos\AbnormalTransactionLog;
 
 
@@ -968,7 +973,7 @@ class ApiPosController extends Controller
 
         // 组装 xml
         $xmlnotify = config('xmltype.txnotify');
-        $responseXML= new SimpleXMLElement($xmlnotify); 
+        $responseXML= new \SimpleXMLElement($xmlnotify); 
 
         $plainText=base64_decode($message); 
         $ok=cfcaverify($plainText,$signature);
@@ -981,7 +986,7 @@ class ApiPosController extends Controller
             
         }else{
             $txName = "";
-            $simpleXML= new SimpleXMLElement($plainText);   
+            $simpleXML= new \SimpleXMLElement($plainText);   
             $txCode=$simpleXML->Head->TxCode;
             
             if ($txCode=="1118"){
@@ -1181,6 +1186,14 @@ class ApiPosController extends Controller
     {
         $data = $req->get('data');
         $store_code = $req->get('store_code');
+
+        // 检查字段
+        $fieldsresult = $this->checkFields($data, self::SYNC_MEMBER);
+        if($fieldsresult !== true)
+        {
+            return $fieldsresult;
+        }
+
         DB::beginTransaction();
         try {
             $save_count = 0;
@@ -1211,7 +1224,7 @@ class ApiPosController extends Controller
                     $ret = $tmpuser->save();
                     if($ret === false)
                     {
-                        throw new Exception(" save members record failed", 1);
+                        throw new \Exception(" save members record failed", 1);
                     } 
                     $save_count++;   
                 } else {
@@ -1235,7 +1248,7 @@ class ApiPosController extends Controller
                     $ret = $is_exist->save();
                     if($ret === false)
                     {
-                        throw new Exception(" update members record failed", 1);
+                        throw new \Exception(" update members record failed", 1);
                     }
                     $update_count++;   
                 }
@@ -1262,6 +1275,14 @@ class ApiPosController extends Controller
     {
         $data = $req->get('data');
         $store_code = $req->get('store_code');
+
+        // 检查字段
+        $fieldsresult = $this->checkFields($data, self::SYNC_USER);
+        if($fieldsresult !== true)
+        {
+            return $fieldsresult;
+        }
+
         DB::beginTransaction();
         try {
             $save_count =0;
@@ -1279,7 +1300,6 @@ class ApiPosController extends Controller
                     $tmpuser->rank                = $value['rank'];
                     $tmpuser->deleted             = $value['deleted'];
                     $tmpuser->is_active           = $value['deleted'];
-                    
                     $tmpuser->realname            = $value['realname'];
                     $tmpuser->business_licence_no = $value['user_number'];
                     $tmpuser->phone               = $value['phone'];
@@ -1288,7 +1308,7 @@ class ApiPosController extends Controller
                     $ret = $tmpuser->save();
                     if($ret === false)
                     {
-                        throw new Exception(" save user record failed", 1);
+                        throw new \Exception(" save user record failed", 1);
                     } 
                     $save_count++;   
                 } else {
@@ -1308,7 +1328,7 @@ class ApiPosController extends Controller
                     $ret = $is_exist->save();
                     if($ret === false)
                     {
-                        throw new Exception(" update user record failed", 1);
+                        throw new \Exception(" update user record failed", 1);
                     }
                     $update_count++;   
                 }
@@ -1343,6 +1363,14 @@ class ApiPosController extends Controller
     {
         $data = $req->get('data');
         $store_code = $req->get('store_code');
+
+        // 检查字段
+        $fieldsresult = $this->checkFields($data, self::SYNC_GOODS);
+        if($fieldsresult !== true)
+        {
+            return $fieldsresult;
+        }
+
         DB::beginTransaction();
         try {
             $save_count = 0;
@@ -1384,7 +1412,7 @@ class ApiPosController extends Controller
                     $ret = $tmpuser->save();
                     if($ret === false)
                     {
-                        throw new Exception(" save goods record failed", 1);
+                        throw new \Exception(" save goods record failed", 1);
                     }  
                     $save_count++;  
                 } else {
@@ -1404,7 +1432,7 @@ class ApiPosController extends Controller
                     $ret = $is_exist->save();
                     if($ret === false)
                     {
-                        throw new Exception(" update goods record failed", 1);
+                        throw new \Exception(" update goods record failed", 1);
                     }
                     $update_count++;
                 }
@@ -1433,6 +1461,14 @@ class ApiPosController extends Controller
     {
         $data = $req->get('data');
         $store_code = $req->get('store_code');
+
+        // 检查字段
+        $fieldsresult = $this->checkFields($data, self::SYNC_ORDER);
+        if($fieldsresult !== true)
+        {
+            return $fieldsresult;
+        }
+
         DB::beginTransaction();
         try {
             $save_count=0;
@@ -1470,7 +1506,7 @@ class ApiPosController extends Controller
                     $ret = $tmpuser->save();
                     if($ret === false)
                     {
-                        throw new Exception(" save order record failed", 1);
+                        throw new \Exception(" save order record failed", 1);
                     }    
                     $save_count++;
                 } else {
@@ -1500,7 +1536,7 @@ class ApiPosController extends Controller
                     $ret                        = $is_exist->save();
                     if($ret === false)
                     {
-                        throw new Exception(" update order record failed", 1);
+                        throw new \Exception(" update order record failed", 1);
                     }
                     $update_count++;
                 }
@@ -1523,6 +1559,14 @@ class ApiPosController extends Controller
     {
         $data = $req->get('data');
         $store_code = $req->get('store_code');
+
+        // 检查字段
+        $fieldsresult = $this->checkFields($data, self::SYNC_ORDERGOODS);
+        if($fieldsresult !== true)
+        {
+            return $fieldsresult;
+        }
+
         DB::beginTransaction();
         try {
             $save_count = 0;
@@ -1552,7 +1596,7 @@ class ApiPosController extends Controller
                     $ret = $tmpuser->save();
                     if($ret === false)
                     {
-                        throw new Exception(" save order goods record failed", 1);
+                        throw new \Exception(" save order goods record failed", 1);
                     }
                     $save_count ++;    
                 } else {
@@ -1575,7 +1619,7 @@ class ApiPosController extends Controller
                     $ret = $is_exist->save();
                     if($ret === false)
                     {
-                        throw new Exception(" update order goods record failed", 1);
+                        throw new \Exception(" update order goods record failed", 1);
                     }
                     $update_count ++;    
                 }
@@ -1594,14 +1638,77 @@ class ApiPosController extends Controller
         return true;
     }
 
+    /**
+     * 根据请求类型验证字段
+     * @param  [type] $data [description]
+     * @param  [type] $type [description]
+     * @return [type]       [description]
+     */
+    private function checkFields($data, $type)
+    {
+        $fields = [];
+        switch ($type) {
+            case self::SYNC_USER:
+                $fields = ['id','uname','password','rank','deleted','realname','user_number','phone'];
+                break;
+            case self::SYNC_GOODS:
+                $fields = ['id','cat_id','goods_sn','cost_price','shop_price','repertory','repertory_caution','staleTime','onSale','sale_time','isShort','short_time','sale_time','check','type','spec','custom','unit','create_time','deleted'];
+                break;
+            case self::SYNC_MEMBER:
+                $fields = ['id','uname','phone','idcard','deleted','birthday','discount','total_consumption','total_order','points','balance','gender','create_time','comment'];
+                break;
+            case self::SYNC_GOODSSKU:
+                  // 废弃
+                break;
+            case self::SYNC_ORDERGOODS:
+                $fields = ['id','ogid','gid','goods_sn','goods_name','goods_num','goods_price','subtotal_price','discounts_price','discount_code','discount','deleted'];    
+                break;
+            case self::SYNC_CATEGORY:
+                // 无
+                break;
+            case self::SYNC_SHIFTLOG:
+                $fields = ['id','uid','shifts_code','start_time','end_time','total_price','cash_price','deleted'];
+                break;
+            default:
+                # code...
+                break;
+        }
+
+        // check
+        if(is_array($data)&&sizeof($data)>0)
+        {
+            $test = $data[0];
+            foreach ($fields as $key => $value) {
+                if(!array_key_exists($value, $test))
+                {
+                    return $this->ajaxFail(null, "{$value} field is required", $type*1100+$key);
+                }
+            }
+        } else {
+            return true;
+        }
+
+        return true;
+    }
+
     public function syncShiftLog(Request $req)
     {
         $data = $req->get('data');
         $store_code = $req->get('store_code');
+
+        $fieldsresult = $this->checkFields($data, self::SYNC_SHIFTLOG);
+        if($fieldsresult !== true)
+        {
+            return $fieldsresult;
+        }
+
         DB::beginTransaction();
         try {
             $save_count = 0;
             $update_count = 0;
+
+            // fields check
+            
             foreach ($data as $key => $value) {
                 // 去重
                 $is_exist = ShiftLog::where(['store_code'=>$store_code,'id'=>$value['id']])->first();
@@ -1613,7 +1720,6 @@ class ApiPosController extends Controller
                     $tmpuser->shifts_code = $value['shifts_code'];
                     $tmpuser->start_time  = $value['start_time'];
                     $tmpuser->end_time    = $value['end_time'];
-                    
                     $tmpuser->total_price = $value['total_price'];
                     $tmpuser->cash_price  = $value['cash_price'];
                     $tmpuser->deleted     = $value['deleted'];
@@ -1621,7 +1727,7 @@ class ApiPosController extends Controller
                     $ret = $tmpuser->save();
                     if($ret === false)
                     {
-                        throw new Exception(" save members record failed", 1);
+                        throw new \Exception(" save members record failed", 1);
                     }   
                     $save_count++; 
                 } else {
@@ -1630,7 +1736,6 @@ class ApiPosController extends Controller
                     $is_exist->shifts_code = $value['shifts_code'];
                     $is_exist->start_time  = $value['start_time'];
                     $is_exist->end_time    = $value['end_time'];
-                    
                     $is_exist->total_price = $value['total_price'];
                     $is_exist->cash_price  = $value['cash_price'];
                     $is_exist->deleted     = $value['deleted'];
@@ -1640,7 +1745,7 @@ class ApiPosController extends Controller
                     $ret = $is_exist->save();
                     if($ret === false)
                     {
-                        throw new Exception(" update members record failed", 1);
+                        throw new \Exception(" update members record failed", 1);
                     }
                     $update_count++; 
                 }
@@ -1739,6 +1844,26 @@ class ApiPosController extends Controller
     }
 
     /**
+     * 获取 goods_sku 详情
+     * @param  Request $req [description]
+     * @return [type]       [description]
+     */
+    public function getSkuGoods(Request $req)
+    {
+        $barcode = $req->get('barcode');
+
+        if(empty($barcode))
+        {
+            return $this->ajaxFail(null, "barcode can not be empty", 1000);
+        }
+
+        $info = GoodsSku::where(['goods_sn'=>$barcode])->first();
+        return $this->ajaxSuccess($info, "success");
+
+
+    }
+
+    /**
      * 定时任务接口，定时从中金拉取账单数据，生成 prepayment 表
      * @param  Request $req [description]
      * @return [type]       [description]
@@ -1787,7 +1912,7 @@ class ApiPosController extends Controller
                         $save_result = $is_exist->save();
                         if($save_result === false)
                         {
-                            throw new Exception("save error", 1);
+                            throw new \Exception("save error", 1);
                         } else {
 
                         }
@@ -1807,7 +1932,7 @@ class ApiPosController extends Controller
                         $save_result = $newrec->save();
                         if($save_result === false)
                         {
-                            throw new Exception("save error", 1);
+                            throw new \Exception("save error", 1);
                         } else {
 
                         }
@@ -1823,6 +1948,8 @@ class ApiPosController extends Controller
                 
                 // 生成 prepayment 
                 $this->generatePrepayment($date);
+                // 生成对账单数据
+                $this->generateAfterPayment($data);
 
                 return $this->ajaxSuccess([], "read success, {$total} records");
             } catch (Exception $e) {
@@ -1848,9 +1975,16 @@ class ApiPosController extends Controller
 
         $qrytime = strtotime($date);
 
+        // 获取日期时间内的订单
+        $timestamp = strtotime($date);
+        $draw_date = date('Y-m-d 0:0:0', $timestamp);
+        $midnight_date = date("y-m-d 23:59:59", $timestamp);
 
-        $orderlist = DB::select("select * from pos_server_order where 1");
-        $loglist = DB::select("select * from pos_cpcc_tx_log where 1");
+        $draw_ts = strtotime($draw_date);
+        $midnight_ts = strtotime($midnight_date);
+
+        $orderlist = DB::select("select * from pos_server_order where create_time < {$midnight_ts} and create_time > {$draw_ts}");
+        $loglist = DB::select("select * from pos_cpcc_tx_log where TxType=1402 and check_date={$date}");
 
         $order_sn       = array_column($orderlist, 'order_sn');
         $txsn           = array_column($loglist, 'TxSn');
@@ -1919,7 +2053,7 @@ class ApiPosController extends Controller
                         $saveresult = $is_exist->save();
                         if($saveresult === false)
                         {
-                            throw new Exception("Error Processing Request", 1);
+                            throw new \Exception("Error Processing Request", 1);
                         }
                     } else {
                         $tmppre = new Prepayment();
@@ -1944,7 +2078,7 @@ class ApiPosController extends Controller
                         $saveresult = $tmppre->save();
                         if($saveresult === false)
                         {
-                            throw new Exception("Error Processing Request", 1);
+                            throw new \Exception("Error Processing Request", 1);
                         }    
                     }
                     
@@ -1991,7 +2125,7 @@ class ApiPosController extends Controller
                         $saveresult = $tmppre->save();
                         if($saveresult === false)
                         {
-                            throw new Exception("Error Processing Request", 1);
+                            throw new \Exception("Error Processing Request", 1);
                         }                        
                     }                    
                 }
@@ -2025,7 +2159,7 @@ class ApiPosController extends Controller
                             $saveresult = $is_exist->save();
                             if($saveresult === false)
                             {
-                                throw new Exception("Error Processing Request", 1);
+                                throw new \Exception("Error Processing Request", 1);
                             }  
                         } else {
                             unset($tmppre);
@@ -2045,7 +2179,265 @@ class ApiPosController extends Controller
                             $saveresult = $tmppre->save();
                             if($saveresult === false)
                             {
-                                throw new Exception("Error Processing Request", 1);
+                                throw new \Exception("Error Processing Request", 1);
+                            }    
+                        }
+
+                        
+                    }
+                }
+
+            // 生成 order 记录条数， log 记录条数， order 记录金额 log 记录金额 差额 order-log
+            $delta = $order_total - $log_total;
+            $is_log_exist = AbnormalTransactionLog::where(['check_date' => $date,'tx_type'=>1402])->first();
+            if(!is_null($is_log_exist))
+            {
+                $is_log_exist->log_num = $log_num;
+                $is_log_exist->log_total = $log_total;
+                $is_log_exist->order_num = $order_num;
+                $is_log_exist->order_total = $order_total;
+                $is_log_exist->amount = $order_total - $log_total;
+
+                $is_log_exist->save();
+
+            } else {
+                $tmp_log = new AbnormalTransactionLog();
+                $tmp_log->check_date = $date;
+                $tmp_log->tx_type = 1402;
+                $tmp_log->log_num = $log_num;
+                $tmp_log->log_total = $log_total;
+                $tmp_log->order_num = $order_num;
+                $tmp_log->amount = $order_total - $log_total;
+                $tmp_log->order_total = $order_total;
+                $tmp_log->create_time = time();
+                $tmp_log->save();
+            }
+
+            DB::commit();
+            return $this->ajaxSuccess([], "read success");
+        } catch (Exception $e) {
+            DB::rollBack();
+            // 写日志
+            return $this->ajaxFail(null, "read data fail", 1000);
+        }
+        
+    }
+
+    /**
+     * 生成对账单数据
+     * @param  [type] $date [description]
+     * @return [type]       [description]
+     */
+    public function generatePostpayment($date)
+    {
+        return;
+        $qrytime = strtotime($date);
+
+        // 获取日期时间内的订单
+        $timestamp = strtotime($date);
+        $draw_date = date('Y-m-d 0:0:0', $timestamp);
+        $midnight_date = date("y-m-d 23:59:59", $timestamp);
+
+        $draw_ts = strtotime($draw_date);
+        $midnight_ts = strtotime($midnight_date);
+
+        $orderlist = DB::select("select * from pos_outflow_log where  check_date={$date}");
+        $loglist = DB::select("select * from pos_cpcc_tx_log where TxType=1341 and check_date={$date}");
+
+        $order_sn       = array_column($orderlist, 'SerialNumber');
+        $txsn           = array_column($loglist, 'TxSn');
+        $merge          = array_merge($order_sn, $txsn);
+        $order_diff_log = array_diff($order_sn, $txsn);
+        $log_diff_order = array_diff($txsn, $order_sn);
+
+        if(sizeof($merge) == sizeof($order_sn))
+        {
+            // 没有差异
+        }
+
+
+        $order_num = 0;
+        $order_total = 0.0;
+        $log_num = 0;
+        $log_total = 0.0;
+        $delta = 0;
+
+
+        $ll = DB::select("SELECT
+            o.OrderNo, o.Amount as o_amount,o.notify_time as o_notify_time o.create_time as o_create_time,o.SerialNumber as o_serial_no,o.id as o_id,
+            l.TxAmount as l_amount, l.BankNotificationTime as l_notify_time,l.TxSn as l_serial_no,l.TxType as l_type,l.id as l_id
+                FROM pos_outflow_log as o
+            JOIN pos_cpcc_tx_log as l
+            ON o.order_sn = l.TxSn
+            where l.TxType=1402
+           
+        ");
+
+        // 开启事务
+        DB::beginTransaction();
+        try{
+                foreach ($ll as $key => $value) {
+                    // 去重
+                    $is_exist = Postpayment::where(['serial_no'=>$value->l_serial_no])->first();
+
+                    // 统计金额数量
+                    $order_num +=1;
+                    $log_num +=1;
+                    $order_total += $value->o_amount;
+                    $log_total += $value->l_amount;
+
+                    if($is_exist !==null)
+                    {
+                        $is_exist->check_date = $date;
+                        $is_exist->serial_no = $value->o_serial_no;
+                        $is_exist->store_name = "待处理2";
+                        $is_exist->store_code = $value->order_no;
+                        $is_exist->cpcc_amount = $value->l_amount;
+                        $is_exist->order_amount = $value->o_amount;
+
+
+
+                        if(abs($value->l_amount - $value->o_amount) > 1)
+                        {
+                            $is_exist->result_status = self::CHECK_NUMBERNOTMATCH;
+                        } else {
+                            $is_exist->result_status = self::CHECK_SUCCESS;
+                        }
+                        $is_exist->status = 0;
+                        $is_exist->order_time = $value->o_create_time;
+                        $is_exist->cpcc_time = $value->l_notify_time;
+                        $is_exist->cpcc_tx_log_id = $value->l_id;
+                        $is_exist->order_id = $value->o_id;
+                        $saveresult = $is_exist->save();
+                        if($saveresult === false)
+                        {
+                            throw new \Exception("Error Processing Request", 1);
+                        }
+                    } else {
+                        $tmppre = new  Postpayment();
+                        $tmppre->check_date = $date;
+                        $tmppre->serial_no = $value->o_serial_no;
+                        $tmppre->store_name = "待处理2";
+                        $tmppre->store_code = $value->order_no;
+                        $tmppre->cpcc_amount = $value->l_amount;
+                        $tmppre->order_amount = $value->o_amount;
+
+                        if(abs($value->l_amount - $value->o_amount) > 1)
+                        {
+                            $tmppre->result_status = self::CHECK_NUMBERNOTMATCH;
+                        } else {
+                            $tmppre->result_status = self::CHECK_SUCCESS;
+                        }
+                        $tmppre->status = 0;
+                        $tmppre->order_time = $value->o_create_time;
+                        $tmppre->cpcc_time = $value->l_notify_time;
+                        $tmppre->cpcc_tx_log_id = $value->l_id;
+                        $tmppre->order_id = $value->o_id;
+                        $saveresult = $tmppre->save();
+                        if($saveresult === false)
+                        {
+                            throw new \Exception("Error Processing Request", 1);
+                        }    
+                    }
+                    
+
+
+                }
+ 
+
+                // 差异性插入
+                if(sizeof($order_diff_log) > 0)
+                {
+
+                    foreach ($order_diff_log as $key => $value) {
+                        // 去重
+                        
+                        $is_exist =  Postpayment::where(['serial_no'=>$value])->first();
+
+                        if($is_exist !==null)
+                        {
+                            continue;
+                        }
+
+                        // 根据id 查找 Order 信息
+                        $orderinfo = OutflowLog::where(['order_sn'=>$value])->first();
+
+                        // 统计 order 信息
+                        $order_num +=1;
+                        $order_total += $orderinfo->amount;
+
+                        unset($tmppre);
+                        $tmppre = new Prepayment();
+                        $tmppre->check_date = $date;
+                        $tmppre->serial_no = $orderinfo->SerialNumber;
+                        $tmppre->store_name = "orderoly";
+                        $tmppre->store_code = $orderinfo->OrderNo;
+                        $tmppre->cpcc_amount = 0;
+                        $tmppre->order_amount = $orderinfo->Amount;
+                        $tmppre->result_status = self::check_CCPCNOT;// 
+                        $tmppre->status = 0;
+                        $tmppre->order_time = $orderinfo->create_time;
+                        $tmppre->cpcc_time = 0;
+                        $tmppre->cpcc_tx_log_id = 0;
+                        $tmppre->order_id = $orderinfo->id;
+                        $saveresult = $tmppre->save();
+                        if($saveresult === false)
+                        {
+                            throw new \Exception("Error Processing Request", 1);
+                        }                        
+                    }                    
+                }
+
+                if(sizeof($log_diff_order) > 0)
+                {
+                    foreach ($log_diff_order as $key => $value) {
+                        // 去重
+                        $is_exist = Prepayment::where(['serial_no'=>$value])->first();
+                        $loginfo = CpccTxLog::where(['TxSn'=>$value])->first();
+
+                        // 统计 log 信息
+                        $log_num +=1;
+                        $log_total +=$loginfo->TxAmount;
+
+                        if($is_exist !==null)
+                        {
+
+                            $is_exist->check_date = $date;
+                            $is_exist->serial_no = $loginfo->TxSn;
+                            $is_exist->store_name = "log_only";
+                            $is_exist->store_code = "xxxx";
+                            $is_exist->cpcc_amount = $loginfo->TxAmount;
+                            $is_exist->order_amount = 0;
+                            $is_exist->result_status = self::CHECK_ORDERNOT;
+                            $is_exist->status = 0;
+                            $is_exist->order_time = 0;
+                            $is_exist->cpcc_time = $loginfo->BankNotificationTime;
+                            $is_exist->cpcc_tx_log_id = $loginfo->id;
+                            $is_exist->order_id = 0;
+                            $saveresult = $is_exist->save();
+                            if($saveresult === false)
+                            {
+                                throw new \Exception("Error Processing Request", 1);
+                            }  
+                        } else {
+                            unset($tmppre);
+                            $tmppre = new Prepayment();
+                            $tmppre->check_date = $date;
+                            $tmppre->serial_no = $loginfo->TxSn;
+                            $tmppre->store_name = "log_only";
+                            $tmppre->store_code = "xxxx";
+                            $tmppre->cpcc_amount = $loginfo->TxAmount;
+                            $tmppre->order_amount = 0;
+                            $tmppre->result_status = self::CHECK_ORDERNOT;
+                            $tmppre->status = 0;
+                            $tmppre->order_time = 0;
+                            $tmppre->cpcc_time = $loginfo->BankNotificationTime;
+                            $tmppre->cpcc_tx_log_id = $loginfo->id;
+                            $tmppre->order_id = 0;
+                            $saveresult = $tmppre->save();
+                            if($saveresult === false)
+                            {
+                                throw new \Exception("Error Processing Request", 1);
                             }    
                         }
 
@@ -2157,7 +2549,7 @@ class ApiPosController extends Controller
                     $saveresult = $tmppre->save();
                     if($saveresult === false)
                     {
-                        throw new Exception("Error Processing Request", 1);
+                        throw new \Exception("Error Processing Request", 1);
                     }
 
 
@@ -2195,7 +2587,7 @@ class ApiPosController extends Controller
                         $saveresult = $tmppre->save();
                         if($saveresult === false)
                         {
-                            throw new Exception("Error Processing Request", 1);
+                            throw new \Exception("Error Processing Request", 1);
                         }                        
                     }                    
                 }
@@ -2228,7 +2620,7 @@ class ApiPosController extends Controller
                         $saveresult = $tmppre->save();
                         if($saveresult === false)
                         {
-                            throw new Exception("Error Processing Request", 1);
+                            throw new \Exception("Error Processing Request", 1);
                         }
                     }
                 }
