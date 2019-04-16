@@ -2686,11 +2686,11 @@ class ApiPosController extends Controller
      */
     private function notify1408($order_no, $serial_no, $status, $notify_time, $store_id)
     {
-         Log::info('1402 异步回调 order_no {$order_no}  serial {$serial_no} status {$status} notify {$notify_time} store_id {$store_id}');
+         Log::info("1402 异步回调 order_no {$order_no}  serial {$serial_no} status {$status} notify {$notify_time} store_id {$store_id}");
          $rec = ServerOrder::where(['order_no'=>$order_no, "serial_no"=>$serial_no])->first();
          if($rec === null)
          {
-            Log::info('1402 异步回调 order_no {$order_no}  serial {$serial_no} status {$status} notify {$notify_time} store_id {$store_id}  record not found');
+            Log::info("1402 异步回调 order_no {$order_no}  serial {$serial_no} status {$status} notify {$notify_time} store_id {$store_id}  record not found");
             return;
          }
 
@@ -2699,7 +2699,7 @@ class ApiPosController extends Controller
         $result = $rec->save();
         if($result === false)
         {
-            Log::info('1402 异步回调 order_no {$order_no}  serial {$serial_no} status {$status} notify {$notify_time} store_id {$store_id}  update server order failed');
+            Log::info("1402 异步回调 order_no {$order_no}  serial {$serial_no} status {$status} notify {$notify_time} store_id {$store_id}  update server order failed");
         }
     }
 
@@ -2713,24 +2713,24 @@ class ApiPosController extends Controller
         if($info === null)
         {
 
-            Log::info('1341 异步回调 serial_no {$serial_no}  order_no {$order_no} amount {$amount} status {$status} transafer_time {$transafer_time} record not found');
+            Log::info("1341 异步回调 serial_no {$serial_no}  order_no {$order_no} amount {$amount} status {$status} transafer_time {$transafer_time} record not found");
             return;
         }
 
         //update
         if(abs($info->amount - $amount)>1)
         {
-            Log::info('1341 异步回调 serial_no {$serial_no}  order_no {$order_no} amount {$amount} status {$status} transafer_time {$transafer_time} amount not match {$info->amount} vs ccps {$amount}');    
+            Log::info("1341 异步回调 serial_no {$serial_no}  order_no {$order_no} amount {$amount} status {$status} transafer_time {$transafer_time} amount not match {$info->amount} vs ccps {$amount}");    
         }
 
         $info->status = $status;
         $result = $info->save();
         if($result === false)
         {
-            Log::info('1341 异步回调 serial_no {$serial_no}  order_no {$order_no} amount {$amount} status {$status} transafer_time {$transafer_time} update failed');
+            Log::info("1341 异步回调 serial_no {$serial_no}  order_no {$order_no} amount {$amount} status {$status} transafer_time {$transafer_time} update failed");
             return;    
         }
-        Log::info('1341 异步回调 serial_no {$serial_no}  order_no {$order_no} amount {$amount} status {$status} transafer_time {$transafer_time} complted');
+        Log::info("1341 异步回调 serial_no {$serial_no}  order_no {$order_no} amount {$amount} status {$status} transafer_time {$transafer_time} complted");
     }
 
 
@@ -2890,7 +2890,6 @@ class ApiPosController extends Controller
      */
     public function banklist(Request $req)
     {
-         Log::info('hello wolrd');
 
         $list = Bank::all();
         return $this->ajaxSuccess($list, 'success');
