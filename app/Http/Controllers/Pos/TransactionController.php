@@ -200,7 +200,7 @@ class TransactionController extends Controller
                 if($tmpoutflow->status == 1)
                 {
                     // 已结算成功，无需结算
-                    continue;
+                    //continue;
                 }
 
                 // 组装参数，发送报文
@@ -219,7 +219,7 @@ class TransactionController extends Controller
                 $postdata['BranchName']           = "whatever";
                 $postdata['Province']             = "whatever";
                 $postdata['City']                 = "whatever";
-                $ret = $this->get_web_content($postdata, "http://pos1.123.com/api/apipos/ccpc1341", true);
+                $ret = $this->get_web_content($postdata, $_SERVER['SERVER_NAME']."/api/apipos/ccpc1341", true);
                 $json_str = json_decode($ret, true);
                 if($json_str['code'] == 0)
                 {
