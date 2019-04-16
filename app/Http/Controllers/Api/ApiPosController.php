@@ -976,7 +976,7 @@ class ApiPosController extends Controller
         $responseXML= new \SimpleXMLElement($xmlnotify); 
 
         $plainText=base64_decode($message); 
-        $ok=cfcaverify($plainText,$signature);
+        $ok=$this->cfcaverify($plainText,$signature);
 
         if($ok!=1)
         {
