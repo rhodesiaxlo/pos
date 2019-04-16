@@ -1390,9 +1390,9 @@ class ApiPosController extends Controller
                     $tmpuser->repertory         = $value['repertory'];
                     $tmpuser->repertory_caution = $value['repertory_caution'];
                     $tmpuser->staleTime         = $value['staleTime'];
-                    $tmpuser->is_forsale        = $value['onSale'];
+                    $tmpuser->is_forsale        = $value['is_forsale'];
                     $tmpuser->sale_time         = $value['sale_time'];
-                    $tmpuser->is_short          = $value['isShort'];
+                    $tmpuser->is_short          = $value['is_short'];
                     $tmpuser->short_time        = $value['short_time'];
                     $tmpuser->sale_time         = $value['sale_time'];
                     $tmpuser->check             = $value['check'];
@@ -1421,9 +1421,9 @@ class ApiPosController extends Controller
                     $is_exist->repertory         = $value['repertory'];
                     $is_exist->repertory_caution = $value['repertory_caution'];
                     $is_exist->staleTime         = $value['staleTime'];
-                    $is_exist->is_forsale        = $value['onSale'];
+                    $is_exist->is_forsale        = $value['is_forsale'];
                     $is_exist->sale_time         = $value['sale_time'];
-                    $is_exist->is_short          = $value['isShort'];
+                    $is_exist->is_short          = $value['is_short'];
                     $is_exist->short_time        = $value['short_time'];
                     $is_exist->sale_time         = $value['sale_time'];
                     $is_exist->check             = $value['check'];
@@ -1496,14 +1496,14 @@ class ApiPosController extends Controller
                     $tmpuser->uid              = $value['uid'];
                     $tmpuser->store_code       = $store_code;
                     $tmpuser->user_name        = $value['user_name'];
-                    $tmpuser->mid              = $value['mid'];
+                    $tmpuser->mid              = is_null($value['mid'])?0:$value['mid'];
                     $tmpuser->total_price      = $value['total_price'];
                     $tmpuser->discount_rate    = $value['discount_rate'];
                     
                     $tmpuser->discounts_price  = $value['discounts_price'];
                     $tmpuser->discount_code    = $value['discount_code'];
                     $tmpuser->change_price     = $value['change_price'];
-                    $tmpuser->refund_uid       = $value['refund_uid'];
+                    $tmpuser->refund_uid       = is_null($value['refund_uid'])?0:$value['refund_uid'];
 
                     $tmpuser->receivable_price = $value['receivable_price'];
                     $tmpuser->practical_price  = $value['practical_price'];
@@ -1527,14 +1527,14 @@ class ApiPosController extends Controller
                     $is_exist->uid              = $value['uid'];
                     $is_exist->store_code       = $store_code;
                     $is_exist->user_name        = $value['user_name'];
-                    $is_exist->mid              = $value['mid'];
+                    $is_exist->mid              = is_null($value['mid'])?0:$value['mid'];
                     $is_exist->total_price      = $value['total_price'];
                     $is_exist->discount_rate    = $value['discount_rate'];
                     
                     $is_exist->discounts_price  = $value['discounts_price'];
                     $is_exist->discount_code    = $value['discount_code'];
                     $is_exist->change_price     = $value['change_price'];
-                    $is_exist->refund_uid       = $value['refund_uid'];
+                    $is_exist->refund_uid       = is_null($value['refund_uid'])?0:$value['refund_uid'];
                     
 
                     $is_exist->receivable_price = $value['receivable_price'];
@@ -1661,7 +1661,7 @@ class ApiPosController extends Controller
                 $fields = ['id','uname','password','rank','deleted','realname','user_number','phone'];
                 break;
             case self::SYNC_GOODS:
-                $fields = ['id','cat_id','goods_sn','cost_price','shop_price','repertory','repertory_caution','staleTime','onSale','sale_time','isShort','short_time','sale_time','check','type','spec','custom','unit','create_time','deleted'];
+                $fields = ['id','cat_id','goods_sn','cost_price','shop_price','repertory','repertory_caution','staleTime','is_forsale','sale_time','is_short','short_time','sale_time','check','type','spec','custom','unit','create_time','deleted'];
                 break;
             case self::SYNC_MEMBER:
                 $fields = ['id','uname','phone','idcard','deleted','birthday','discount','total_consumption','total_order','points','balance','gender','create_time','comment'];
@@ -2731,6 +2731,28 @@ class ApiPosController extends Controller
         if($info === null)
         {
             Log::info("1341 异步回调 serial_no {$serial_no}  order_no {$order_no} amount {$amount} status {$status} transafer_time {$transafer_time} record not found");
+            $newoutflowlog = new OutflowLog();
+            $userinfo = User::where(['store_code'=>$order_no, 'rank'=>0])->first();
+            if(is_null($userinfo))
+            {
+                return;
+            }
+
+            $newoutflowlog->SerialNumber = $serial_no;
+            $newoutflowlog->OrderNo = $order_no;
+            $newoutflowlog->Amount = $amount;
+            //$newoutflowlog->AccountType = "";
+            //$newoutflowlog->PaymentAccountName = "";
+            //$newoutflowlog->PaymentAccountNumbe = "";
+            $newoutflowlog->BankID = $userinfo->bank_id;
+            $newoutflowlog->AccountName = $userinfo->account_name;
+            $newoutflowlog->AccountNumber = $userinfo->account_no;
+            $newoutflowlog->create_time = time();
+            $newoutflowlog->notify_time = time();
+            $newoutflowlog->check_date = "1234";
+            $newoutflowlog->message = "自动生成";
+            $newoutflowlog->status = $status;
+            $newoutflowlog->save();
             return;
         }
 
