@@ -2704,6 +2704,8 @@ class ApiPosController extends Controller
             $newserverorder->order_sn = $serial_no;
             $newserverorder->payment_way = $store_id;
             $newserverorder->notify_time = $notify_time;
+            $newserverorder->status = $status;
+
             $newserverorder->create_time = time();
             $newserverorder->save();
             Log::info("1402 异步回调 order_no {$order_no}  serial {$serial_no} status {$status} notify {$notify_time} store_id {$store_id}  record not found");
