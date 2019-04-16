@@ -238,7 +238,8 @@ function prepayment(){
                 eeor('初审成功','bg_green_1')
                 window.location = "/pos/transaction/withdrawconfirm?date="+$('#seachdate').val();
             }else{
-                alert(res.message)
+                // alert(res.message)
+                eeor(res.message,'bg-red-2')
             }
         })
     }else{
@@ -257,7 +258,8 @@ function prepayment(){
                 eeor('复审成功','bg_green_1')
                 window.location = "/pos/transaction/withdrawconfirm?date="+$('#seachdate').val();
             }else{
-                alert(res.message)
+                // alert(res.message)
+                eeor(res.message,'bg-red-2')
             }
         })
     }

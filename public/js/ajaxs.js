@@ -33,7 +33,9 @@ function ajaxs(url,data,suc){
 			}
 		},
 		error:function(XMLHttpRequest, textStatus, errorThrown){
-			alert('请求超时，请检查当前网络状态，并刷新页面' + textStatus)
+			// debugger
+			eeor((errorThrown+'：'+XMLHttpRequest.status),'bg-red-2')
+			// alert('请求超时，请检查当前网络状态，并刷新页面' + textStatus)
 		}
 	});
 }

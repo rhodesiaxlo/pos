@@ -72,14 +72,14 @@
         </tr>
         @endforeach
     </table>
-    <div class='fixed bg-fff' id='ok' style='width:26%; left:40%;top:50%;display:none;'>
-        <p class='txal bold w100pc' style='border-bottom:1px solid #999;'>结算划出</p>
+    <div class='fixed bg-fff pos_aler' id='ok' style='width:26%; left:40%;top:50%;display:none;'>
+        <p class='txal bold w100pc pos_aler_title' style='border-bottom:1px solid #999;'>结算划出</p>
         <div class='txal w100pc bold' style='height:100px;line-height:100px;'>
             <p>确定对选中商家作划出结算款？</p>
         </div>
         <div class='fsa mg-b-10'>
-            <input type="button" onclick='return end()' value="是" />
-            <input type="button" class="" onclick="$('#ok').hide()" value='否' />
+            <input type="button" class="mg-l-10 w80px bor-n white " style='background: #d83138;' onclick='return end()' value="是" />
+            <input type="button" class="mg-l-10 w80px bor-n white " onclick="$('#ok').hide()" value='否' />
         </div>
     </div>
     <div class='fixed bg-fff' id='eor' style='width:26%; left:40%; top:50%; display:none;'>
@@ -113,7 +113,7 @@
             var date=new Date($('.date_picker').val())
             var tod=Date.parse(date)
             if(tod>=yest1){
-                alert('当前时间不可选择')
+                eeor('当前时间不可选择','bg-red-2')
                 $('.date_picker').val('')
             }
         }
@@ -125,10 +125,6 @@
                 }
             });
             if(list.length==0){
-                // $('#eor').empty()
-                // $('#eor').show()
-                // $('#eor').append("<div class='txal w100pc bold' style='height:100px;line-height:100px;'>请先选择要清算的账单</div>")
-                // $("#eor").fadeOut(3000);
                 eeor('请先选择要清算的账单','bg-red-2')
             }else{
                 $('#ok').show()
@@ -150,14 +146,12 @@
             ajaxs(url,data,res=>{
                 if(res.code==1){
                     $('#ok').hide()
-                    $('#eor').empty()
-                    $('#eor').show()
-                    $('#eor').append("<div class='txal w100pc bold' style='height:100px;line-height:100px;'>清算成功！</div>")
-                    $("#eor").fadeOut(3000);
+                    eeor('清算成功！','bg_green_1')
+                    window.location = "/pos/transaction/outflow?date="+$('#seachdate').val();
                 }else{
-                    alert(res.message)
+                    eeor(res.message,'bg-red-2')
+                    // alert(res.message)
                 }
-               
             })
         }
         $("#all").click(function(){    
