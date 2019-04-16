@@ -1382,7 +1382,7 @@ class ApiPosController extends Controller
                 {
                     $tmpuser                    = new Goods;
                     $tmpuser->id                = $value['id'];
-                    $tmpuser->cid               = $value['cid'];
+                    $tmpuser->cid               = $value['cat_id'];
                     $tmpuser->goods_name        = $value['goods_sn'];
                     $tmpuser->goods_sn          = $store_code;
                     $tmpuser->cost_price        = $value['cost_price'];
