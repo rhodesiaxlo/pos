@@ -1383,18 +1383,15 @@ class ApiPosController extends Controller
                     $tmpuser                    = new Goods;
                     $tmpuser->id                = $value['id'];
                     $tmpuser->cid               = $value['cat_id'];
-                    $tmpuser->goods_name        = $value['goods_sn'];
-                    $tmpuser->goods_sn          = $store_code;
+                    $tmpuser->goods_name        = $value['goods_name'];
+                    $tmpuser->goods_sn          = $value['goods_sn'];
                     $tmpuser->cost_price        = $value['cost_price'];
                     $tmpuser->shop_price        = $value['shop_price'];
                     $tmpuser->repertory         = $value['repertory'];
                     $tmpuser->repertory_caution = $value['repertory_caution'];
-                    
-                    
                     $tmpuser->staleTime         = $value['staleTime'];
                     $tmpuser->is_forsale        = $value['onSale'];
                     $tmpuser->sale_time         = $value['sale_time'];
-                    
                     $tmpuser->is_short          = $value['isShort'];
                     $tmpuser->short_time        = $value['short_time'];
                     $tmpuser->sale_time         = $value['sale_time'];
@@ -1405,6 +1402,7 @@ class ApiPosController extends Controller
                     $tmpuser->unit              = $value['unit'];
                     $tmpuser->create_time       = $value['create_time'];
                     $tmpuser->deleted           = $value['deleted'];
+                    $tmpuser->store_code        = $store_code;
 
 
 
@@ -1416,17 +1414,31 @@ class ApiPosController extends Controller
                     }  
                     $save_count++;  
                 } else {
-                    $is_exist->id                  = $value['id'];
-                    $is_exist->uname               = $value['uname'];
-                    $is_exist->password            = $value['password'];
-                    $is_exist->rank                = $value['rank'];
-                    $is_exist->store_code          = $store_code;
-                    $is_exist->deleted             = $value['deleted'];
-                    $is_exist->is_active           = $value['deleted'];
-                    
-                    $is_exist->realname            = $value['realname'];
-                    $is_exist->business_licence_no = $value['user_number'];
-                    $is_exist->phone               = $value['phone'];
+
+                    $is_exist->id                = $value['id'];
+                    $is_exist->cid               = $value['cat_id'];
+                    $is_exist->goods_name        = $value['goods_name'];
+                    $is_exist->goods_sn          = $value['goods_sn'];
+                    $is_exist->cost_price        = $value['cost_price'];
+                    $is_exist->shop_price        = $value['shop_price'];
+                    $is_exist->repertory         = $value['repertory'];
+                    $is_exist->repertory_caution = $value['repertory_caution'];
+                    $is_exist->staleTime         = $value['staleTime'];
+                    $is_exist->is_forsale        = $value['onSale'];
+                    $is_exist->sale_time         = $value['sale_time'];
+                    $is_exist->is_short          = $value['isShort'];
+                    $is_exist->short_time        = $value['short_time'];
+                    $is_exist->sale_time         = $value['sale_time'];
+                    $is_exist->check             = $value['check'];
+                    $is_exist->type              = $value['type'];
+                    $is_exist->spec              = $value['spec'];
+                    $is_exist->custom            = $value['custom'];
+                    $is_exist->unit              = $value['unit'];
+                    $is_exist->create_time       = $value['create_time'];
+                    $is_exist->deleted           = $value['deleted'];
+                    $is_exist->store_code        = $store_code;
+
+
 
 
                     $ret = $is_exist->save();
