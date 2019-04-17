@@ -1382,7 +1382,7 @@ class ApiPosController extends Controller
                 {
                     $tmpuser                    = new Goods;
                     $tmpuser->id                = $value['id'];
-                    $tmpuser->cat_id             = $value['cat_id'];
+                    $tmpuser->cat_id             = is_null($value['cat_id'])?0:$value['cat_id'];
                     $tmpuser->goods_name        = $value['goods_name'];
                     $tmpuser->goods_sn          = $value['goods_sn'];
                     $tmpuser->cost_price        = $value['cost_price'];
@@ -1413,7 +1413,7 @@ class ApiPosController extends Controller
                 } else {
 
                     $is_exist->id                = $value['id'];
-                    $is_exist->cat_id              = $value['cat_id'];
+                    $is_exist->cat_id              = is_null($value['cat_id'])?0:$value['cat_id'];
                     $is_exist->goods_name        = $value['goods_name'];
                     $is_exist->goods_sn          = $value['goods_sn'];
                     $is_exist->cost_price        = $value['cost_price'];
