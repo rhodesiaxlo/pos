@@ -178,6 +178,7 @@ class TransactionController extends Controller
      */
     public function outflow(Request $req)
     {
+
         if($req->isMethod('POST'))
         {
             $id_list = $req->get('checked');

@@ -6,7 +6,7 @@ function ajaxs(url,data,suc){
 		data,
 		dataType:"json",
 		type : "POST",
-		timeout: 15000,
+		timeout: 30000,
 		success: function(response, status, xhr){
 			// debugger
 			// suc(JSON.parse(response))
@@ -47,7 +47,7 @@ function ajaxGet(url,data,suc){
 		data,
 		dataType:"json",
 		type : "GET",
-		timeout: 15000,
+		timeout: 30000,
 		traditional: true,
 		success: function(response, status, xhr){
 			// debugger

@@ -147,7 +147,7 @@
                 if(res.code==1){
                     $('#ok').hide()
                     eeor('清算成功！','bg_green_1')
-                    window.location = "/pos/transaction/outflow?date="+$('#seachdate').val();
+                    window.location = "/pos/transaction/payment?date="+$('#seachdate').val();
                 }else{
                     eeor(res.message,'bg-red-2')
                     // alert(res.message)
