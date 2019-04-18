@@ -210,7 +210,7 @@ function prepayment(){
     var amount=$('#amount').val()
     var message=$('#msg').val()
     var date=$('#date').val()
-    var tx_type='1343'
+    var tx_type='1341'
     var id=$('#testid').val()
     if(message==''){
         // alert('请填写备注');

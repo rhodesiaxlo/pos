@@ -6,6 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Postpayment extends Model
 {
-    protected $table = "pos_postprepayment";
+    protected $table = "pos_postpayment";
     public $timestamps = false;
 }

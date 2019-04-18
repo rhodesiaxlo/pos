@@ -605,7 +605,7 @@ class ApiPosController extends Controller
                 {
                     for($i = 0; $i<$cur_total; $i++)
                     {
-                        $tmp = [];
+                        $tmp                         = [];
                         $tmp['TxType']               = (string)$simpleXML->Body->Tx[$i]->TxType;  
                         $tmp['TxSn']                 = (string)$simpleXML->Body->Tx[$i]->TxSn;        
                         $tmp['TxAmount']             = (string)$simpleXML->Body->Tx[$i]->TxAmount;        
@@ -613,7 +613,9 @@ class ApiPosController extends Controller
                         $tmp['PaymentAmount']        = (string)$simpleXML->Body->Tx[$i]->PaymentAmount;        
                         $tmp['PayerFee']             = (string)$simpleXML->Body->Tx[$i]->PayerFee;        
                         $tmp['Remark']               = (string)$simpleXML->Body->Tx[$i]->Remark;        
-                        $tmp['BankNotificationTime'] = (string)$simpleXML->Body->Tx[$i]->BankNotificationTime;        
+                        $tmp['BankNotificationTime'] = (string)$simpleXML->Body->Tx[$i]->BankNotificationTime;  
+                        $tmp['MarketOrderNo']        = (string)$simpleXML->Body->Tx[$i]->MarketOrderNo;        
+
                         $tmp['InstitutionFee']       = (string)$simpleXML->Body->Tx[$i]->InstitutionFee;     
                         $tmp['SettlementFlag']       = (string)$simpleXML->Body->Tx[$i]->SettlementFlag;        
                         $tmp['SplitType']            = (string)$simpleXML->Body->Tx[$i]->SplitType;        
@@ -1915,6 +1917,7 @@ class ApiPosController extends Controller
                         $is_exist->PaymentAmount        =$value['PaymentAmount'];
                         $is_exist->PayerFee             =$value['PayerFee'];
                         $is_exist->BankNotificationTime =$value['BankNotificationTime'];
+                        $is_exist->MarketOrderNo        =$value['MarketOrderNo'];
                         $is_exist->check_date           =$date;
                         $is_exist->InstitutionFee       =$value['InstitutionFee'];
                         $is_exist->SplitType            =$value['SplitType'];
@@ -1935,6 +1938,7 @@ class ApiPosController extends Controller
                         $newrec->PaymentAmount        =$value['PaymentAmount'];
                         $newrec->PayerFee             =$value['PayerFee'];
                         $newrec->BankNotificationTime =$value['BankNotificationTime'];
+                        $newrec->MarketOrderNo        =$value['MarketOrderNo'];
                         $newrec->check_date           =$date;
                         $newrec->InstitutionFee       =$value['InstitutionFee'];
                         $newrec->SplitType            =$value['SplitType'];
@@ -1958,7 +1962,7 @@ class ApiPosController extends Controller
                 // 生成 prepayment 
                 $this->generatePrepayment($date);
                 // 生成对账单数据
-                $this->generateAfterPayment($data);
+                $this->generateAfterPayment($date);
 
                 return $this->ajaxSuccess([], "read success, {$total} records");
             } catch (Exception $e) {
@@ -2020,9 +2024,11 @@ class ApiPosController extends Controller
                 FROM pos_server_order as o
             JOIN pos_cpcc_tx_log as l
             ON o.order_sn = l.TxSn
-            where l.TxType=1402
+            where l.TxType=1402 and l.check_date='{$date}'
            
         ");
+
+
 
         // 开启事务
         DB::beginTransaction();
@@ -2237,9 +2243,8 @@ class ApiPosController extends Controller
      * @param  [type] $date [description]
      * @return [type]       [description]
      */
-    public function generatePostpayment($date)
+    public function generateAfterPayment($date)
     {
-        return;
         $qrytime = strtotime($date);
 
         // 获取日期时间内的订单
@@ -2251,7 +2256,7 @@ class ApiPosController extends Controller
         $midnight_ts = strtotime($midnight_date);
 
         $orderlist = DB::select("select * from pos_outflow_log where  check_date={$date}");
-        $loglist = DB::select("select * from pos_cpcc_tx_log where TxType=1341 and check_date={$date}");
+        $loglist = DB::select("select * from pos_cpcc_tx_log where TxType=1341 and check_date='{$date}' ");
 
         $order_sn       = array_column($orderlist, 'SerialNumber');
         $txsn           = array_column($loglist, 'TxSn');
@@ -2271,16 +2276,23 @@ class ApiPosController extends Controller
         $log_total = 0.0;
         $delta = 0;
 
-
+        // 取检查日期内的公有记录
         $ll = DB::select("SELECT
-            o.OrderNo, o.Amount as o_amount,o.notify_time as o_notify_time o.create_time as o_create_time,o.SerialNumber as o_serial_no,o.id as o_id,
+            o.OrderNo, o.Amount as o_amount,o.notify_time as o_notify_time, o.create_time as o_create_time,o.SerialNumber as o_serial_no,o.id as o_id,
             l.TxAmount as l_amount, l.BankNotificationTime as l_notify_time,l.TxSn as l_serial_no,l.TxType as l_type,l.id as l_id
                 FROM pos_outflow_log as o
             JOIN pos_cpcc_tx_log as l
-            ON o.order_sn = l.TxSn
-            where l.TxType=1402
+            ON o.SerialNumber = l.TxSn
+            where l.TxType=1341 and l.check_date='{$date}'
            
         ");
+
+        $comonsize = sizeof($ll);
+        $odersize = sizeof($order_diff_log);
+        $logsize = sizeof($log_diff_order);
+        $order_sn_str = json_encode($order_sn);
+        $tx_sn_str = json_encode($txsn);
+        Log::info("generate after payment  common record {$comonsize}  order only {$odersize}  log only {$logsize}  order {$order_sn_str}  txsn = {$tx_sn_str}");
 
         // 开启事务
         DB::beginTransaction();
@@ -2299,7 +2311,11 @@ class ApiPosController extends Controller
                     {
                         $is_exist->check_date = $date;
                         $is_exist->serial_no = $value->o_serial_no;
-                        $is_exist->store_name = "待处理2";
+
+                        $store_info = User::where(['store_code'=>$value->order_no, 'rank'=>0])->first();
+
+
+                        $is_exist->store_name = is_null($store_info)?"no store":$store_info->store_name;
                         $is_exist->store_code = $value->order_no;
                         $is_exist->cpcc_amount = $value->l_amount;
                         $is_exist->order_amount = $value->o_amount;
@@ -2326,7 +2342,10 @@ class ApiPosController extends Controller
                         $tmppre = new  Postpayment();
                         $tmppre->check_date = $date;
                         $tmppre->serial_no = $value->o_serial_no;
-                        $tmppre->store_name = "待处理2";
+
+                        $store_info = User::where(['store_code'=>$value->order_no, 'rank'=>0])->first();
+
+                        $tmppre->store_name = is_null($store_info)?"no store":$store_info->store_name;
                         $tmppre->store_code = $value->order_no;
                         $tmppre->cpcc_amount = $value->l_amount;
                         $tmppre->order_amount = $value->o_amount;
@@ -2376,10 +2395,14 @@ class ApiPosController extends Controller
                         $order_total += $orderinfo->amount;
 
                         unset($tmppre);
-                        $tmppre = new Prepayment();
+                        $tmppre = new Postpayment();
                         $tmppre->check_date = $date;
                         $tmppre->serial_no = $orderinfo->SerialNumber;
-                        $tmppre->store_name = "orderoly";
+
+                        $store_info = User::where(['store_code'=>$value->order_no, 'rank'=>0])->first();
+
+
+                        $tmppre->store_name = is_null($store_info)?"no store":$store_info->store_name;
                         $tmppre->store_code = $orderinfo->OrderNo;
                         $tmppre->cpcc_amount = 0;
                         $tmppre->order_amount = $orderinfo->Amount;
@@ -2401,7 +2424,7 @@ class ApiPosController extends Controller
                 {
                     foreach ($log_diff_order as $key => $value) {
                         // 去重
-                        $is_exist = Prepayment::where(['serial_no'=>$value])->first();
+                        $is_exist = Postpayment::where(['serial_no'=>$value])->first();
                         $loginfo = CpccTxLog::where(['TxSn'=>$value])->first();
 
                         // 统计 log 信息
@@ -2413,8 +2436,13 @@ class ApiPosController extends Controller
 
                             $is_exist->check_date = $date;
                             $is_exist->serial_no = $loginfo->TxSn;
-                            $is_exist->store_name = "log_only";
-                            $is_exist->store_code = "xxxx";
+
+                            $store_info = User::where(['store_code'=>$loginfo->MarketOrderNo, 'rank'=>0])->first();
+
+                        
+                            $is_exist->store_name = is_null($store_info)?"no store":$store_info->store_name;
+
+                            $is_exist->store_code = $loginfo->MarketOrderNo;
                             $is_exist->cpcc_amount = $loginfo->TxAmount;
                             $is_exist->order_amount = 0;
                             $is_exist->result_status = self::CHECK_ORDERNOT;
@@ -2430,7 +2458,7 @@ class ApiPosController extends Controller
                             }  
                         } else {
                             unset($tmppre);
-                            $tmppre = new Prepayment();
+                            $tmppre = new Postpayment();
                             $tmppre->check_date = $date;
                             $tmppre->serial_no = $loginfo->TxSn;
                             $tmppre->store_name = "log_only";
@@ -2456,7 +2484,7 @@ class ApiPosController extends Controller
 
             // 生成 order 记录条数， log 记录条数， order 记录金额 log 记录金额 差额 order-log
             $delta = $order_total - $log_total;
-            $is_log_exist = AbnormalTransactionLog::where(['check_date' => $date,'tx_type'=>1402])->first();
+            $is_log_exist = AbnormalTransactionLog::where(['check_date' => $date,'tx_type'=>1341])->first();
             if(!is_null($is_log_exist))
             {
                 $is_log_exist->log_num = $log_num;
@@ -2470,7 +2498,7 @@ class ApiPosController extends Controller
             } else {
                 $tmp_log = new AbnormalTransactionLog();
                 $tmp_log->check_date = $date;
-                $tmp_log->tx_type = 1402;
+                $tmp_log->tx_type = 1341;
                 $tmp_log->log_num = $log_num;
                 $tmp_log->log_total = $log_total;
                 $tmp_log->order_num = $order_num;
@@ -2664,6 +2692,16 @@ class ApiPosController extends Controller
 
         // 生成预处理表
         exit('生成预处理表');
+    }
+
+    /**
+     * 检查安卓更新
+     * @param  Request $req [description]
+     * @return [type]       [description]
+     */
+    public function checkUpdate(Request $req)
+    {
+        return $this->ajaxFail(null, 'not implemtn yet', 1000);
     }
 
     /**

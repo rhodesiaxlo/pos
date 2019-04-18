@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 
 use App\Models\Pos\AbnormalTransactionLog;
 use App\Models\Pos\Prepayment;
+use App\Models\Pos\Postpayment;
+
 use App\Models\Pos\OutflowLog;
 use App\Models\Pos\OutflowPrepayment;
 use App\Models\Pos\User;
@@ -81,7 +83,7 @@ class TransactionController extends Controller
         //exit(" drawn = {$drawn} midnight = {$midnight}");
         
         //$prepayments = DB::table('pos_prepayment')->whereBetween('pos_prepayment.order_time',array($drawntimestamp, $midnighttimestamp))->get();
-        $prepayments = DB::table('pos_prepayment')->where(['check_date'=>$date])->get();
+        $prepayments = DB::table('pos_prepayment')->where(['check_date'=>$date])->orderby('result_status','desc')->orderby('cpcc_time', 'desc')->get();
 
 
         // $logs = DB::table('pos_abnormal_transaction_log')->whereBetween('pos_abnormal_transaction_log.(month, day, year)',array($drawntimestamp, $midnighttimestamp))->first();
@@ -162,12 +164,13 @@ class TransactionController extends Controller
 
         //exit(" drawn = {$drawn} midnight = {$midnight}");
         
-        $prepayments = DB::table('pos_prepayment')->whereBetween('pos_prepayment.order_time',array($drawntimestamp, $midnighttimestamp))->get();
+        // $prepayments = DB::table('pos_postpayment')->whereBetween('pos_postpayment.check',array($drawntimestamp, $midnighttimestamp))->get();
 
-        $prepayments = [];
+        // $prepayments = [];
+
+        $prepayments = DB::table('pos_postpayment')->where(['check_date'=>$date])->orderby('result_status','desc')->orderby('cpcc_time', 'desc')->get();
         //$logs = DB::table('pos_abnormal_transaction_log')->whereBetween('pos_abnormal_transaction_log.create_time',array($drawntimestamp, $midnighttimestamp))->first();
-        $logs = DB::table('pos_abnormal_transaction_log')->where(['check_date'=>$date,'tx_type'=>1343])->first();
-        
+        $logs = DB::table('pos_abnormal_transaction_log')->where(['check_date'=>$date,'tx_type'=>1341])->first();
     	return view('pos.tx.withdrawconfirm')->with("logs", $logs)->with('prepayments', $prepayments)->with('search', $search);
     }
 
@@ -313,7 +316,16 @@ class TransactionController extends Controller
                     }
                 }
 
-                $result = Prepayment::where(['check_date'=>$check_date])->update(['status'=>1]);
+                if($tx_type == 1341)
+                {
+                    $update_name = "Postpayment";
+                    $result = Postpayment::where(['check_date'=>$check_date])->update(['status'=>1]);
+
+                } else if($tx_type == 1402 ) {
+                    $update_name = "Prepayment";
+                    $result = Prepayment::where(['check_date'=>$check_date])->update(['status'=>1]);
+
+                }
                 if(false === $result)
                 {
                     throw new \Exception("prepayments 更新失败!", 1);
@@ -397,7 +409,19 @@ class TransactionController extends Controller
                 }
 
                 // 标记prepayments
-                $result = Prepayment::where(['check_date'=>$check_date])->update(['status'=>2]);
+                if($tx_type == 1341)
+                {
+                    $update_name = "Postpayment";
+                    $result = Postpayment::where(['check_date'=>$check_date])->update(['status'=>2]);
+
+                } else if($tx_type == 1402 ) {
+                    $update_name = "Prepayment";
+                    $result = Prepayment::where(['check_date'=>$check_date])->update(['status'=>2]);
+
+                }
+
+
+                //$result = Prepayment::where(['check_date'=>$check_date])->update(['status'=>2]);
                 if(false === $result)
                 {
                     throw new \Exception("prepayments 更新失败!", 1);
@@ -407,62 +431,68 @@ class TransactionController extends Controller
                 // 根据日期和状态生成
                 // $rest = Prepayment::where(['check_date'=>$check_date, 'status'=>2, 'result_status'=>0])->select(array(\DB::raw('sum(cpcc_amount) as log_amount'),'store_name','store_code'))->get();
 
-                $rest = Prepayment::where(['check_date'=>$check_date])->get();
+                // 如果是 收银对账，还需要生成结算列表
+                if($tx_type == 1402)
+                {
 
-                // $rest = DB::select("select `cpcc_amount`, `store_code`, `store_name` from pos_prepayment where check_date={$check_date}");
-                $ret = [];
-                foreach ($rest as $key => $value) {
-                    // 根据store_code 选择
-                    if(!isset($ret[$value['store_code']]))
-                    {
-                        $ret[$value->store_code] = [];
-                    }
 
-                    $ret[$value->store_code]['store_name'] = $value->store_name;
-                    $ret[$value->store_code]['store_code'] = $value->store_code;
-                    if(isset($ret[$value->store_code]['amount']))
-                    {
-                        $ret[$value->store_code]['amount'] += $value->cpcc_amount;    
-                    }else{
-                        $ret[$value->store_code]['amount'] = $value->cpcc_amount;
-                    }
-                    
-                }
+                    $rest = Prepayment::where(['check_date'=>$check_date])->get();
 
-                // 写入 outflowlog
-                foreach ($ret as $key => $value) {
-                    $outflow = new OutflowLog();
-                    $outflow->OrderNo = $value['store_code'];
-                    $outflow->check_date = $check_date;
-                    $outflow->create_time = time();
-                    $outflow->Amount = $value['amount'];
+                    // $rest = DB::select("select `cpcc_amount`, `store_code`, `store_name` from pos_prepayment where check_date={$check_date}");
+                    $ret = [];
+                    foreach ($rest as $key => $value) {
+                        // 根据store_code 选择
+                        if(!isset($ret[$value['store_code']]))
+                        {
+                            $ret[$value->store_code] = [];
+                        }
 
-                    $storeinfo = User::where(['store_code'=>$value['store_code'], 'rank'=>0, 'deleted'=>0])->first();
-                    if(is_null($storeinfo))
-                    {
-                        // 报错
-                        throw new   \Exception("找不到店铺信息", 1);
+                        $ret[$value->store_code]['store_name'] = $value->store_name;
+                        $ret[$value->store_code]['store_code'] = $value->store_code;
+                        if(isset($ret[$value->store_code]['amount']))
+                        {
+                            $ret[$value->store_code]['amount'] += $value->cpcc_amount;    
+                        }else{
+                            $ret[$value->store_code]['amount'] = $value->cpcc_amount;
+                        }
                         
                     }
 
-                    if( intval($storeinfo->bank_id) ===false || intval($storeinfo->bank_id)<100)
-                    {
-                        // 报错
-                        throw new   \Exception("没有设置店铺银行卡信息，无法结算", 1);
-                        
+                    // 写入 outflowlog
+                    foreach ($ret as $key => $value) {
+                        $outflow = new OutflowLog();
+                        $outflow->OrderNo = $value['store_code'];
+                        $outflow->check_date = $check_date;
+                        $outflow->create_time = time();
+                        $outflow->Amount = $value['amount'];
+
+                        $storeinfo = User::where(['store_code'=>$value['store_code'], 'rank'=>0, 'deleted'=>0])->first();
+                        if(is_null($storeinfo))
+                        {
+                            // 报错
+                            throw new   \Exception("找不到店铺信息", 1);
+                            
+                        }
+
+                        if( intval($storeinfo->bank_id) ===false || intval($storeinfo->bank_id)<100)
+                        {
+                            // 报错
+                            throw new   \Exception("没有设置店铺银行卡信息，无法结算", 1);
+                            
+                        }
+
+                        $outflow->BankID = $storeinfo->bank_id;
+                        $outflow->AccountName = $storeinfo->account_name;
+                        $outflow->AccountNumber = $storeinfo->account_no;
+                        $out_id = $outflow->save();
+
+                        if($out_id === false)
+                        {
+                            // 报错
+                            throw new   \Exception("outflow 保存失败", 1);
+                        }
+
                     }
-
-                    $outflow->BankID = $storeinfo->bank_id;
-                    $outflow->AccountName = $storeinfo->account_name;
-                    $outflow->AccountNumber = $storeinfo->account_no;
-                    $out_id = $outflow->save();
-
-                    if($out_id === false)
-                    {
-                        // 报错
-                        throw new   \Exception("outflow 保存失败", 1);
-                    }
-
                 }
 
                 DB::commit();
