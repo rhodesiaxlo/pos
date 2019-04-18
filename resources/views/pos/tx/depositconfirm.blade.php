@@ -255,7 +255,6 @@ function prepayment(){
             }
         })
     }
-
 }
 
 function move(){
