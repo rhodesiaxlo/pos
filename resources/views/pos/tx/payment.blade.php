@@ -143,7 +143,7 @@
             let data={
                 checked:datas
             }
-            ajaxs(url,data,res=>{
+            ajaxsPost(url,data,res=>{
                 if(res.code==1){
                     $('#ok').hide()
                     eeor('清算成功！','bg_green_1')
