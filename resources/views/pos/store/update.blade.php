@@ -8,7 +8,7 @@
 
 @section('content')
     <div class='f18 bold mg-bt-15 pos_str_msg' style="">编辑</div>
-    <form class="" id='form' method="POST" action="{{url::route('pos.store.edit')}}" >
+    <form class="" id='form' method="POST" action="{{url::route('pos.store.edit')}}" onsubmit="return toVaild()">
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
         <input type="hidden" name="local_id" id="local_id" value="{{$userinfo->local_id}}">
 
@@ -60,7 +60,7 @@
             <p class='bg-skyblue white padd-tb-15 f17 pos_index_tital'>账号信息</p>
             <div class='fsb mg-b-10'>
                 <div class='w50pc'> <span class='w120px dslb'>登录用户名</span>  <input type="text" value='{{$userinfo->uname}}' name='uname' class='w50pc' placeholder='文本'/></div>
-                <div class='w50pc'> 登录密码  <input type="text" value='{{$userinfo->uname}}' name='password' class='w50pc' placeholder='数字、六位' /></div>
+                <div class='w50pc'> 登录密码  <input type="text" value='{{$userinfo->password}}' name='password' class='w50pc' placeholder='数字、六位' /></div>
             </div>
         </div>
         
@@ -83,7 +83,7 @@
                 <input class="mg-l-10 w80px bor-n white " style='' type="button" class="" onclick="$('#or').slideToggle()" value='否' />
             </div>
         </div>
-        </form>   
+    </form>   
     <form class="" id='form' method="POST" action="{{url::route('pos.store.del')}}" >
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
         <input type="hidden" name="local_id" id="local_id" value="{{$userinfo->local_id}}">
@@ -120,7 +120,14 @@
                 $('#or').slideToggle()
             }
         }
-
+        // function toVaild(){
+        //     var d = {};
+        //     var t = $('form').serializeArray();
+        //     $.each(t, function() {
+        //     d[this.name] = this.value;
+        //     });
+        //     debugger
+        // }
         function delSub(){
             $('#del').slideToggle()
         }
