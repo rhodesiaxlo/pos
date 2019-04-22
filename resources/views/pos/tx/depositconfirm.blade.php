@@ -64,6 +64,7 @@
     <div class='flex jc-end' style='width:;'>
         <button class='bor-14 mg-l-10 w80px bor-n white bg-blue'>导出</button>
         <button type='button' class='bor-14 mg-l-10 w80px bor-n white bg-blue' onclick='return alrt(0)'>手工调帐</button>
+        
         @if(Gate::forUser(auth('admin')->user())->check('admin.permission.create'))
         <button type='button' class='bor-14 mg-l-10 w80px bor-n white bg-blue' onclick='return alrt(1)'>复核</button>
         @endif
