@@ -41,7 +41,7 @@
         @endif
 
         @if(empty($logs))
-        <p> 没有数据</p>
+        <p>没有数据</p>
         @endif
     </table>
 </div>
