@@ -105,7 +105,7 @@ class StoreController extends Controller
             $userinfo->account_no          = $req->get('account_no');
             $userinfo->business_licence_no = $req->get('number');
             $userinfo->store_name          = $req->get('nameStort');
-            $userinfo->is_active              = trim($req->get('status'))=="启用"?1:0;
+            $userinfo->is_active              = trim($req->get('staus'))=="启用"?1:0;
 
             $userinfo->rank                = 0;
             $result                        = $userinfo->save();

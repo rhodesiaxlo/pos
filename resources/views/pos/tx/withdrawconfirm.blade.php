@@ -26,7 +26,7 @@
     </div>
     <table style="text-align: center;" class='w100pc' border='1' rules='all' cellpadding='10'>
         <tr class='pos_tr'>
-            <td>交易金额差额</td>
+            <td>交易金额差额(元)</td>
             <td>备注</td>
             <td>经办人</td>
             <td>复核人</td>
