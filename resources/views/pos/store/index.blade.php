@@ -104,7 +104,6 @@
             window.location.reload()//刷新当前页面.
         }
         function is_a(e,a){
-            debugger
             var url='/pos/store/edit'
             var data={
                 local_id:e,
