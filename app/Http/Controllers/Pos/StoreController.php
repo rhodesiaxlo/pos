@@ -124,6 +124,11 @@ class StoreController extends Controller
                 return redirect('pos/store/index')->withSuccess('添加失败，登录名已存在');
             }
 
+            $bu_no_exist = User::where(['business_licence_no'=>$req->get('number')])->first();
+            if(!is_null($bu_no_exist))
+            {
+                return redirect('pos/store/index')->withSuccess('添加失败，营业执照已存在');
+            }
 
             $loginTokenName = Auth::guard('admin')->getName();
             $operator=Session::get($loginTokenName);
