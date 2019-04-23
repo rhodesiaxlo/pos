@@ -128,7 +128,7 @@
             </tr>
             <tr>
                 <td >备注：</td>
-                <td ><textarea name="value" id="msg" class='w100pc h100pc' style='border:none;outline: none;' cols="100" rows="10">{{$logs->message}}</textarea></td>
+                <td ><textarea name="value" maxlength="250" id="msg" class='w100pc h100pc' style='border:none;outline: none;' cols="100" rows="10">{{$logs->message}}</textarea></td>
             </tr>
             <tr>
                 <td colspan="2">
@@ -146,7 +146,7 @@
             </tr>
             <tr>
                 <td >备注：</td>
-                <td ><textarea name="value" id="msg" class='w100pc h100pc' style='border:none;outline: none;' cols="100" rows="10"></textarea></td>
+                <td ><textarea name="value" maxlength="250" id="msg" class='w100pc h100pc' style='border:none;outline: none;' cols="100" rows="10"></textarea></td>
             </tr>
             <tr>
                 <td colspan="2">

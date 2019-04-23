@@ -62,7 +62,7 @@
                 <td>{{$user->creator->name}}</td>
                 <td>{{date('Y-m-d', $user->create_time)}}</td>
                 <td><a href='/pos/store/edit?id={{$user->local_id}}'>编辑</a></td>
-                <td>{{$user->is_active==1?"正常":"禁用"}}</td>
+                <td id='is_a'><span onclick='is_a({{$user->is_active}},{{$user->local_id}})'>{{$user->is_active==1?"正常":"禁用"}}</span></td>
             </tr>
             @endforeach
         </table>
@@ -103,6 +103,24 @@
         function newPage(){
             window.location.reload()//刷新当前页面.
         }
+        function is_a(e,a){
+            var url='/pos/store/edit'
+            var data={
+                id:e,
+                status:a,
+                type:'index'
+            }
+            ajaxs(url,data,res=>{
+                if(res.code==1){
+                    // window.location.reload()//刷新当前页面.
+                    $('#is_a').empty()
+                    $('#is_a').append(`<span onclick='is_a({{$user->is_active}},{{$user->local_id}})'>{{$user->is_active==1?"正常":"禁用"}}</span>`)
+                }else{
+                    eeor(res.message,'bg-red-2')
+                }
+            })
+        }
+
     </script>
 
 @stop

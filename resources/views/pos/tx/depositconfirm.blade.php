@@ -137,11 +137,11 @@
                     <td >备注：</td>
 
                     @if(!empty($logs))
-                    <td ><textarea name="value" id="msg" class='w100pc h100pc' style='border:none;outline: none;' cols="100" rows="10" value=''>{{$logs->message}}</textarea></td>
+                    <td ><textarea name="value" maxlength="250" id="msg" class='w100pc h100pc' style='border:none;outline: none;' cols="100" rows="10" value=''>{{$logs->message}}</textarea></td>
                     @endif
 
                     @if(empty($logs))
-                    <td ><textarea name="value" id="msg" class='w100pc h100pc' style='border:none;outline: none;' cols="100" rows="10" value=''></textarea></td>
+                    <td ><textarea maxlength="250" name="value" id="msg" class='w100pc h100pc' style='border:none;outline: none;' cols="100" rows="10" value=''></textarea></td>
                     @endif
                 </tr>
                 <tr>
@@ -234,7 +234,6 @@ function prepayment(){
                 eeor('初审成功','bg_green_1')
                 window.location = "/pos/transaction/depositconfirm?date="+$('#seachdate').val();
             }else{
-                // alert(res.message)
                 eeor(res.message,'bg-red-2')
             }
         })
@@ -253,7 +252,6 @@ function prepayment(){
                 eeor('复审成功','bg_green_1')
                 window.location = "/pos/transaction/depositconfirm?date="+$('#seachdate').val();
             }else{
-                // alert(res.message)
                 eeor(res.message,'bg-red-2')
             }
         })
@@ -272,6 +270,7 @@ function validateForm(){
     });
     if(d.value==''){
         alert('请填写备注');
+        // eeor(res.message,'bg-red-2')
         return false;
     }
     if(d.amount==''){

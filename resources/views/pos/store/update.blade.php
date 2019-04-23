@@ -15,7 +15,7 @@
         <div>
             <p class='bg-skyblue white padd-tb-15 f17 pos_index_tital'>店铺信息</p>
             <div class='fsb w100pc'  >
-                <p style='width:50%;'><span class='w120px dslb'> 店铺名称</span>  <input id='nameStort' name='nameStort' style='width:60%;' type="text" value='{{$userinfo->store_name}}' /></p>
+                <p style='width:50%;'><span class='w120px dslb'> 店铺名称</span>  <input id='nameStort' name='nameStort' maxlength="20" style='width:60%;' type="text" value='{{$userinfo->store_name}}' /></p>
                 <div class='mg-b-10' style='width:50%;'> <span class='red'>*</span> 商家编号  <input  style='width:60%;' type="text" readonly='true' placeholder='无需填写，系统自动生成编码'  value="{{$userinfo->store_code}}" /></div>
             </div>
             <div class='fsb mg-b-10'>
@@ -27,11 +27,11 @@
                     <select style='width:15%;' onchange="citY(this.options[this.options.selectedIndex].value)" name="province" id="province"><option>省份</option></select>
                     <select style='width:15%;' onchange="countY(this.options[this.options.selectedIndex].value)" name="city" id="city"><option>城市</option></select>
                     <select style='width:15%;' name="county" id="county"><option>区</option></select>
-                    <input style='width:25%;' value='{{$userinfo->address}}' name='address' id='' type="text" placeholder='详细地址'>
+                    <input style='width:25%;' value='{{$userinfo->address}}' name='address' id='' type="text" maxlength="20" placeholder='详细地址'>
                 </div>
             </div>
             <div class='fsb mg-b-10'>
-                <div class='w50pc'><span class='w120px dslb'> 营业执照编号</span>  <input name='number' value='{{$userinfo->business_licence_no}}' type="text" class='w50pc' /></div>
+                <div class='w50pc'><span class='w120px dslb'> 营业执照编号</span>  <input name='number'  maxlength="20" value='{{$userinfo->business_licence_no}}' type="text" class='w50pc' /></div>
                 <div class='w50pc'>
                     店铺状态 &nbsp
                     <label for="staus1">启用</label> 
@@ -44,23 +44,23 @@
         <div>
             <p class='bg-skyblue white padd-tb-15 f17 pos_index_tital'>店主信息</p>
             <div class='fsb mg-b-10'>
-                <div class='w50pc'> <span class='w120px dslb'>店主姓名</span> <input name='name' value='{{$userinfo->realname}}' type="text" class='w50pc' /></div>
-                <div class='w50pc'> 联系方式  <input name='phone' value='{{$userinfo->phone}}' type="text" class='w50pc' placeholder='' /></div>
+                <div class='w50pc'> <span class='w120px dslb'>店主姓名</span> <input name='name'  maxlength="15" value='{{$userinfo->realname}}' type="text" class='w50pc' /></div>
+                <div class='w50pc'> 联系方式  <input name='phone' value='{{$userinfo->phone}}' maxlength="11" type="text" class='w50pc' placeholder='' /></div>
             </div>
         </div>
         <div>
             <p class='bg-skyblue white padd-tb-15 f17 pos_index_tital'>收款信息</p>
             <div class='fsb  mg-b-10'>
-                <div class='w50pc'><span class='w120px dslb'> 收款账户名 </span> <input name='account_name' value='{{$userinfo->account_name}}' type="text" class='w50pc' /></div>
-                <div class='w50pc'> 收款账号  <input name='account_no' value='{{$userinfo->account_no}}' type="text" class='w50pc' placeholder='' /></div>
+                <div class='w50pc'><span class='w120px dslb'> 收款账户名 </span> <input name='account_name' maxlength="15" value='{{$userinfo->account_name}}' type="text" class='w50pc' /></div>
+                <div class='w50pc'> 收款账号  <input name='account_no' value='{{$userinfo->account_no}}' maxlength="20" type="text" class='w50pc' placeholder='' /></div>
             </div>
             <div><span class='w120px dslb'>开户行</span><select style=';' class='w50pc mg-b-10' name="place" id="place" ></select></div>
         </div>
         <div>
             <p class='bg-skyblue white padd-tb-15 f17 pos_index_tital'>账号信息</p>
             <div class='fsb mg-b-10'>
-                <div class='w50pc'> <span class='w120px dslb'>登录用户名</span>  <input type="text" value='{{$userinfo->uname}}' name='uname' class='w50pc' placeholder='文本'/></div>
-                <div class='w50pc'> 登录密码  <input type="text" value='{{$userinfo->password}}' name='password' class='w50pc' placeholder='数字、六位' /></div>
+                <div class='w50pc'> <span class='w120px dslb'>登录用户名</span>  <input type="text" maxlength="15" value='{{$userinfo->uname}}' name='uname' class='w50pc' placeholder='文本'/></div>
+                <div class='w50pc'> 登录密码  <input type="password" value='{{$userinfo->password}}' id='password' minlength="6" maxlength="20" name='password' class='w50pc' placeholder='数字、六位' /></div>
             </div>
         </div>
         
@@ -110,24 +110,42 @@
             $.each(t, function() {
             d[this.name] = this.value;
             });
-            if (d.address==''||d.amuName==''||d.amuNum==''||d.area=='区'||d.city=='城市'||d.name==''||d.nameStort==''||d.number==''||d.phone==''||d.place=='where'||d.province=='省份'||d.staus==''||d.userSub==''||d.username=='') {
+            if (d.address==''||d.amuName==''||d.amuNum==''||d.area=='区'||d.city=='城市'||d.name==''||d.nameStort==''||d.number==''||d.phone==''||d.place==''||d.province=='省份'||d.staus==''||d.userSub==''||d.username==''||d.uname==''||d.password=='') {
                 $('#eor').empty()
                 $('#eor').show()
                 $('#eor').append("<div class='txal w100pc bold' style='height:100px;line-height:100px;background: #44b793;'>请填写完整信息！</div>")
                 $("#eor").fadeOut(3000);
                 return false;
-            } else {
+            } else if(d.password.length<6){
+                eeor('密码应大于或等于6位','bg-red-2')
+                return false;
+            } else{
                 $('#or').slideToggle()
             }
+
+            // if (verify_code == '') {
+            //     d_messages('请输入图片验证码');
+            //     return false;
+            // }
+            // if (mobile == '') {
+            //     d_messages('请输入验证的手机号');
+            //     $("#focus-mobile").focus();
+            //     return false;
+            // }
+            // if (!myreg.test(mobile)) {
+            //     d_messages('请输入有效的手机号');
+            //     $("#focus-mobile").focus();
+            //     return false;
+            // }
         }
-        // function toVaild(){
-        //     var d = {};
-        //     var t = $('form').serializeArray();
-        //     $.each(t, function() {
-        //     d[this.name] = this.value;
-        //     });
-        //     debugger
-        // }
+        
+        $("#password").blur(function(){
+            var a=$('#password').val().length
+            if(a<6){
+                eeor('密码应大于或等于6位','bg-red-2')
+            }
+        });
+
         function delSub(){
             $('#del').slideToggle()
         }
