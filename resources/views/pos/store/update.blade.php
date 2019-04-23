@@ -16,7 +16,7 @@
             <p class='bg-skyblue white padd-tb-15 f17 pos_index_tital'>店铺信息</p>
             <div class='fsb w100pc'  >
                 <p style='width:50%;'><span class='w120px dslb'> 店铺名称</span>  <input id='nameStort' name='nameStort' style='width:60%;' type="text" value='{{$userinfo->store_name}}' /></p>
-                <div class='mg-b-10' style='width:50%;'> <span class='red'>*</span> 商家编号  <input  style='width:60%;' type="text" disabled="disabled" placeholder='无需填写，系统自动生成编码'  value="{{$userinfo->store_code}}" /></div>
+                <div class='mg-b-10' style='width:50%;'> <span class='red'>*</span> 商家编号  <input  style='width:60%;' type="text" readonly='true' placeholder='无需填写，系统自动生成编码'  value="{{$userinfo->store_code}}" /></div>
             </div>
             <div class='fsb mg-b-10'>
                 <div class='w120px dslb'> 店铺地址  </div>

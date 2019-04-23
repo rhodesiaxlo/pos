@@ -67,7 +67,7 @@
             <button class='bor-14 mg-l-10 w80px bor-n white bg-blue' onclick='alrt(1)'>复核</button>
         @endif
     </div>
-    <table id="box" class="tableA w100pc mg-t-10" style="text-align: center;" border='1' rules='all' >
+    <table id="box" class="tableA w100pc mg-t-10" style="text-align: center;" border='1' rules='all'>
         <tr class='pos_tr'>
             <td>流水号</td>
             <td>交易日期</td>
