@@ -288,7 +288,7 @@ class TransactionController extends Controller
                 {
                     // 没有记录，创建新记录
                     $tmp = new AbnormalTransactionLog();
-                    $tmp->amount = $amount;
+                    $tmp->amount = $amount*100;
                     $tmp->check_date = $check_date;
                     $tmp->tx_type = $tx_type;
                     $tmp->message = $message;
@@ -305,7 +305,7 @@ class TransactionController extends Controller
                     }
                 } else {
                     $tmpinfo = AbnormalTransactionLog::where(['id'=>$id])->first();
-                    $tmpinfo->amount = $amount;
+                    $tmpinfo->amount = $amount*100;
                     $tmpinfo->check_date = $check_date;
                     $tmpinfo->tx_type = $tx_type;
                     $tmpinfo->message = $message;
