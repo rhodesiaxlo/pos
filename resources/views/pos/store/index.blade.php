@@ -19,14 +19,14 @@
         <div class='f18 pos_str_msg' style="">店铺信息</div>
         <div class='fsb pos_index_tital' style="">
             <div>
-                <select class='rel bor-4' name='class' style='height:30px;top:1px;' name="" id="selectName" ></select>
-                <input name='Keyword' class='mg-l-10 bor-4 inputPlace' style='height:30px;' type="text" placeholder="请输入关键字查找">
-                <button class='mg-l-10 w80px bor-n white bg-blue' type='submit' style=''>查找</button>
+                <select class='rel bor-4' name='class' style='height:30px;top:1px;' name="" id="selectName" value='' ></select>
+                <input id='keyword' name='Keyword' class='mg-l-10 bor-4 inputPlace' style='height:30px;' type="text" placeholder="请输入关键字查找">
+                <button class='mg-l-10 w80px bor-n white bg-blue' type='submit' style='' onclick='return n()'>查找</button>
             </div>
             <div>
                 <!-- <button style='border-radius: 14px;' id="new" onclick="window.location = '/pos/store/add';return false;">+新增店铺</button> -->
-                <button class='mg-l-10 w80px bor-n white bg-blue' style='' id="new" onclick="return add()">+新增店铺</button>
-                <button class='mg-l-10 w80px bor-n white bg-blue' style='' onclick='newPage()'>刷新</button>
+                <button type='button' class='mg-l-10 w80px bor-n white bg-blue' style='' id="new" onclick="return add()">+新增店铺</button>
+                <button type='button' class='mg-l-10 w80px bor-n white bg-blue' style='' onclick='return newPage()'>刷新</button>
             </div>
         </div>
     </div>
@@ -81,24 +81,44 @@
 @section('js')
     <script>
         let selectName=[
-            {name:'按店铺名称'},
-            {name:'按店主姓名'},
-            {name:'按商铺编号'},
-            {name:'按营业执照编号'},
-            {name:'按店铺地址'},
-            {name:'按联系方式'},
-            {name:'按收款账户名'},
-            {name:'按收款账户号'},
-            {name:'按开户行'}
+            {name:'按店铺名称',id:0},
+            {name:'按店主姓名',id:1},
+            {name:'按商铺编号',id:2},
+            {name:'按营业执照编号',id:3},
+            {name:'按店铺地址',id:4},
+            {name:'按联系方式',id:5},
+            {name:'按收款账户名',id:6},
+            {name:'按收款账户号',id:7},
+            {name:'按开户行',id:8}
         ]
         for(let item of selectName){
-            $('#selectName').append(`<option value ="${item.name}">${item.name}</option>`)
+            $('#selectName').append(`<option value ="${item.id}">${item.name}</option>`)
         }
         function add(){
             //debugger;
             window.location = "/pos/store/add";
             return false;
         }
+
+        function n(){
+            var value=$('#keyword').val()
+            var type=$('#selectName').val()
+            var url='/pos/store/index'
+            var data={
+                type,
+                value,
+            }
+            ajaxs(url,data,res=>{
+                if(res.code==1){
+                    window.location.reload()//刷新当前页面.
+                    // $('#is_a').empty()
+                    // $('#is_a').append(`<span onclick='is_a({{$user->is_active}},{{$user->local_id}})'>{{$user->is_active==1?"正常":"禁用"}}</span>`)
+                }else{
+                    eeor(res.message,'bg-red-2')
+                }
+            })
+        }
+
         // console.log(timeLV({{$user->create_time}}))
         function newPage(){
             window.location.reload()//刷新当前页面.
