@@ -106,7 +106,7 @@
         function is_a(e,a){
             var url='/pos/store/edit'
             var data={
-                id:e,
+                local_id:e,
                 status:a,
                 type:'index'
             }
