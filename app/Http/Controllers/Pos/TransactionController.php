@@ -277,13 +277,18 @@ class TransactionController extends Controller
                 exit(json_encode(['code'=>0, 'message'=>'已完成复审']));
             }
 
+            if(is_null($exist))
+            {
+                exit(json_encode(['code'=>0, 'message'=>'没有审核数据，请联系管理员']));
+            }
+
             DB::beginTransaction();
             try {
                 if($id==0)
                 {
                     // 没有记录，创建新记录
                     $tmp = new AbnormalTransactionLog();
-                    //$tmp->amount = $amount;
+                    $tmp->amount = $amount;
                     $tmp->check_date = $check_date;
                     $tmp->tx_type = $tx_type;
                     $tmp->message = $message;
@@ -300,7 +305,7 @@ class TransactionController extends Controller
                     }
                 } else {
                     $tmpinfo = AbnormalTransactionLog::where(['id'=>$id])->first();
-                    //$tmpinfo->amount = $amount;
+                    $tmpinfo->amount = $amount;
                     $tmpinfo->check_date = $check_date;
                     $tmpinfo->tx_type = $tx_type;
                     $tmpinfo->message = $message;
