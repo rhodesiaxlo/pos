@@ -150,6 +150,16 @@ class ApiPosController extends Controller
             return $this->ajaxFail(null, 'account illegal', 1006);
         }
 
+        if($result['is_active'] == 0)
+        {
+            return $this->ajaxFail(null, 'account is not active', 1016);   
+        }
+
+        if($result['deleted'] == 1)
+        {
+            return $this->ajaxFail(null, 'account has been deleted', 1018);   
+        }
+
         if(!empty($result->device_no) &&trim($result->device_no) != trim($device_no))
         {
             return $this->ajaxFail(null, 'device_no not match , please contract custerm service to unbinding', 1004);
