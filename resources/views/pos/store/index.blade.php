@@ -62,7 +62,7 @@
                 <td>{{$user->creator->name}}</td>
                 <td>{{date('Y-m-d', $user->create_time)}}</td>
                 <td><a href='/pos/store/edit?id={{$user->local_id}}'>编辑</a></td>
-                <td id='is_a'><span onclick='is_a({{$user->is_active}},{{$user->local_id}})'>{{$user->is_active==1?"正常":"禁用"}}</span></td>
+                <td id='is_a'><span onclick='is_a({{$user->local_id}},{{$user->is_active}})'>{{$user->is_active==1?"正常":"禁用"}}</span></td>
             </tr>
             @endforeach
         </table>
