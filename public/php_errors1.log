@@ -1,0 +1,20 @@
+[23-Apr-2019 19:32:18 Asia/Shanghai] PHP Fatal error:  Uncaught ErrorException: Array to string conversion in /mnt/pos/app/Http/Controllers/Pos/StoreController.php:34
+Stack trace:
+#0 /mnt/pos/app/Http/Controllers/Pos/StoreController.php(34): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(8, 'Array to string...', '/mnt/pos/app/Ht...', 34, Array)
+#1 [internal function]: App\Http\Controllers\Pos\StoreController->index(Object(Illuminate\Http\Request))
+#2 /mnt/pos/vendor/laravel/framework/src/Illuminate/Routing/Controller.php(55): call_user_func_array(Array, Array)
+#3 /mnt/pos/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(44): Illuminate\Routing\Controller->callAction('index', Array)
+#4 /mnt/pos/vendor/laravel/framework/src/Illuminate/Routing/Route.php(189): Illuminate\Routing\ControllerDispatcher->dispatch(Object(Illuminate\Routing\Route), Object(App\Http\Controllers\Pos\StoreController), 'index')
+#5 /mnt/pos/vendor/laravel/framework/src/Illuminate/Routing/Route.php(144): Illuminate\Routing\Route->runController()
+#6 /mnt/pos/ in /mnt/pos/app/Http/Controllers/Pos/StoreController.php on line 34
+[23-Apr-2019 19:32:18 Asia/Shanghai] PHP Fatal error:  Uncaught ErrorException: Array to string conversion in /mnt/pos/app/Http/Controllers/Pos/StoreController.php:34
+Stack trace:
+#0 /mnt/pos/app/Http/Controllers/Pos/StoreController.php(34): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(8, 'Array to string...', '/mnt/pos/app/Ht...', 34, Array)
+#1 [internal function]: App\Http\Controllers\Pos\StoreController->index(Object(Illuminate\Http\Request))
+#2 /mnt/pos/vendor/laravel/framework/src/Illuminate/Routing/Controller.php(55): call_user_func_array(Array, Array)
+#3 /mnt/pos/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(44): Illuminate\Routing\Controller->callAction('index', Array)
+#4 /mnt/pos/vendor/laravel/framework/src/Illuminate/Routing/Route.php(189): Illuminate\Routing\ControllerDispatcher->dispatch(Object(Illuminate\Routing\Route), Object(App\Http\Controllers\Pos\StoreController), 'index')
+#5 /mnt/pos/vendor/laravel/framework/src/Illuminate/Routing/Route.php(144): Illuminate\Routing\Route->runController()
+#6 /mnt/pos/ in /mnt/pos/app/Http/Controllers/Pos/StoreController.php on line 34
+[23-Apr-2019 19:57:48 Asia/Shanghai] PHP Fatal error:  'break' not in the 'loop' or 'switch' context in /mnt/pos/app/Http/Controllers/Pos/StoreController.php on line 40
+[23-Apr-2019 19:57:48 Asia/Shanghai] PHP Fatal error:  'break' not in the 'loop' or 'switch' context in /mnt/pos/app/Http/Controllers/Pos/StoreController.php on line 40

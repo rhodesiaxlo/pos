@@ -22,10 +22,91 @@ class StoreController extends Controller
      * @return [type]       [description]
      */
     public function index(Request $req){
-    	// 搜索，分页 
-        $userlist = User::with('creator')->with('bank')->where(['deleted'=>0])->orderby('create_time', "desc")->paginate(env('RECORD_PERPAGE'));
 
-    	return view('pos.store.index')->with('users', $userlist);
+
+        // 搜索，分页 
+        $where[] = array("deleted", 0);
+        $search = [];
+        $key = "";
+        $value = "";
+
+
+
+        if($req->isMethod('POST'))
+        {
+            $type = $req->get('class');
+            $value = $req->get('Keyword');
+            $search['type'] = $type;
+            $search['value'] = $value;
+            if(!empty($value))
+            {
+
+                switch ($type) {
+                    case 0:
+                        // 店铺名称
+                        $key = "store_name";
+                        $where[] = array("store_name", "like", "%".$value."%");
+                        break;
+                    case 1:
+                        // 店主姓名
+                        $key = "realname";
+                        $where[] = array("realname", "like", "%".$value."%");
+                        break;
+                    case 2:
+                        // 商户编码
+                        $key = "store_code";
+                        $where[] = array("store_code", "like", "%".$value."%");
+                        break;
+                    case 3:
+                        $key = "business_licence_no";
+                        $where[] = array("business_licence_no", "like", "%".$value."%");
+                        break;
+                    case 4:
+                        // 店铺地址
+                        $key = "address";
+                        $where[] = array("address", "like", "%".$value."%");
+                        break;
+                    case 5:
+                        $key = "phone";
+                        $where[] = array("phone", "like", "%".$value."%");
+                        break;
+                    case 6:
+                        $key = "account_name";
+                        $where[] = array("account_name", "like", "%".$value."%");
+                        break;
+                    case 7:
+                        $key = "account_no";
+                        $where[] = array("account_no", "like", "%".$value."%");
+
+                        break;
+                    case '8':
+                        $key = "bank_name";
+                        $bankinfo = Bank::where('name', "like", "%".$value."%")->first();
+                        if(!is_null($bankinfo))
+                        {
+                            $where['bank_id'] = $bankinfo->id;    
+                        } else {
+                            $where['bank_id'] = -1;    
+
+                        }
+
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+          // exit(json_encode($userlist));
+        }
+
+        if(empty($key))
+        {
+            $userlist = User::with('creator')->with('bank')->where($where)->orderby('create_time', "desc")->paginate(env('RECORD_PERPAGE'));
+        } else {
+            $userlist = User::with('creator')->with('bank')->where($where)->orderby('create_time', "desc")->paginate(env('RECORD_PERPAGE'))->appends($key, $value);
+        }
+        
+    	return view('pos.store.index')->with('users', $userlist)->with('search', $search);
     }
 
     /**
@@ -91,21 +172,37 @@ class StoreController extends Controller
         if($req->isMethod('POST'))
         {
             $local_id = $req->get('local_id');
+
+
             $userinfo = User::find($local_id);
-            $userinfo->province_id         = $req->get('province');
-            $userinfo->city_id             = $req->get('city');
-            $userinfo->area_id             = $req->get('county');
-            $userinfo->address             = $req->get('address');
-            $userinfo->realname            = $req->get('name');
-            $userinfo->phone               = $req->get('phone');
-            $userinfo->uname               = $req->get('uname');
-            $userinfo->password            = $req->get('password');
-            $userinfo->bank_id             = $req->get('place');
-            $userinfo->account_name        = $req->get('account_name');
-            $userinfo->account_no          = $req->get('account_no');
-            $userinfo->business_licence_no = $req->get('number');
-            $userinfo->store_name          = $req->get('nameStort');
-            $userinfo->is_active              = trim($req->get('staus'))=="启用"?1:0;
+
+            $type = $req->get('type');
+            if(empty($type))
+            {
+                $userinfo->province_id         = $req->get('province');
+                $userinfo->city_id             = $req->get('city');
+                $userinfo->area_id             = $req->get('county');
+                $userinfo->address             = $req->get('address');
+                $userinfo->realname            = $req->get('name');
+                $userinfo->phone               = $req->get('phone');
+                $userinfo->uname               = $req->get('uname');
+                $userinfo->password            = $req->get('password');
+                $userinfo->bank_id             = $req->get('place');
+                $userinfo->account_name        = $req->get('account_name');
+                $userinfo->account_no          = $req->get('account_no');
+                $userinfo->business_licence_no = $req->get('number');
+                $userinfo->store_name          = $req->get('nameStort');
+                $userinfo->is_active              = trim($req->get('staus'))=="启用"?1:0;
+            } else {
+                $userinfo->is_active              = $req->get('status');
+                $result                        = $userinfo->save();
+                if($result !== false)
+                {
+                    exit(json_encode(['code'=>1, 'message'=>"success"]));
+                } else {
+                    exit(json_encode(['code'=>0, 'message'=>"更新失败", 'error_code'=>1000]));
+                }
+            }
 
             $userinfo->rank                = 0;
             $result                        = $userinfo->save();
