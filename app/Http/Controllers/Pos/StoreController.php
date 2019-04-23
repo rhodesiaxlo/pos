@@ -36,6 +36,14 @@ class StoreController extends Controller
     {
         if($req->isMethod('POST'))
         {
+            // 去重 uname
+            $is_exist = User::where(['uname'=>$req->get('uname')])->first();
+            if(!is_null($is_exist))
+            {
+                return redirect('pos/store/index')->withSuccess('添加失败，登录名已存在');
+            }
+
+
             $loginTokenName = Auth::guard('admin')->getName();
             $operator=Session::get($loginTokenName);
 

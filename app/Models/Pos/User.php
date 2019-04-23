@@ -3,6 +3,7 @@
 namespace App\Models\Pos;
 
 use Illuminate\Database\Eloquent\Model;
+use  App\Models\pos\StoreIncr;
 
 class User extends Model
 {
@@ -53,6 +54,10 @@ class User extends Model
     {
         //JM+7位数字
         //ZY
-            return "JM".strval(time());
+        $new = new StoreIncr();
+        $new->message = time();
+        $id = $new->save();
+
+        return "JM".sprintf("%07d", $new->id);
     }
 }

@@ -27,6 +27,8 @@ use App\Models\Pos\OutflowLog;
 use App\Models\Pos\Prepayment;
 use App\Models\Pos\Postpayment;
 use App\Models\Pos\GoodsSku;
+use App\Models\Pos\GeneralLog;
+
 
 
 
@@ -1882,24 +1884,34 @@ class ApiPosController extends Controller
     public function pullBillFromCcpc(Request $req)
     {
         $date = $req->get('date');
+
+        /*
+        
         if(empty($date))
         {
             return $this->ajaxFail(null, "date can not be empty", 1000);
         }
+        */
+
+        $date = date('Y-m-d', time());
+
 
         //遍历数据，至 error_code = 666666
         $page = 1;
+
         while(1)
         {
             $response = $this->fun1811('004792', $date, $page, 10000, true);
             $current_no = sizeof($response['list']);
+            
             $total = $response['total'];
             // 如果 current_no 小于 1 ，中断执行
-            if($current_no < 1)
-            {
-                break;
-            }
-            
+            // if($current_no < 1)
+            // {
+            //     break;
+            // }
+
+
             // 写入数据   
             // 开启事务
             DB::beginTransaction();
@@ -1957,6 +1969,10 @@ class ApiPosController extends Controller
 
                 DB::commit();
                 // 写日志
+                $log = new GeneralLog();
+                $log->message = "拉取成功 日期 ".date('Y-m-d H:i:s', time());
+                $log->date = date('Y-m-d H:i:s', time());
+                $log->save();
                 // todo 
                 
                 // 生成 prepayment 
@@ -2229,6 +2245,12 @@ class ApiPosController extends Controller
             }
 
             DB::commit();
+            // 写日志
+            $log = new GeneralLog();
+            $log->message = "prepayment 生成成功 总数 ".sizeof($merge).' order 独有 '.sizeof($order_diff_log).' log 独有 '.sizeof($log_diff_order);
+            $log->date = date('Y-m-d H:i:s', time());
+            $log->save();
+
             return $this->ajaxSuccess([], "read success");
         } catch (Exception $e) {
             DB::rollBack();
@@ -2509,6 +2531,12 @@ class ApiPosController extends Controller
             }
 
             DB::commit();
+            // 写日志
+            $log = new GeneralLog();
+            $log->message = "prepayment 生成成功 总数 ".sizeof($merge).' order 独有 '.sizeof($order_diff_log).' log 独有 '.sizeof($log_diff_order);
+            $log->date = date('Y-m-d H:i:s', time());
+            $log->save();
+
             return $this->ajaxSuccess([], "read success");
         } catch (Exception $e) {
             DB::rollBack();

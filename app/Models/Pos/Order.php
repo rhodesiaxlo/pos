@@ -3,6 +3,7 @@
 namespace App\Models\Pos;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Pos\OrderIncr;
 
 class Order extends Model
 {
@@ -54,6 +55,10 @@ class Order extends Model
     public static function getRandomOrderSn($code=1402)
     {
         // to do 
+        $new = new OrderIncr();
+        $new->message = time();
+        $id = $new->save();
+
         return $code."_".strval(time()).rand(1000,9999);
     }
 }
