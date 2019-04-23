@@ -3,7 +3,7 @@
 namespace App\Models\Pos;
 
 use Illuminate\Database\Eloquent\Model;
-use  App\Models\pos\StoreIncr;
+use  App\Models\Pos\StoreIncr;
 
 class User extends Model
 {
