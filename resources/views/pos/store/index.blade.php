@@ -75,8 +75,6 @@
             </div> -->
         </div>
     </div>
-<img src="/img/indexOne.png" alt="">
-<img src="/img/indexTwo.png" alt="">
   
  @stop
 
