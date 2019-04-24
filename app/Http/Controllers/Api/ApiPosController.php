@@ -1746,6 +1746,8 @@ class ApiPosController extends Controller
                     $tmpuser->total_price = $value['total_price'];
                     $tmpuser->cash_price  = $value['cash_price'];
                     $tmpuser->deleted     = $value['deleted'];
+                    
+                    $tmpuser->store_code  = $store_code;
 
                     $ret = $tmpuser->save();
                     if($ret === false)
