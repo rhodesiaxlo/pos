@@ -95,10 +95,10 @@
             {name:'未结算',status:2,}
         ]
         $(function(){
-            $('.date_picker').date_input();
             sele()
             var date=$('#seachdate').val()
             $('#date').val(date)
+            $('.date_picker').date_input();
         })
         function sele(){
             $('#status').empty()

@@ -1,3 +1,10 @@
+function eeor(e,c){
+    $('#eor').empty()
+    $('#eor').show()
+    $('#eor').append(`<div class='txal w100pc bold white ${c}' style='height:100px;line-height:100px;'>${e}</div>`)
+    $("#eor").fadeOut(3000);
+}
+
 function ajaxs(url,data,suc){
 	var url=url
 	$.ajax({
@@ -33,7 +40,6 @@ function ajaxs(url,data,suc){
 			}
 		},
 		error:function(XMLHttpRequest, textStatus, errorThrown){
-			// debugger
 			eeor((errorThrown+'：'+XMLHttpRequest.status),'bg-red-2')
 			// alert('请求超时，请检查当前网络状态，并刷新页面' + textStatus)
 		}
@@ -202,9 +208,4 @@ function date1(){
 	return yestoday
 }
 
-function eeor(e,c){
-    $('#eor').empty()
-    $('#eor').show()
-    $('#eor').append(`<div class='txal w100pc bold white ${c}' style='height:100px;line-height:100px;'>${e}</div>`)
-    $("#eor").fadeOut(3000);
-}
+

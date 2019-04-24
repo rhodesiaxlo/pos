@@ -179,9 +179,9 @@
 
 let nume;
 $(function(){
-    $('.date_picker').date_input();
     var date=$('#seachdate').val()
     $('#date').val(date)
+    $('.date_picker').date_input();
 })
 function val(e){
     var start = new Date(new Date(new Date().toLocaleDateString()).getTime());//当天00:00
