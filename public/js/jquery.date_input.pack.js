@@ -92,7 +92,8 @@ DateInput = (function($) {
 		},
 		selectDate: function(date) {
 			if (typeof(date) == "undefined") {
-				date = this.stringToDate(this.input.val())
+				// date = this.stringToDate(new Date(this.input.val()))
+				date = new Date(this.input.val())
 			};
 			if (!date) date = new Date();
 			this.selectedDate = date;
