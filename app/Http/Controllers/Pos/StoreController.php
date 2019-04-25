@@ -181,6 +181,12 @@ class StoreController extends Controller
 
             $userinfo = User::find($local_id);
 
+            $bu_no_exist = User::where(['business_licence_no'=>$req->get('number')])->first();
+            if(!is_null($bu_no_exist))
+            {
+                exit(json_encode(['code'=>0, 'message'=>"营业执照编号已经存在", 'error_code'=>1000]));
+            }
+
             $type = $req->get('type');
             if(empty($type))
             {
