@@ -1596,13 +1596,13 @@ class ApiPosController extends Controller
             $update_count = 0;
             foreach ($data as $key => $value) {
                 // 去重
-                $is_exist = OrderGoods::where(['store_code'=>$store_code,'goods_sn'=>$value['goods_sn'], 'order_id'=>$value['ogid'],'id'=>$value['id']])->first();
+                $is_exist = OrderGoods::where(['store_code'=>$store_code,'goods_sn'=>$value['goods_sn'], 'order_id'=>$value['order_id'],'id'=>$value['id']])->first();
                 if(is_null($is_exist))
                 {
                     $tmpuser                  = new OrderGoods;
                     $tmpuser->id              = $value['id'];
-                    $tmpuser->order_id        = $value['ogid'];
-                    $tmpuser->goods_id        = $value['gid'];
+                    $tmpuser->order_id        = $value['order_id'];
+                    $tmpuser->goods_id        = $value['goods_id'];
                     $tmpuser->goods_sn        = $value['goods_sn'];
                     $tmpuser->goods_name      = $value['goods_name'];
                     $tmpuser->goods_num       = $value['goods_num'];
@@ -1624,8 +1624,8 @@ class ApiPosController extends Controller
                     $save_count ++;    
                 } else {
                     $is_exist->id              = $value['id'];
-                    $is_exist->order_id        = $value['ogid'];
-                    $is_exist->goods_id        = $value['gid'];
+                    $is_exist->order_id        = $value['order_id'];
+                    $is_exist->goods_id        = $value['goods_id'];
                     $is_exist->goods_sn        = $value['goods_sn'];
                     $is_exist->goods_name      = $value['goods_name'];
                     $is_exist->goods_num       = $value['goods_num'];
@@ -1684,7 +1684,7 @@ class ApiPosController extends Controller
                   // 废弃
                 break;
             case self::SYNC_ORDERGOODS:
-                $fields = ['id','ogid','gid','goods_sn','goods_name','goods_num','goods_price','subtotal_price','discounts_price','discount_code','discount','deleted'];    
+                $fields = ['id','order_id','goods_id','goods_sn','goods_name','goods_num','goods_price','subtotal_price','discounts_price','discount_code','discount','deleted'];    
                 break;
             case self::SYNC_CATEGORY:
                 // 无
