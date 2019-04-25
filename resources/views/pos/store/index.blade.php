@@ -12,7 +12,8 @@
         padding:10px;
     }
 </style>
-
+        <!-- @include('admin.partials.errors')
+        @include('admin.partials.success') -->
 <form action="{{url::route('pos.store.index')}}" method="POST">
     <input type="hidden" name="_token" value="{{ csrf_token() }}">
     <div>

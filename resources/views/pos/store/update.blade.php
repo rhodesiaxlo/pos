@@ -79,7 +79,7 @@
                 <p>确定修改店铺信息？</p>
             </div>
             <div class='fsa mg-b-10'>
-                <input class="mg-l-10 w80px bor-n white " style='background: #d83138;' type="submit" value="是" />
+                <input class="mg-l-10 w80px bor-n white " style='background: #d83138;' onclick='return inert()' type="button" value="是" />
                 <input class="mg-l-10 w80px bor-n white " style='' type="button" class="" onclick="$('#or').slideToggle()" value='否' />
             </div>
         </div>
@@ -122,21 +122,40 @@
             } else{
                 $('#or').slideToggle()
             }
+        }
 
-            // if (verify_code == '') {
-            //     d_messages('请输入图片验证码');
-            //     return false;
-            // }
-            // if (mobile == '') {
-            //     d_messages('请输入验证的手机号');
-            //     $("#focus-mobile").focus();
-            //     return false;
-            // }
-            // if (!myreg.test(mobile)) {
-            //     d_messages('请输入有效的手机号');
-            //     $("#focus-mobile").focus();
-            //     return false;
-            // }
+        function inert(){
+            var d = {};
+            var t = $('form').serializeArray();
+            $.each(t, function() {
+            d[this.name] = this.value;
+            });
+            var url='/pos/store/add';
+            var data={
+                address:d.address,
+                amuName:d.amuName,
+                amuNum:d.amuNum,
+                county:d.county,
+                city:d.city,
+                name:d.name,
+                nameStort:d.nameStort,
+                number:d.number,
+                phone:d.phone,
+                place:d.place,
+                province:d.province,
+                staus:d.staus,
+                password:d.password,
+                uname:d.uname,
+                store_code:d.store_code,
+            }
+            ajaxs(url,data,res=>{
+                if(res.code==1){
+                    window.location = "/pos/store/index";
+                }else{
+                    $('#or').slideToggle()
+                    eeor(res.message,'bg-red-2')
+                }
+            })
         }
         
         $("#password").blur(function(){
