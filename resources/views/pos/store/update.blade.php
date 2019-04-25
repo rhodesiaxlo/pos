@@ -130,7 +130,7 @@
             $.each(t, function() {
             d[this.name] = this.value;
             });
-            var url='/pos/store/add';
+            var url='/pos/store/edit';
             var data={
                 address:d.address,
                 amuName:d.amuName,
