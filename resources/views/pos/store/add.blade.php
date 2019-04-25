@@ -74,7 +74,7 @@
                 <p>确定新增店铺信息？</p>
             </div>
             <div class='fsa mg-b-10'>
-                <input class="mg-l-10 w80px bor-n white " style='background: #d83138;' type="submit" value="是" />
+                <input class="mg-l-10 w80px bor-n white " style='background: #d83138;' type="button" onclick='return inert()' value="是" />
                 <input class="mg-l-10 w80px bor-n white " type="button" class="" onclick="$('#or').slideToggle()" value='否' />
             </div>
         </div>
@@ -115,6 +115,40 @@
             } else {
                 $('#or').slideToggle()
             }
+        }
+
+        function inert(){
+            var d = {};
+            var t = $('form').serializeArray();
+            $.each(t, function() {
+            d[this.name] = this.value;
+            });
+            var url='/pos/store/add';
+            var data={
+                address:d.address,
+                amuName:d.amuName,
+                amuNum:d.amuNum,
+                county:d.county,
+                city:d.city,
+                name:d.name,
+                nameStort:d.nameStort,
+                number:d.number,
+                phone:d.phone,
+                place:d.place,
+                province:d.province,
+                staus:d.staus,
+                userSub:d.userSub,
+                username:d.username,
+                store_code:d.store_code,
+            }
+            ajaxs(url,data,res=>{
+                if(res.code==1){
+                    window.location = "/pos/store/index";
+                }else{
+                    $('#or').slideToggle()
+                    eeor(res.message,'bg-red-2')
+                }
+            })
         }
 
         $("#password").blur(function(){
