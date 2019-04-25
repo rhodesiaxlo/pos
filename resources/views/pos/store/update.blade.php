@@ -132,6 +132,7 @@
             });
             var url='/pos/store/edit';
             var data={
+                local_id,
                 address:d.address,
                 amuName:d.amuName,
                 amuNum:d.amuNum,
