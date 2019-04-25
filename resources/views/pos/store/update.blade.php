@@ -110,7 +110,7 @@
             $.each(t, function() {
             d[this.name] = this.value;
             });
-            if (d.address==''||d.amuName==''||d.amuNum==''||d.area=='区'||d.city=='城市'||d.name==''||d.nameStort==''||d.number==''||d.phone==''||d.place==''||d.province=='省份'||d.staus==''||d.userSub==''||d.username==''||d.uname==''||d.password=='') {
+            if (d.address==''||d.amuName==''||d.amuNum==''||d.county=='区'||d.city=='城市'||d.name==''||d.nameStort==''||d.number==''||d.phone==''||d.place==''||d.province=='省份'||d.staus==''||d.uname==''||d.password==''||d.store_code=='') {
                 $('#eor').empty()
                 $('#eor').show()
                 $('#eor').append("<div class='txal w100pc bold' style='height:100px;line-height:100px;background: #44b793;'>请填写完整信息！</div>")

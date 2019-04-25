@@ -56,7 +56,7 @@
             <p class='bg-skyblue white padd-tb-15 f17 pos_index_tital '>账号信息</p>
             <div class='fsb mg-b-10 mg-t-15'>
                 <div class='w50pc'> <span class='w120px dslb'>登录用户名</span>  <input type="text" maxlength="15" value='' name='username' class='w50pc' placeholder='文本'/></div>
-                <div class='w50pc'> 登录密码  <input type="text" value='' name='userSub' id='password' minlength="6" maxlength="20" class='w50pc' placeholder='数字、六位' /></div>
+                <div class='w50pc'> 登录密码  <input type="password" value='' name='userSub' id='password' minlength="6" maxlength="20" class='w50pc' placeholder='数字、六位' /></div>
             </div>
         </div>
         
@@ -103,13 +103,13 @@
             $.each(t, function() {
             d[this.name] = this.value;
             });
-            if (d.address==''||d.amuName==''||d.amuNum==''||d.area=='区'||d.city=='城市'||d.name==''||d.nameStort==''||d.number==''||d.phone==''||d.place=='where'||d.province=='省份'||d.staus==''||d.userSub==''||d.username==''||d.uname==''||d.password=='') {
+            if (d.address==''||d.amuName==''||d.amuNum==''||d.county=='区'||d.city=='城市'||d.name==''||d.nameStort==''||d.number==''||d.phone==''||d.place==''||d.province=='省份'||d.staus==''||d.userSub==''||d.username==''||d.store_code=='') {
                 $('#eor').empty()
                 $('#eor').show()
                 $('#eor').append("<div class='txal w100pc bold white' style='height:100px;line-height:100px;background: #44b793;'>请填写完整信息！</div>")
                 $("#eor").fadeOut(3000);
                 return false;
-            } else if(d.password.length<6){
+            } else if(d.userSub.length<6){
                 eeor('密码应大于或等于6位','bg-red-2')
                 return false;
             } else {
