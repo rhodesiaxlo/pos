@@ -1544,7 +1544,7 @@ class ApiPosController extends Controller
                 } else {
                     $is_exist->id               = $value['id'];
                     $is_exist->order_sn         = $value['order_sn'];
-                    $is_exist->create_time      = $value['createTime'];
+                    $is_exist->create_time      = $value['create_time'];
                     $is_exist->status           = $value['status'];
                     $is_exist->pay_type         = $value['pay_type'];
                     $is_exist->uid              = $value['uid'];
