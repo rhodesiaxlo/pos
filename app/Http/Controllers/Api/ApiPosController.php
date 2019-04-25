@@ -1755,6 +1755,10 @@ class ApiPosController extends Controller
                     $tmpuser->total_price = $value['total_price'];
                     $tmpuser->cash_price  = $value['cash_price'];
                     $tmpuser->deleted     = $value['deleted'];
+
+                    $tmpuser->total_order     = $value['total_order'];
+
+                    
                     
                     $tmpuser->store_code  = $store_code;
 
@@ -1773,6 +1777,8 @@ class ApiPosController extends Controller
                     $is_exist->total_price = $value['total_price'];
                     $is_exist->cash_price  = $value['cash_price'];
                     $is_exist->deleted     = $value['deleted'];
+
+                    $is_exist->total_order     = $value['total_order'];
 
                     $is_exist->store_code  = $store_code;
 
