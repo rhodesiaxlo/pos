@@ -62,8 +62,9 @@
                 <td>{{$user->creator->name}}</td>
                 <td>{{date('Y-m-d', $user->create_time)}}</td>
                 <td><a href='/pos/store/edit?id={{$user->local_id}}'>编辑</a></td>
-                <!-- <td id='is_a'><span onclick='is_a({{$user->local_id}},{{$user->is_active==1?0:1}})'>{{$user->is_active==1?"正常":"禁用"}}</span></td> -->
-                <td id='is_a'><img onclick='is_a({{$user->local_id}},{{$user->is_active==1?0:1}})' src='{{$user->is_active==1?"/img/indexOne.png":"/img/indexTwo.png"}}' alt=""></td>
+                <td id='is_a'>
+                    <img id='is_img' class='toggle'  data-is_active='{{$user->is_active}}' data-local_id='{{$user->local_id}}' src='{{$user->is_active==1?"/img/indexOne.png":"/img/indexTwo.png"}}' alt="" />
+                </td>
             </tr>
             @endforeach
         </table>
@@ -75,11 +76,15 @@
             </div> -->
         </div>
     </div>
-  
+
  @stop
 
 @section('js')
     <script>
+       
+        $(function(){
+            
+        })
         let selectName=[
             {name:'按店铺名称',id:0},
             {name:'按店主姓名',id:1},
@@ -111,36 +116,38 @@
             ajaxs(url,data,res=>{
                 if(res.code==1){
                     window.location.reload()//刷新当前页面.
-                    // $('#is_a').empty()
-                    // $('#is_a').append(`<span onclick='is_a({{$user->is_active}},{{$user->local_id}})'>{{$user->is_active==1?"正常":"禁用"}}</span>`)
                 }else{
                     eeor(res.message,'bg-red-2')
                 }
             })
         }
 
-        // console.log(timeLV({{$user->create_time}}))
         function newPage(){
             window.location.reload()//刷新当前页面.
         }
-        function is_a(e,a){
-            var url='/pos/store/edit'
+
+        $("#box tr #is_a #is_img").click(function(){
+            var that=$(this)
+            var item = $(this).index();  //获取索引下标 也从0开始
+            var textword = $(this).context.dataset;  //文本内容
+            var active=textword.is_active;
+            active==1?active=0:active=1;
+            var id=textword.local_id;
+            var url='/pos/store/edit';
             var data={
-                local_id:e,
-                status:a,
+                local_id:id,
+                status:active,
                 type:'index'
             }
             ajaxs(url,data,res=>{
                 if(res.code==1){
-                    // window.location.reload()//刷新当前页面.
-                    // console.log({{$user->is_active}})
-                    $('#is_a').empty()
-                    $('#is_a').append(`<img onclick='is_a({{$user->local_id}},{{$user->is_active==1?0:1}})' src='{{$user->is_active==1?"/img/indexOne.png":"/img/indexTwo.png"}}' alt="">`)
+                    $('#is_img').attr('src',active==1?"/img/indexOne.png":"/img/indexTwo.png")
+                    that.context.dataset.is_active=res.status
                 }else{
                     eeor(res.message,'bg-red-2')
                 }
             })
-        }
+        })
 
     </script>
 
