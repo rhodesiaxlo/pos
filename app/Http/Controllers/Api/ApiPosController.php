@@ -1422,6 +1422,8 @@ class ApiPosController extends Controller
                     $tmpuser->deleted           = $value['deleted'];
                     $tmpuser->store_code        = $store_code;
 
+                    $tmpuser->place_code         = $value['place_code'];
+
                     $ret = $tmpuser->save();
                     if($ret === false)
                     {
@@ -1441,6 +1443,9 @@ class ApiPosController extends Controller
                     $is_exist->staleTime         = $value['staleTime'];
                     $is_exist->is_forsale        = $value['is_forsale'];
                     $is_exist->sale_time         = $value['sale_time'];
+
+                    $is_exist->place_code         = $value['place_code'];
+
                     $is_exist->is_short          = $value['is_short'];
                     $is_exist->short_time        = $value['short_time'];
                     $is_exist->sale_time         = $value['sale_time'];
