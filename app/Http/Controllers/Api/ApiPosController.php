@@ -1412,7 +1412,7 @@ class ApiPosController extends Controller
                     $tmpuser->sale_time         = $value['sale_time'];
                     $tmpuser->is_short          = $value['is_short'];
                     $tmpuser->short_time        = $value['short_time'];
-                    $tmpuser->sale_time         = $value['sale_time'];
+                    $tmpuser->staleTime         = $value['staleTime'];
                     $tmpuser->check             = $value['check'];
                     $tmpuser->type              = $value['type'];
                     $tmpuser->spec              = $value['spec'];
@@ -1448,7 +1448,7 @@ class ApiPosController extends Controller
 
                     $is_exist->is_short          = $value['is_short'];
                     $is_exist->short_time        = $value['short_time'];
-                    $is_exist->sale_time         = $value['sale_time'];
+                    $is_exist->staleTime         = $value['staleTime'];
                     $is_exist->check             = $value['check'];
                     $is_exist->type              = $value['type'];
                     $is_exist->spec              = $value['spec'];
@@ -1513,7 +1513,7 @@ class ApiPosController extends Controller
                     $tmpuser                   = new Order;
                     $tmpuser->id               = $value['id'];
                     $tmpuser->order_sn         = $value['order_sn'];
-                    $tmpuser->create_time      = $value['createTime'];
+                    $tmpuser->create_time      = $value['create_time'];
                     $tmpuser->status           = $value['status'];
                     $tmpuser->pay_type         = $value['pay_type'];
                     $tmpuser->uid              = $value['uid'];
