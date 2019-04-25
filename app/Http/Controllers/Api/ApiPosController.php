@@ -1214,7 +1214,7 @@ class ApiPosController extends Controller
             $update_count = 0;
             foreach ($data as $key => $value) {
                 // 去重
-                $is_exist = Member::where(['id'=>$value['id']])->first();
+                $is_exist = Member::where(['id'=>$value['id'],'store_code'=>$store_code])->first();
                 if(is_null($is_exist))
                 {
                     $is_exist = Member::where(['store_code'=>$store_code,'uname'=>$value['uname']])->first();
