@@ -203,7 +203,7 @@ class StoreController extends Controller
                 $result                        = $userinfo->save();
                 if($result !== false)
                 {
-                    exit(json_encode(['code'=>1, 'message'=>"success"]));
+                    exit(json_encode(['code'=>1, 'message'=>"success", 'status'=>$req->get('status')]));
                 } else {
                     exit(json_encode(['code'=>0, 'message'=>"更新失败", 'error_code'=>1000]));
                 }
