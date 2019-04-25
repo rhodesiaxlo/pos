@@ -121,14 +121,17 @@ class StoreController extends Controller
             $is_exist = User::where(['uname'=>$req->get('uname')])->first();
             if(!is_null($is_exist))
             {
-                return redirect('pos/store/index')->withSuccess('添加失败，登录名已存在');
+                exit(json_encode(['code'=>0, 'message'=>"添加失败，登录名已存在", 'error_code'=>1000]));
+
+                // return redirect('pos/store/index')->withSuccess('添加失败，登录名已存在');
             }
 
             $bu_no_exist = User::where(['business_licence_no'=>$req->get('number')])->first();
             if(!is_null($bu_no_exist))
             {
-                return redirect('pos/store/index')->withSuccess('添加失败，营业执照已存在');
+                exit(json_encode(['code'=>0, 'message'=>"添加失败, 营业执照编号重复", 'error_code'=>1000]));
             }
+
 
             $loginTokenName = Auth::guard('admin')->getName();
             $operator=Session::get($loginTokenName);
@@ -157,9 +160,11 @@ class StoreController extends Controller
 
             if($result === false)
             {
-                return redirect('pos/store/index')->withErrors("添加失败");
+                exit(json_encode(['code'=>0, 'message'=>"添加失败", 'error_code'=>1000]));
+                //return redirect('pos/store/index')->withErrors("添加失败");
             } else {
-                return redirect('pos/store/index')->withSuccess('添加成功');
+                exit(json_encode(['code'=>1, 'message'=>"success"]));
+                //return redirect('pos/store/index')->withSuccess('添加成功');
             }
 
             // exit(json_encode(['code'=>0, 'message'=>"error",'data'=>json_encode($_POST)]));
@@ -184,7 +189,8 @@ class StoreController extends Controller
             $bu_no_exist = User::where(['business_licence_no'=>$req->get('number')])->first();
             if(!is_null($bu_no_exist))
             {
-                return redirect('pos/store/index')->withErrors("添加失败, 营业执照编号重复");
+                exit(json_encode(['code'=>0, 'message'=>"添加失败, 营业执照编号重复", 'error_code'=>1000]));
+                // return redirect('pos/store/index')->withErrors("添加失败, 营业执照编号重复");
             }
 
             $type = $req->get('type');
@@ -220,9 +226,11 @@ class StoreController extends Controller
 
             if($result === false)
             {
-                return redirect('pos/store/index')->withErrors("添加失败");
+                exit(json_encode(['code'=>0, 'message'=>"添加失败", 'error_code'=>1000]));
+                //return redirect('pos/store/index')->withErrors("添加失败");
             } else {
-                return redirect('pos/store/index')->withSuccess('添加成功');
+                exit(json_encode(['code'=>1, 'message'=>"success"]));
+                // return redirect('pos/store/index')->withSuccess('添加成功');
             }
 
             // return redirect('pos/store/index')->withErrors("更新失败");
