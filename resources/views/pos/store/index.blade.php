@@ -78,7 +78,6 @@
         </div>
     </div>
 
-    <?php echo json_encode($search); ?>
     @if(empty($search))
         <input type="hidden" id="seach"  value="" />
         <input type="hidden" id="seachtype"  value="" />
@@ -96,7 +95,7 @@
             var seach=$('#seach').val()
             var type=$('#seachtype').val()
             seach?$('#keyword').val(seach):''
-            $("#selectName  option[value="+type+"] ").attr("selected",true)
+            type?$("#selectName  option[value="+type+"] ").attr("selected",true):''
         })
         let selectName=[
             {name:'按店铺名称',id:0},
