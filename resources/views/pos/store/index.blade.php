@@ -78,13 +78,25 @@
         </div>
     </div>
 
+    <?php echo json_encode($search); ?>
+    @if(empty($search))
+        <input type="hidden" id="seach"  value="" />
+        <input type="hidden" id="seachtype"  value="" />
+    @endif
+    @if(!empty($search))
+        <input type="hidden" id="seach"  value="{{$search['value']}}" />
+        <input type="hidden" id="seachtype"  value="{{$search['type']}}" />
+    @endif
  @stop
 
 @section('js')
     <script>
        
         $(function(){
-            
+            var seach=$('#seach').val()
+            var type=$('#seachtype').val()
+            seach?$('#keyword').val(seach):''
+            $("#selectName  option[value="+type+"] ").attr("selected",true)
         })
         let selectName=[
             {name:'按店铺名称',id:0},
@@ -98,7 +110,7 @@
             {name:'按开户行',id:8}
         ]
         for(let item of selectName){
-            $('#selectName').append(`<option value ="${item.id}">${item.name}</option>`)
+            $('#selectName').append(`<option id='${item.id}' value ="${item.id}">${item.name}</option>`)
         }
         function add(){
             //debugger;
