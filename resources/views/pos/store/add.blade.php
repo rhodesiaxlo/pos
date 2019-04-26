@@ -55,8 +55,8 @@
         <div class='mg-t-15'>
             <p class='bg-skyblue white padd-tb-15 f17 pos_index_tital '>账号信息</p>
             <div class='fsb mg-b-10 mg-t-15'>
-                <div class='w50pc'> <span class='w120px dslb'>登录用户名</span>  <input type="text" maxlength="15" value='' name='username' class='w50pc' placeholder='文本'/></div>
-                <div class='w50pc'> 登录密码  <input type="password" value='' name='userSub' id='password' minlength="6" maxlength="20" class='w50pc' placeholder='数字、六位' /></div>
+                <div class='w50pc'> <span class='w120px dslb'>登录用户名</span>  <input type="text" maxlength="15" value="{{$store_code}}" name='username' class='w50pc' placeholder='文本'/></div>
+                <div class='w50pc'> 登录密码  <input type="text" value='888888' name='userSub' id='password' minlength="6" maxlength="20" class='w50pc' placeholder='数字、六位' /></div>
             </div>
         </div>
         
