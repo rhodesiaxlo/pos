@@ -183,19 +183,20 @@ class StoreController extends Controller
         {
             $local_id = $req->get('local_id');
 
-
             $userinfo = User::find($local_id);
 
-            $bu_no_exist = User::where(['business_licence_no'=>$req->get('number')])->first();
-            if(!is_null($bu_no_exist))
-            {
-                exit(json_encode(['code'=>0, 'message'=>"添加失败, 营业执照编号重复", 'error_code'=>1000]));
-                // return redirect('pos/store/index')->withErrors("添加失败, 营业执照编号重复");
-            }
-
             $type = $req->get('type');
+
             if(empty($type))
             {
+                $bu_no_exist = User::where(['business_licence_no'=>$req->get('number')])->first();
+                if(!is_null($bu_no_exist))
+                {
+                    exit(json_encode(['code'=>0, 'message'=>"添加失败, 营业执照编号重复", 'error_code'=>1000]));
+                    // return redirect('pos/store/index')->withErrors("添加失败, 营业执照编号重复");
+                }
+
+
                 $userinfo->province_id         = $req->get('province');
                 $userinfo->city_id             = $req->get('city');
                 $userinfo->area_id             = $req->get('county');
