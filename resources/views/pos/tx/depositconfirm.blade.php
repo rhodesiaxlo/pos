@@ -233,7 +233,7 @@ function prepayment(){
             if(res.code==1){
                 move()
                 eeor('初审成功','bg_green_1')
-                window.location = "/pos/transaction/depositconfirm?date="+$('#seachdate').val();
+                window.location = "/pos/transaction/index?date="+$('#seachdate').val();
             }else{
                 eeor(res.message,'bg-red-2')
             }
@@ -251,7 +251,7 @@ function prepayment(){
             if(res.code==1){
                 move()
                 eeor('复审成功','bg_green_1')
-                window.location = "/pos/transaction/depositconfirm?date="+$('#seachdate').val();
+                window.location = "/pos/transaction/index?date="+$('#seachdate').val();
             }else{
                 eeor(res.message,'bg-red-2')
             }
