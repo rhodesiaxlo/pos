@@ -99,6 +99,71 @@ class StoreController extends Controller
           // exit(json_encode($userlist));
         }
 
+        $args_store_name = $req->get('store_name');
+        $args_realname = $req->get('realname');
+        $args_store_code = $req->get('store_code');
+        $args_business_no = $req->get('business_licence_no');
+        $args_address = $req->get('address');
+        $args_phone = $req->get('phone');
+        $args_account_name = $req->get('account_name');
+        $args_account_no = $req->get('account_no');
+        $args_bank_name = $req->get('bank_name');
+
+        if(!empty($args_store_name))
+        {
+            $search['type'] = 0;
+            $search['value'] = $args_store_name;
+        }
+
+        if(!empty($args_realname))
+        {
+            $search['type'] = 1;
+            $search['value'] = $args_realname;   
+        }
+
+        if(!empty($args_store_code))
+        {
+            $search['type'] = 2;
+            $search['value'] = $args_store_code;   
+        }
+
+        if(!empty($args_business_no))
+        {
+            $search['type'] = 3;
+            $search['value'] = $args_business_no;   
+        }
+
+        if(!empty($args_address))
+        {
+            $search['type'] = 4;
+            $search['value'] = $args_address;   
+        }
+
+        if(!empty($args_phone))
+        {
+            $search['type'] = 5;
+            $search['value'] = $args_phone;   
+        }
+
+        if(!empty($args_account_name))
+        {
+            $search['type'] = 6;
+            $search['value'] = $args_account_name;   
+        }
+
+        if(!empty($args_account_no))
+        {
+            $search['type'] = 7;
+            $search['value'] = $args_account_no;   
+        }
+
+        if(!empty($args_bank_name))
+        {
+            $search['type'] = 8;
+            $search['value'] = $args_bank_name;   
+        }
+
+
         if(empty($key))
         {
             $userlist = User::with('creator')->with('bank')->where($where)->orderby('create_time', "desc")->paginate(env('RECORD_PERPAGE'));
@@ -189,13 +254,13 @@ class StoreController extends Controller
 
             if(empty($type))
             {
-                $bu_no_exist = User::where(['business_licence_no'=>$req->get('number')])->first();
+                $where[] = array('local_id', '<>',  $req->get('local_id'));
+                $where[] = array('business_licence_no', "=", $req->get('number'));
+                $bu_no_exist = User::where($where)->first();
                 if(!is_null($bu_no_exist))
                 {
                     exit(json_encode(['code'=>0, 'message'=>"添加失败, 营业执照编号重复", 'error_code'=>1000]));
-                    // return redirect('pos/store/index')->withErrors("添加失败, 营业执照编号重复");
                 }
-
 
                 $userinfo->province_id         = $req->get('province');
                 $userinfo->city_id             = $req->get('city');
