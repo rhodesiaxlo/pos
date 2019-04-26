@@ -25,4 +25,7 @@ Route::any('transaction/outflow','TransactionController@outflow')->name('pos.tra
 Route::any('transaction/firstcheck','TransactionController@firstCheck')->name('pos.transaction.firstcheck');
 Route::any('transaction/recheck','TransactionController@reCheck')->name('pos.transaction.recheck');
 
+// 收银对账
+
+
 

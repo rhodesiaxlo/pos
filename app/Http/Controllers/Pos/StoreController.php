@@ -183,12 +183,10 @@ class StoreController extends Controller
         if($req->isMethod('POST'))
         {
             // 去重 uname
-            $is_exist = User::where(['uname'=>$req->get('uname')])->first();
+            $is_exist = User::where(['uname'=>$req->get('username')])->first();
             if(!is_null($is_exist))
             {
                 exit(json_encode(['code'=>0, 'message'=>"添加失败，登录名已存在", 'error_code'=>1000]));
-
-                // return redirect('pos/store/index')->withSuccess('添加失败，登录名已存在');
             }
 
             $bu_no_exist = User::where(['business_licence_no'=>$req->get('number')])->first();
@@ -196,7 +194,6 @@ class StoreController extends Controller
             {
                 exit(json_encode(['code'=>0, 'message'=>"添加失败, 营业执照编号重复", 'error_code'=>1000]));
             }
-
 
             $loginTokenName = Auth::guard('admin')->getName();
             $operator=Session::get($loginTokenName);
@@ -218,9 +215,10 @@ class StoreController extends Controller
             $userinfo->store_name          = $req->get('nameStort');
             $userinfo->rank                = 0;
             $userinfo->create_time         = time();
-            $userinfo->is_active              = trim($req->get('status'))=="启用"?1:0;
+            $userinfo->is_active              = trim($req->get('staus'))=="启用"?1:0;
 
             $userinfo->created_by          = $operator;
+
             $result                        = $userinfo->save();
 
             if($result === false)
