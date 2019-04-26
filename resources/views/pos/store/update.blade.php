@@ -60,7 +60,7 @@
             <p class='bg-skyblue white padd-tb-15 f17 pos_index_tital'>账号信息</p>
             <div class='fsb mg-b-10'>
                 <div class='w50pc'> <span class='w120px dslb'>登录用户名</span>  <input type="text" maxlength="15" value='{{$userinfo->uname}}' name='uname' class='w50pc' placeholder='文本'/></div>
-                <div class='w50pc'> 登录密码  <input type="password" value='{{$userinfo->password}}' id='password' minlength="6" maxlength="20" name='password' class='w50pc' placeholder='数字、六位' /></div>
+                <div class='w50pc'> 登录密码  <input type="text" value='{{$userinfo->password}}' id='password' minlength="6" maxlength="20" name='password' class='w50pc' placeholder='数字、六位' /></div>
             </div>
         </div>
         
@@ -110,7 +110,7 @@
             $.each(t, function() {
             d[this.name] = this.value;
             });
-            if (d.address==''||d.amuName==''||d.amuNum==''||d.county=='区'||d.city=='城市'||d.name==''||d.nameStort==''||d.number==''||d.phone==''||d.place==''||d.province=='省份'||d.staus==''||d.uname==''||d.password==''||d.store_code=='') {
+            if (d.address==''||d.amuName==''||d.amuNum==''||d.account_name==''||d.account_no==''||d.county=='区'||d.city=='城市'||d.name==''||d.nameStort==''||d.number==''||d.phone==''||d.place==''||d.province=='省份'||d.staus==''||d.uname==''||d.password==''||d.store_code=='') {
                 $('#eor').empty()
                 $('#eor').show()
                 $('#eor').append("<div class='txal w100pc bold' style='height:100px;line-height:100px;background: #44b793;'>请填写完整信息！</div>")

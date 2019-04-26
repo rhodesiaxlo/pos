@@ -92,10 +92,9 @@
     <script>
        
         $(function(){
-            var seach=$('#seach').val()
-            var type=$('#seachtype').val()
-            seach?$('#keyword').val(seach):''
-            type?$("#selectName  option[value="+type+"] ").attr("selected",true):''
+            var seach=$('#seach').val(),type=$('#seachtype').val();
+            seach?$('#keyword').val(seach):'';
+            type?$("#selectName  option[value="+type+"] ").attr("selected",true):'';
         })
         let selectName=[
             {name:'按店铺名称',id:0},
@@ -153,14 +152,13 @@
             }
             ajaxs(url,data,res=>{
                 if(res.code==1){
-                    $('#is_img').attr('src',active==1?"/img/indexOne.png":"/img/indexTwo.png")
+                    that.attr('src',active==1?"/img/indexOne.png":"/img/indexTwo.png")
                     that.context.dataset.is_active=res.status
                 }else{
                     eeor(res.message,'bg-red-2')
                 }
             })
         })
-
     </script>
 
 @stop
