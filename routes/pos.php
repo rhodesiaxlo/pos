@@ -24,8 +24,34 @@ Route::any('transaction/withdrawconfirm','TransactionController@withdrawConfirm'
 Route::any('transaction/outflow','TransactionController@outflow')->name('pos.transaction.outflow');
 Route::any('transaction/firstcheck','TransactionController@firstCheck')->name('pos.transaction.firstcheck');
 Route::any('transaction/recheck','TransactionController@reCheck')->name('pos.transaction.recheck');
+Route::any('transaction/export','TransactionController@export')->name('pos.transaction.export');
 
+
+Route::any('excel/index','ExcelController@index')->name('pos.excel.index');
+/*** REST 重构使用 ****/
+/*
 // 收银对账
+Route::any('deposittx/index','DepositTxController@index')->name('pos.deposittx.index');
+Route::any('deposittx/firstcheck','DepositTxController@firstCheck')->name('pos.deposittx.firstcheck');
+Route::any('deposittx/recheck','DepositTxController@reCheck')->name('pos.deposittx.recheck');
+Route::any('deposittx/export','DepositTxController@export')->name('pos.deposittx.export');
+
+// 打款
+Route::any('writeoff/index','WriteOffController@index')->name('pos.writeoff.index');
+Route::any('writeoff/outflow','WriteOffController@outflow')->name('pos.writeoff.outflow');
+
+// 结算对账
+Route::any('withdrawtx/index','WithdrawTxController@index')->name('pos.withdrawtx.index');
+Route::any('withdrawtx/firstcheck','WithdrawTxController@firstCheck')->name('pos.withdrawtx.firstcheck');
+Route::any('withdrawtx/recheck','WithdrawTxController@reCheck')->name('pos.withdrawtx.recheck');
+Route::any('withdrawtx/export','WithdrawTxController@export')->name('pos.withdrawtx.export');
+
+// excel 处理页面
+Route::any('excel/export','ExcelController@export')->name('pos.excel.index');
+*/
+
+/*** REST 重构使用 ****/
+
 
 
 

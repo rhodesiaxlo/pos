@@ -260,6 +260,14 @@ class StoreController extends Controller
                     exit(json_encode(['code'=>0, 'message'=>"添加失败, 营业执照编号重复", 'error_code'=>1000]));
                 }
 
+
+                $unmae_exist = User::where(['uname' => $req->get('uname')])->first();
+                if(!is_null($unmae_exist))
+                {
+                    exit(json_encode(['code'=>0, 'message'=>"添加失败, 登录名重复", 'error_code'=>1000]));
+
+                }
+
                 $userinfo->province_id         = $req->get('province');
                 $userinfo->city_id             = $req->get('city');
                 $userinfo->area_id             = $req->get('county');

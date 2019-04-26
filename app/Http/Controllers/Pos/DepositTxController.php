@@ -60,13 +60,9 @@ class DepositTxController extends Controller
         $drawntimestamp = strtotime($drawn);
         $midnighttimestamp = strtotime($midnight);
 
-        //exit(" drawn = {$drawn} midnight = {$midnight}");
         
-        //$prepayments = DB::table('pos_prepayment')->whereBetween('pos_prepayment.order_time',array($drawntimestamp, $midnighttimestamp))->get();
         $prepayments = DB::table('pos_prepayment')->where(['check_date'=>$date])->orderby('result_status','desc')->orderby('cpcc_time', 'desc')->get();
-
-
-        // $logs = DB::table('pos_abnormal_transaction_log')->whereBetween('pos_abnormal_transaction_log.(month, day, year)',array($drawntimestamp, $midnighttimestamp))->first();
+        
         $logs = DB::table('pos_abnormal_transaction_log')->where(['check_date'=>$date,'tx_type'=>1402])->first();
         return view('pos.tx.depositconfirm')->with('logs', $logs)->with('prepayments', $prepayments)->with('search', $search);
     }

@@ -32,6 +32,10 @@ class GetMenu
         $data['top'] = [];
         //查找并拼接出地址的别名值
         $path_arr = explode('/', \URL::getRequest()->path());
+
+        // 构造name
+        $name = implode(".", $path_arr);
+
         if (isset($path_arr[1])) {
             $urlPath = $path_arr[0] . '.' . $path_arr[1] . '.index';
         } else {
@@ -62,6 +66,7 @@ class GetMenu
         unset($data[0]);
         //ation open 可以在函数中计算给他
         $data['openarr'] = array_unique($openArr);
+        $data['name'] = $name;
         return $data;
 
     }
