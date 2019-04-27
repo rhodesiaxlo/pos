@@ -46,6 +46,7 @@ class StoreController extends Controller
             $search['type'] = 0;
             $search['value'] = $args_store_name;
             $key = "store_name";
+            $value = $args_store_name;
             $where[] = array("store_name", "like", "%".$value."%");
         }
 
@@ -54,6 +55,8 @@ class StoreController extends Controller
             $search['type'] = 1;
             $search['value'] = $args_realname;  
             $key = "realname";
+            $value = $args_realname;
+
             $where[] = array("realname", "like", "%".$value."%"); 
         }
 
@@ -62,6 +65,8 @@ class StoreController extends Controller
             $search['type'] = 2;
             $search['value'] = $args_store_code;   
             $key = "store_code";
+            $value = $args_store_code;
+
             $where[] = array("store_code", "like", "%".$value."%");
         }
 
@@ -71,6 +76,8 @@ class StoreController extends Controller
             $search['value'] = $args_business_no;  
 
             $key = "business_licence_no";
+            $value = $args_business_no;
+
             $where[] = array("business_licence_no", "like", "%".$value."%"); 
         }
 
@@ -81,6 +88,8 @@ class StoreController extends Controller
 
             // 店铺地址
             $key = "address";
+            $value = $args_address;
+
             $where[] = array("address", "like", "%".$value."%");
         }
 
@@ -90,6 +99,8 @@ class StoreController extends Controller
             $search['value'] = $args_phone;   
 
             $key = "phone";
+            $value = $args_phone;
+
             $where[] = array("phone", "like", "%".$value."%");
         }
 
@@ -99,6 +110,8 @@ class StoreController extends Controller
             $search['value'] = $args_account_name; 
 
             $key = "account_name";
+            $value = $args_account_name;
+
             $where[] = array("account_name", "like", "%".$value."%");  
         }
 
@@ -107,6 +120,8 @@ class StoreController extends Controller
             $search['type'] = 7;
             $search['value'] = $args_account_no;  
             $key = "account_no";
+            $value = $args_account_no;
+
             $where[] = array("account_no", "like", "%".$value."%"); 
         }
 
@@ -115,6 +130,8 @@ class StoreController extends Controller
             $search['type'] = 8;
             $search['value'] = $args_bank_name;
             $key = "bank_name";
+            $value = $args_bank_name;
+
             $bankinfo = Bank::where('name', "like", "%".$value."%")->first();
             if(!is_null($bankinfo))
             {
