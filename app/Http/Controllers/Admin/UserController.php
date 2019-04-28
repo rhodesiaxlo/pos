@@ -154,6 +154,8 @@ class UserController extends Controller
 
         }
 
+        exit(json_encode($request->all()));
+
         $user->save();
         $user->giveRoleTo($request->get('roles', []));
 

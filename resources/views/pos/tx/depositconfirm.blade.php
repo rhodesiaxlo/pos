@@ -65,7 +65,7 @@
         <button class='bor-14 mg-l-10 w80px bor-n white bg-blue'>导出</button>
         <button type='button' class='bor-14 mg-l-10 w80px bor-n white bg-blue' onclick='return alrt(0)'>手工调帐</button>
         
-        @if(Gate::forUser(auth('admin')->user())->check('admin.permission.create'))
+        @if(Gate::forUser(auth('admin')->user())->check('pos.transaction.recheck'))
         <button type='button' class='bor-14 mg-l-10 w80px bor-n white bg-blue' onclick='return alrt(1)'>复核</button>
         @endif
     </div>
