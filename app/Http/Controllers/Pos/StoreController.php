@@ -312,7 +312,7 @@ class StoreController extends Controller
 
 
                 $unmae_exist = User::where(['uname' => $req->get('uname')])->first();
-                if(!is_null($unmae_exist))
+                if(!is_null($unmae_exist) && $unmae_exist->local_id != $local_id)
                 {
                     exit(json_encode(['code'=>0, 'message'=>"添加失败, 登录名重复", 'error_code'=>1000]));
 
