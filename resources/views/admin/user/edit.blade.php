@@ -20,6 +20,8 @@
 
                             @include('admin.partials.errors')
                             @include('admin.partials.success')
+                            <div class="bg-red-2" id="eor">
+                            </div>
                             <form class="form-horizontal" role="form" method="POST"
                                   action="/admin/user/{{ $id }}" onsubmit="return toVaild()">
                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -53,7 +55,12 @@
         $.each(t, function() {
         d[this.name] = this.value;
         });
-        if(d.password_confirmation==''||d.password==''){
+        if(d.password_confirmation!=''&&d.password=='')
+        {
+            eeor('请输入密码','bg-red-2')
+            return false;
+        }
+        if(d.password_confirmation!=''&&d.password!=''&&d.password!=d.password_confirmation){
             eeor('两次密码不一致','bg-red-2')
             return false;
         }
