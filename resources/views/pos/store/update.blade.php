@@ -134,8 +134,8 @@
             var data={
                 local_id,
                 address:d.address,
-                amuName:d.account_name,
-                amuNum:d.account_no,
+                account_name:d.account_name,
+                account_no:d.account_no,
                 county:d.county,
                 city:d.city,
                 name:d.name,
