@@ -16,7 +16,7 @@
             <p class='bg-skyblue white padd-tb-15 f17 pos_index_tital'>店铺信息</p>
             <div class='fsb w100pc'  >
                 <p style='width:50%;'><span class='w120px dslb'> 店铺名称</span>  <input id='nameStort' name='nameStort' maxlength="20" style='width:60%;' type="text" value='{{$userinfo->store_name}}' /></p>
-                <div class='mg-b-10' style='width:50%;'> <span class='red'>*</span> 商家编号  <input  style='width:60%;' type="text" readonly='true' placeholder='无需填写，系统自动生成编码'  value="{{$userinfo->store_code}}" /></div>
+                <div class='mg-b-10' style='width:50%;'> <span class='red'>*</span> 商家编号  <input  style='width:60%;' type="text" readonly='true' placeholder='无需填写，系统自动生成编码'  value="{{$userinfo->store_code}}" name="store_code" /></div>
             </div>
             <div class='fsb mg-b-10'>
                 <div class='w120px dslb'> 店铺地址  </div>
@@ -110,7 +110,7 @@
             $.each(t, function() {
             d[this.name] = this.value;
             });
-            if (d.address==''||d.amuName==''||d.amuNum==''||d.account_name==''||d.account_no==''||d.county=='区'||d.city=='城市'||d.name==''||d.nameStort==''||d.number==''||d.phone==''||d.place==''||d.province=='省份'||d.staus==''||d.uname==''||d.password==''||d.store_code=='') {
+            if (d.address==''||d.account_name==''||d.account_no==''||d.county=='区'||d.city=='城市'||d.name==''||d.nameStort==''||d.number==''||d.phone==''||d.place==''||d.province=='省份'||d.staus==''||d.uname==''||d.password==''||d.store_code=='') {
                 $('#eor').empty()
                 $('#eor').show()
                 $('#eor').append("<div class='txal w100pc bold' style='height:100px;line-height:100px;background: #44b793;'>请填写完整信息！</div>")
@@ -134,8 +134,8 @@
             var data={
                 local_id,
                 address:d.address,
-                amuName:d.amuName,
-                amuNum:d.amuNum,
+                amuName:d.account_name,
+                amuNum:d.account_no,
                 county:d.county,
                 city:d.city,
                 name:d.name,
