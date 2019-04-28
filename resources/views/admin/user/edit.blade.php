@@ -21,7 +21,7 @@
                             @include('admin.partials.errors')
                             @include('admin.partials.success')
                             <form class="form-horizontal" role="form" method="POST"
-                                  action="/admin/user/{{ $id }}">
+                                  action="/admin/user/{{ $id }}" onsubmit="return toVaild()">
                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                 <input type="hidden" name="_method" value="PUT">
                                 <input type="hidden" name="id" value="{{ $id }}">
@@ -43,4 +43,20 @@
             </div>
         </div>
     </div>
+@stop
+
+@section('js')
+<script>
+    function toVaild(){
+        var d = {};
+        var t = $('form').serializeArray();
+        $.each(t, function() {
+        d[this.name] = this.value;
+        });
+        if(d.password_confirmation==''||d.password==''){
+            eeor('两次密码不一致','bg-red-2')
+            return false;
+        }
+    }
+</script>
 @stop
