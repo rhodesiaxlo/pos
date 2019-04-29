@@ -20,17 +20,27 @@ use Illuminate\Support\Facades\Session;
 use  App\Models\Admin\AdminUser;
 use Illuminate\Support\Facades\Log;
 
+use Box\Spout\Writer\WriterFactory;
+use Box\Spout\Common\Type;
+
 /**
  * 收银交易控制器
  */
 class TransactionController extends Controller
 {
-    public function index(Request $req)
+    public function index(Request $req, $excel2=0, $date2=0)
     {
         // 根据日期选择 prepayment , prepayment 里面有 log_id
         $date = date('Y-m-d',strtotime("-1 day"));
+        $excel = $req->get('excel');
 
         $getdate = $req->get('date');
+
+        if($date2!=0){
+            $getdate = $date2;
+        }
+
+        //exit('date = '.$getdate.'#'.json_encode($req->all())." excel = {$excel2} date2 = {$date2}");
         if(!empty($getdate))
             $date = $getdate;
 
@@ -54,16 +64,50 @@ class TransactionController extends Controller
 
         $drawntimestamp = strtotime($drawn);
         $midnighttimestamp = strtotime($midnight);
-
-        //exit(" drawn = {$drawn} midnight = {$midnight}");
         
-        //$prepayments = DB::table('pos_prepayment')->whereBetween('pos_prepayment.order_time',array($drawntimestamp, $midnighttimestamp))->get();
         $prepayments = DB::table('pos_prepayment')->where(['check_date'=>$date])->orderby('result_status','desc')->orderby('cpcc_time', 'desc')->get();
 
 
-        // $logs = DB::table('pos_abnormal_transaction_log')->whereBetween('pos_abnormal_transaction_log.(month, day, year)',array($drawntimestamp, $midnighttimestamp))->first();
         $logs = DB::table('pos_abnormal_transaction_log')->where(['check_date'=>$date,'tx_type'=>1402])->first();
-        return view('pos.tx.depositconfirm')->with('logs', $logs)->with('prepayments', $prepayments)->with('search', $search);
+
+        // 是否导出
+
+        if(!empty($excel2) && $excel2 > 0)
+        {
+            $writer = WriterFactory::create(Type::XLSX); // for XLSX files
+            
+            $writer->setShouldUseInlineStrings(true); // default (and recommended) value
+            $writer->setShouldUseInlineStrings(false); // will use shared strings   
+
+            $writer->openToBrowser("收银对账-{$date}.xlsx"); // stream data directly to the browser
+
+            $writer->addRow(['流水号','交易日期','对账归属日期','商家名称','商户编号','我方交易金额（元）','对账状态','交易日期','调账状态']); // add a row at a time
+            foreach ($prepayments as $key => $value) {
+                unset($tmp);
+                $tmp[] = $value->serial_no;
+                $tmp[] = $value->order_time;
+                $tmp[] = $value->cpcc_time;
+                $tmp[] = $value->store_name;
+                $tmp[] = $value->store_code;
+                $tmp[] = $value->order_amount/100;
+                $tmp[] = $value->cpcc_amount/100;
+                $tmp[] = $value->result_status==0?'对账成功':
+                        ($value->result_status==1?'对账失败 金额不符':
+                        ($value->result_status==2?'平台无此订单':
+                        ($value->result_status==3?'中金无此订单':'其它')));
+                $tmp[] = $value->result_status==0?'待初审':
+                        ($value->result_status==1?'待复审 金额不符':
+                        ($value->result_status==2?'审核完成':
+                        ($value->result_status==3?'其它':'其它')));
+
+                $writer->addRow($tmp);
+            }
+
+            $writer->close();  
+            exit;
+        }
+
+        return view('pos.tx.depositconfirm')->with('logs', $logs)->with('prepayments', $prepayments)->with('search', $search)->with('exporturl',"/pos/transaction/index/1/{$date}");
     }
 
     public function add(Request $req)
@@ -97,6 +141,11 @@ class TransactionController extends Controller
         $date = date('Y-m-d',strtotime("-1 day"));
 
         $getdate = $req->get('date');
+
+        if($date2!=0){
+            $getdate = $date2;
+        }
+
         if(!empty($getdate))
             $date = $getdate;
 
@@ -129,7 +178,43 @@ class TransactionController extends Controller
 
         // $logs = DB::table('pos_abnormal_transaction_log')->whereBetween('pos_abnormal_transaction_log.(month, day, year)',array($drawntimestamp, $midnighttimestamp))->first();
         $logs = DB::table('pos_abnormal_transaction_log')->where(['check_date'=>$date,'tx_type'=>1402])->first();
-    	return view('pos.tx.depositconfirm')->with('logs', $logs)->with('prepayments', $prepayments)->with('search', $search);
+
+        if(!empty($excel2) && $excel2 > 0)
+        {
+            $writer = WriterFactory::create(Type::XLSX); // for XLSX files
+            
+            $writer->setShouldUseInlineStrings(true); // default (and recommended) value
+            $writer->setShouldUseInlineStrings(false); // will use shared strings   
+
+            $writer->openToBrowser("资金划出-{$date}.xlsx"); // stream data directly to the browser
+
+            $writer->addRow(['流水号','交易日期','对账归属日期','商家名称','商户编号','我方交易金额（元）','对账状态','交易日期','调账状态']); // add a row at a time
+            // foreach ($prepayments as $key => $value) {
+            //     unset($tmp);
+            //     $tmp[] = $value->serial_no;
+            //     $tmp[] = $value->order_time;
+            //     $tmp[] = $value->cpcc_time;
+            //     $tmp[] = $value->store_name;
+            //     $tmp[] = $value->store_code;
+            //     $tmp[] = $value->order_amount/100;
+            //     $tmp[] = $value->cpcc_amount/100;
+            //     $tmp[] = $value->result_status==0?'对账成功':
+            //             ($value->result_status==1?'对账失败 金额不符':
+            //             ($value->result_status==2?'平台无此订单':
+            //             ($value->result_status==3?'中金无此订单':'其它')));
+            //     $tmp[] = $value->result_status==0?'待初审':
+            //             ($value->result_status==1?'待复审 金额不符':
+            //             ($value->result_status==2?'审核完成':
+            //             ($value->result_status==3?'其它':'其它')));
+
+            //     $writer->addRow($tmp);
+            // }
+
+            $writer->close();  
+            exit;
+        }
+
+    	return view('pos.tx.depositconfirm')->with('logs', $logs)->with('prepayments', $prepayments)->with('search', $search)->with('exporturl',"/pos/transaction/depositconfirm/1/{$date}");;
     }
 
     /**
@@ -137,11 +222,15 @@ class TransactionController extends Controller
      * @param  Request $req [description]
      * @return [type]       [description]
      */
-    public function payment(Request $req)
+    public function payment(Request $req, $excel2=0, $date2=0)
     {
         // 根据日期选择 prepayment , prepayment 里面有 log_id
         $date = date('Y-m-d',strtotime("-1 day"));
         $getdate = $req->get('date');
+        if($date2!=0){
+            $getdate = $date2;
+        }
+        $is_export = $req->get('excel');
         if(!empty($getdate))
             $date = $getdate;
 
@@ -165,7 +254,39 @@ class TransactionController extends Controller
         $midnighttimestamp = strtotime($midnight);
 
         $outflows = OutflowLog::where(['check_date'=>$date])->get();
-    	return view('pos.tx.payment')->with('outflows', $outflows)->with('search', $search);
+
+        if(!empty($excel2) && $excel2 > 0)
+        {
+            $writer = WriterFactory::create(Type::XLSX); // for XLSX files
+            
+            $writer->setShouldUseInlineStrings(true); // default (and recommended) value
+            $writer->setShouldUseInlineStrings(false); // will use shared strings   
+
+            $writer->openToBrowser("资金划出-{$date}.xlsx"); // stream data directly to the browser
+
+            $writer->addRow(['商家名称','商家编号','交易总金额（元）','服务费（元）','结算总金额（元）','开户行','商家结算账号','结算账户户名','结算（划出）状态','实际划出时间']); // add a row at a time
+            foreach ($outflows as $key => $value) {
+                unset($tmp);
+                $tmp[] = $value->OrderNo;
+                $tmp[] = $value->OrderNo;
+                $tmp[] = $value->Amount;
+                $tmp[] = $value->Amount;
+                $tmp[] = $value->Amount;
+                $tmp[] = $value->BankID;
+                $tmp[] = $value->AccountNumber;
+                $tmp[] = $value->result_status==0?'初始化':
+                        ($value->result_status==1?'成功':
+                        ($value->result_status==2?'失败':
+                        ($value->result_status==3?'其它':'其它')));
+                $tmp[] = $value->create_time;
+
+                $writer->addRow($tmp);
+            }
+
+            $writer->close();  
+            exit;
+        }
+    	return view('pos.tx.payment')->with('outflows', $outflows)->with('search', $search)->with('exporturl',"/pos/transaction/payment/1/{$date}");
     }
 
     /**
@@ -173,11 +294,18 @@ class TransactionController extends Controller
      * @param  Request $req [description]
      * @return [type]       [description]
      */
-    public function withdrawConfirm(Request $req)
+    public function withdrawConfirm(Request $req, $excel2=0, $date2=0)
     {
         // 根据日期选择 prepayment , prepayment 里面有 log_id
         $date = date('Y-m-d',strtotime("-1 day"));
         $getdate = $req->get('date');
+
+        // 导出按钮传入参数
+        if($date2!=0){
+            $getdate = $date2;
+        }
+
+
         if(!empty($getdate))
             $date = $getdate;
         //$date = "2019-04-10";
@@ -203,16 +331,44 @@ class TransactionController extends Controller
         $drawntimestamp = strtotime($drawn);
         $midnighttimestamp = strtotime($midnight);
 
-        //exit(" drawn = {$drawn} midnight = {$midnight}");
-        
-        // $prepayments = DB::table('pos_postpayment')->whereBetween('pos_postpayment.check',array($drawntimestamp, $midnighttimestamp))->get();
-
-        // $prepayments = [];
 
         $prepayments = DB::table('pos_postpayment')->where(['check_date'=>$date])->orderby('result_status','desc')->orderby('cpcc_time', 'desc')->get();
         //$logs = DB::table('pos_abnormal_transaction_log')->whereBetween('pos_abnormal_transaction_log.create_time',array($drawntimestamp, $midnighttimestamp))->first();
         $logs = DB::table('pos_abnormal_transaction_log')->where(['check_date'=>$date,'tx_type'=>1341])->first();
-    	return view('pos.tx.withdrawconfirm')->with("logs", $logs)->with('prepayments', $prepayments)->with('search', $search);
+
+        if(!empty($excel2) && $excel2 > 0)
+        {
+            $writer = WriterFactory::create(Type::XLSX); // for XLSX files
+            
+            $writer->setShouldUseInlineStrings(true); // default (and recommended) value
+            $writer->setShouldUseInlineStrings(false); // will use shared strings   
+
+            $writer->openToBrowser("结算对账-{$date}.xlsx"); // stream data directly to the browser
+
+            $writer->addRow(['流水号','交易日期','对账归属日期','商家名称','商户编号','我方交易金额（元）','支付平台交易金额（元）','对账状态','调账状态']); // add a row at a time
+            foreach ($prepayments as $key => $value) {
+                unset($tmp);
+                $tmp[] = $value->serial_no;
+                $tmp[] = $value->order_time;
+                $tmp[] = $value->cpcc_time;
+                $tmp[] = $value->store_name;
+                $tmp[] = $value->store_code;
+                $tmp[] = $value->order_amount;
+                $tmp[] = $value->cpcc_amount;
+                $tmp[] = $value->result_status==0?'对账成功':
+                        ($value->result_status==1?'对账失败 金额不符':
+                        ($value->result_status==2?'平台无此订单':
+                        ($value->result_status==3?'中金无此订单':'其它')));
+
+                $writer->addRow($tmp);
+            }
+
+            $writer->close();  
+            exit;
+        }
+
+
+    	return view('pos.tx.withdrawconfirm')->with("logs", $logs)->with('prepayments', $prepayments)->with('search', $search)->with('exporturl',"/pos/transaction/withdrawconfirm/1/{$date}");;
     }
 
     /**

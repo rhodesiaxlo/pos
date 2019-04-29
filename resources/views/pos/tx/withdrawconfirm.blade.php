@@ -60,7 +60,7 @@
         @endif
     </div>
     <div class='flex jc-end' style=''>
-        <button class='bor-14 mg-l-10 w80px bor-n white bg-blue'>导出</button>
+        <button class='bor-14 mg-l-10 w80px bor-n white bg-blue'><a href="{{$exporturl}}">导出</a></button>
         <button class='bor-14 mg-l-10 w80px bor-n white bg-blue' onclick='alrt(0)'>手工调帐</button>
         
         @if(Gate::forUser(auth('admin')->user())->check('pos.transaction.recheck'))
