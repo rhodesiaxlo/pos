@@ -1919,8 +1919,10 @@ class ApiPosController extends Controller
             return $this->ajaxFail(null, "date can not be empty", 1000);
         }
         */
-
-        $date = date('Y-m-d', time());
+        if(empty($date))
+        {
+            $date = date('Y-m-d', time());
+        }
 
 
         //遍历数据，至 error_code = 666666
@@ -1997,7 +1999,7 @@ class ApiPosController extends Controller
                 DB::commit();
                 // 写日志
                 $log = new GeneralLog();
-                $log->message = "拉取成功 日期 ".date('Y-m-d H:i:s', time());
+                $log->message = "拉取成功 日期 {$date}";
                 $log->date = date('Y-m-d H:i:s', time());
                 $log->save();
                 // todo 
@@ -2007,7 +2009,7 @@ class ApiPosController extends Controller
                 // 生成对账单数据
                 $this->generateAfterPayment($date);
 
-                return $this->ajaxSuccess([], "read success, {$total} records");
+                return $this->ajaxSuccess([], "read success, {$total} records date {$date}");
             } catch (Exception $e) {
                 DB::rollBack();
                 // 写日志
@@ -2274,7 +2276,7 @@ class ApiPosController extends Controller
             DB::commit();
             // 写日志
             $log = new GeneralLog();
-            $log->message = "prepayment 生成成功 总数 ".sizeof($merge).' order 独有 '.sizeof($order_diff_log).' log 独有 '.sizeof($log_diff_order);
+            $log->message = "prepayment 生成成功 日期 {$date} 总数 ".sizeof($merge).' order 独有 '.sizeof($order_diff_log).' log 独有 '.sizeof($log_diff_order);
             $log->date = date('Y-m-d H:i:s', time());
             $log->save();
 
@@ -2560,7 +2562,7 @@ class ApiPosController extends Controller
             DB::commit();
             // 写日志
             $log = new GeneralLog();
-            $log->message = "prepayment 生成成功 总数 ".sizeof($merge).' order 独有 '.sizeof($order_diff_log).' log 独有 '.sizeof($log_diff_order);
+            $log->message = "prepayment 生成成功 日期 {$date} 总数 ".sizeof($merge).' order 独有 '.sizeof($order_diff_log).' log 独有 '.sizeof($log_diff_order);
             $log->date = date('Y-m-d H:i:s', time());
             $log->save();
 
