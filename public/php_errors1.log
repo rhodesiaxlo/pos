@@ -18,3 +18,11 @@ Stack trace:
 #6 /mnt/pos/ in /mnt/pos/app/Http/Controllers/Pos/StoreController.php on line 34
 [23-Apr-2019 19:57:48 Asia/Shanghai] PHP Fatal error:  'break' not in the 'loop' or 'switch' context in /mnt/pos/app/Http/Controllers/Pos/StoreController.php on line 40
 [23-Apr-2019 19:57:48 Asia/Shanghai] PHP Fatal error:  'break' not in the 'loop' or 'switch' context in /mnt/pos/app/Http/Controllers/Pos/StoreController.php on line 40
+[29-Apr-2019 17:49:30 Asia/Shanghai] PHP Fatal error:  Uncaught ErrorException: Array to string conversion in /mnt/pos/app/Http/Controllers/Pos/ExcelController.php:236
+Stack trace:
+#0 /mnt/pos/app/Http/Controllers/Pos/ExcelController.php(236): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(8, 'Array to string...', '/mnt/pos/app/Ht...', 236, Array)
+#1 /mnt/pos/app/Http/Controllers/Pos/ExcelController.php(74): App\Http\Controllers\Pos\ExcelController->importExcel('./excel/2019042...', '19')
+#2 [internal function]: App\Http\Controllers\Pos\ExcelController->index(Object(Illuminate\Http\Request))
+#3 /mnt/pos/vendor/laravel/framework/src/Illuminate/Routing/Controller.php(55): call_user_func_array(Array, Array)
+#4 /mnt/pos/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(44): Illuminate\Routing\Controller->callAction('index', Array)
+#5 /mnt/pos/vendor/laravel/framework/src/Illuminate/Routing/Route.php(189): Illuminate\Routing\ControllerDispatcher->dispatch(Object(Illuminate\Routing\Route), Object(App\Http\Controllers\Pos\ExcelContr in /mnt/pos/app/Http/Controllers/Pos/ExcelController.php on line 236
