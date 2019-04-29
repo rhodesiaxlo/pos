@@ -33,7 +33,7 @@
         </tr>
         @if(!empty($logs))
             <tr>
-                <td class='red'>{{$logs->amount}}</td>
+                <td class='red'>{{$logs->amount/100}}</td>
                 <td>{{$logs->message}}</td>
                 <td>{{$logs->admin_name}}</td>
                 <td>{{$logs->confirm_name}}</td>
@@ -123,8 +123,8 @@
         @if(!empty($logs))
         <table  width="50%" border="1" rules='all' cellpadding="10" class='txal fixed bg-fff' style='top:50%;left:30%;'>
             <tr>
-                <td>交易金额差额</td>
-                <td class=''> <input type="text" class='red w100pc txal' style='border:none;outline: none;' id='amount' name='amount' autocomplete="off" value='{{$logs->amount}}' /></td>
+                <td>交易金额差额(元)</td>
+                <td class=''> <input type="text" class='red w100pc txal' style='border:none;outline: none;' id='amount' name='amount' autocomplete="off" value='{{$logs->amount/100}}' /></td>
             </tr>
             <tr>
                 <td >备注：</td>
@@ -141,7 +141,7 @@
         @if(empty($logs))
         <table  width="50%" border="1" rules='all' cellpadding="10" class='txal fixed bg-fff' style='top:50%;left:30%;'>
             <tr>
-                <td>交易金额差额</td>
+                <td>交易金额差额(元)</td>
                 <td class=''> <input type="text" class='red w100pc txal' style='border:none;outline: none;' id='amount' name='amount' autocomplete="off" value='0' /></td>
             </tr>
             <tr>
