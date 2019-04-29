@@ -2575,6 +2575,7 @@ class ApiPosController extends Controller
         
     }
 
+
     public function generateOutflowPrepayment(Request $req)
     {
         $date = $req->get('date');
@@ -3027,6 +3028,13 @@ class ApiPosController extends Controller
 
         $list = Bank::all();
         return $this->ajaxSuccess($list, 'success');
+    }
+
+
+    public function storelist(Request $req)
+    {
+        $list = User::where(['rank'=>0, 'is_active'=>1, 'deleted'=>0])->get();
+        return $this->ajaxSuccess($list, 'success');   
     }
 
     public function province(Request $req)
