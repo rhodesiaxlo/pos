@@ -77,7 +77,8 @@
                             eeor('上传成功','bg-red-2')
                             $('#file').val('')
                             $('#see').val('')
-                            $('#failMassge').text(msg.message)
+                            $('#failMassge').empty()
+                            $('#failMassge').append(`<span>${msg.message}</span>`)
                         }else{
                             eeor('上传失败','bg-red-2')
                             $('#file').val('')
