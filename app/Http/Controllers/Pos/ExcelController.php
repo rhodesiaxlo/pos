@@ -333,4 +333,15 @@ class ExcelController extends Controller
     	
     }
 
+    public function downloadExcel(Request $req)
+    {
+		// $file = File::get("../resources/logs/$id");
+		$headers = array(
+		   'Content-Type: application/octet-stream',
+		);
+		//exit(json_encode(file_exists(dirname(dirname(dirname(dirname(dirname(__FILE__)))))."/public/exceltemplate/import.xlsx")));;
+		#return Response::download($file, $id. '.' .$type, $headers); 
+		return response()->download(dirname(dirname(dirname(dirname(dirname(__FILE__)))))."/public/exceltemplate/import.xlsx", 'import.xlsx', $headers);
+    }
+
 }

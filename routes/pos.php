@@ -28,6 +28,8 @@ Route::any('transaction/export','TransactionController@export')->name('pos.trans
 
 
 Route::any('excel/index','ExcelController@index')->name('pos.excel.index');
+Route::any('excel/downloadexcel','ExcelController@downloadExcel')->name('pos.excel.downloadexcel');
+
 /*** REST 重构使用 ****/
 /*
 // 收银对账
