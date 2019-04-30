@@ -32,7 +32,6 @@
             var url='/api/apipos/storelist',data={};
             ajaxs(url,data,(res)=>{
                 if(res.code=='1'){
-                    console.log(res.data)
                     for(let item of res.data){
                         $('#other').append(`<option value='${item.local_id}'>${item.store_name}</option>`)
                     }
@@ -57,7 +56,6 @@
         });
 
         $('#other').on('change',function(){
-            debugger
             $('#file').outerHTML=$('#file').outerHTML
             $('#see').val('')
         })
