@@ -14,7 +14,8 @@
         </select><br/>
         <div class='rel'>
             <input name="file" type="file" id="file" class='abs' style='width:300px;border:1px solid #c5bdbd;display:inline-block;opacity:0;'>
-            <input id='see' class='bor-4' placeholder='选择上传文件' style='width:300px;border:1px solid #baf9de;display:inline-block;z-index:-1;'>
+            <input id='see' class='bor-4' placeholder='选择上传文件' style='width:300px;border:1px solid #baf9de;display:inline-block;z-index:-1;'><br />
+            <a href='/pos/excel/downloadexcel' style='margin:10px 0;'>没有模板？点击下载</a>
         </div>
         <input type="button" onclick='upload1()' id="btn" class='bor-n bg_green_1 white bor-4' value="上传" style='margin:10px 0;width:100px;'>
     </form>
@@ -39,9 +40,10 @@
                     eeor(res.message,'bg-red-2')
                 }
             })
+            
         })
         $('input[type="file"]').on('change', function(){
-            var loc=$('#other').val()
+            var loc=$('#other').val(),lo_id=$('#other').val();
             if(!loc){
                 eeor('请先选择上传店铺','bg-red-2')
                 return false
@@ -49,10 +51,17 @@
             var file = this.files[0];
             var formData = new FormData($('#uploadImg')[0]);
             formData.append('file', file);
-            formData.append('local_id', $('#other').val());
+            formData.append('local_id', lo_id);
             file1=formData
             $('#see').val(formData.get('file').name)
         });
+
+        $('#other').on('change',function(){
+            debugger
+            $('#file').outerHTML=$('#file').outerHTML
+            $('#see').val('')
+        })
+        
         function upload1(){
             var loc=$('#other').val(),file0=$('#see').val()
             if(loc&&file0){
