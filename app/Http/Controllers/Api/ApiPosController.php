@@ -28,6 +28,7 @@ use App\Models\Pos\Prepayment;
 use App\Models\Pos\Postpayment;
 use App\Models\Pos\GoodsSku;
 use App\Models\Pos\GeneralLog;
+use App\Models\Pos\GoodsImport;
 
 
 
@@ -58,6 +59,7 @@ class ApiPosController extends Controller
     const SYNC_ORDERGOODS = 6;
     const SYNC_SHIFTLOG = 7;
     const SYNC_CATEGORY = 8;
+    const SYNC_IMPOTEDGOODS = 9;
 
     // 支付方式
     const PAYWAY_WECHAT = 11;
@@ -274,6 +276,15 @@ class ApiPosController extends Controller
             return $this->ajaxSuccess($shiftloginfo, "success");
         }
 
+        if(intval($type) == self::SYNC_IMPOTEDGOODS)
+        {
+            // shiftlog
+            $where1['store_code'] = $store_code;
+            $where1['is_synced'] = 0;
+            $importgoodslist = GoodsImport::where($where1)->get();
+            return $this->ajaxSuccess($importgoodslist, "success");
+        }
+
         $ret = [];
         $ret['category'] = $category;
         $ret['user'] = $userinfo;
@@ -284,6 +295,69 @@ class ApiPosController extends Controller
         $ret['order_goods'] = $ordergoodsinfo;
         $ret['shift_log'] = $shiftloginfo;
         return $this->ajaxSuccess($ret, "success");
+
+    }
+
+    /**
+     * 导入商品数据通知
+     * @param  Request $req [description]
+     * @return [type]       [description]
+     */
+    public function importNotify(Request $req)
+    {
+        $store_code = $req->get('store_code');
+        $goods_sn_list = $req->get('goods_sn_list');
+        if(empty($store_code))
+        {
+            return $this->ajaxFail(null, "store_code can not be empty", 1000);
+        }
+
+        if(empty($goods_sn_list))
+        {
+            return $this->ajaxFail(null, "goods_sn_list can not be empty", 1000);
+        }        
+
+        // 需要同步的信息
+        // 用户信息
+        $where['store_code'] = $store_code;
+        $userinfo =User::where($where)->get();
+
+        if(empty($userinfo[0]))
+        {
+            return $this->ajaxFail(null, "store not found", 1001);   
+        }
+
+        if(!is_array($goods_sn_list))
+        {
+            return $this->ajaxFail(null, "goods_sn_list has to be array", 1000);
+        }
+
+
+        // 更新
+        $list = GoodsImport::where(['store_code'=>$store_code,'is_synced'=>0])
+                    ->whereIn('goods_sn',$goods_sn_list)->get();
+        DB::beginTransaction();
+        try {
+            foreach ($list as $key => $value) {
+                $value->is_synced = 1;
+                $rr = $value->save();
+                if($rr !==false)
+                {
+
+                } else {
+                    throw new \Exception("更新失败", 1);
+                }
+
+            }    
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            return $this->ajaxFail(null, "更新失败", 1000);
+
+        }
+
+        return $this->ajaxSuccess($goods_sn_list, 'success');
 
     }
 
