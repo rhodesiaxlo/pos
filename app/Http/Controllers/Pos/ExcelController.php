@@ -165,7 +165,7 @@ class ExcelController extends Controller
 		    	}
 		        
 		        // 写入数据
-		        $is_exist = GoodsImport::where(['goods_sn'=>$row[2]])->first();
+		        $is_exist = GoodsImport::where(['goods_sn'=>$row[2],'user_id'=>$store_id])->first();
 		        if(!is_null($is_exist))
 		        {
 		        	
