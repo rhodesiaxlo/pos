@@ -149,8 +149,7 @@ class ExcelController extends Controller
 		    		continue;
 		    	}
 
-		    	// exit(json_encode($row)." row num = {$cur}");
-		    	// 校验数据
+		    	// 校验数据 碰到空行，跳出循环
 		    	if(empty($row[1]) && empty($row[2]) && empty($row[3]))
 		    	{
 		    		break;
@@ -161,88 +160,90 @@ class ExcelController extends Controller
 		    	{
 		    		// 组装错误信息
 		    		$message[] = $ret;
-		    		continue;
-		    	}
+		    		$error_num+=1;
+		    		// continue;
+		    	}else {
 		        
-		        // 写入数据
-		        $is_exist = GoodsImport::where(['goods_sn'=>$row[2],'user_id'=>$store_id])->first();
-		        if(!is_null($is_exist))
-		        {
-		        	
-					$is_exist->user_id           = $store_id; // usr_id
-					$is_exist->store_code        = $store_info->store_code;	// store_code
-					$is_exist->goods_name        = $row[1];
-					
-					$is_exist->goods_sn          = $row[2];
-					$is_exist->cat_id            = $abc[$row[3]] + 1;   // cat_id
-					$is_exist->type              = $row[4];
-					$is_exist->goods_picture     = ""; // 商品图片
-					$is_exist->spec              = $row[5];
-					$is_exist->create_time       = time();
-					$is_exist->unit              = $row[6];
-					$is_exist->cost_price        = $row[7];
-					$is_exist->shop_price        = $row[8];
-					$is_exist->repertory         = $row[9];
-					$is_exist->repertory_caution = $row[10];
-					$is_exist->place_code        = $row[11];
-					
-					$is_exist->staleTime         = strtotime($row[12]->format('Y-m-d'));
-					$is_exist->custom            = "1";
-					$is_exist->is_forsale        = $row[13];
-					$is_exist->sale_time         = time();
-					$is_exist->is_short          = $row[14];
-					$is_exist->short_time        = time();
-					$is_exist->check             = "0";
-					$is_exist->last_modified     = time();
+			        // 写入数据
+			        $is_exist = GoodsImport::where(['goods_sn'=>$row[2],'user_id'=>$store_id])->first();
+			        if(!is_null($is_exist))
+			        {
+			        	
+						$is_exist->user_id           = $store_id; // usr_id
+						$is_exist->store_code        = $store_info->store_code;	// store_code
+						$is_exist->goods_name        = $row[1];
+						
+						$is_exist->goods_sn          = $row[2];
+						$is_exist->cat_id            = $abc[$row[3]] + 1;   // cat_id
+						$is_exist->type              = $row[4];
+						$is_exist->goods_picture     = ""; // 商品图片
+						$is_exist->spec              = $row[5];
+						$is_exist->create_time       = time();
+						$is_exist->unit              = $row[6];
+						$is_exist->cost_price        = $row[7];
+						$is_exist->shop_price        = $row[8];
+						$is_exist->repertory         = $row[9];
+						$is_exist->repertory_caution = $row[10];
+						$is_exist->place_code        = $row[11];
+						
+						$is_exist->staleTime         = strtotime($row[12]->format('Y-m-d'));
+						$is_exist->custom            = "1";
+						$is_exist->is_forsale        = $row[13];
+						$is_exist->sale_time         = time();
+						$is_exist->is_short          = $row[14];
+						$is_exist->short_time        = time();
+						$is_exist->check             = "0";
+						$is_exist->last_modified     = time();
 
 
-		        	// 保存，保存成功后，更新记
-		        	$save_rest = $is_exist->save();
-		        	if($save_rest !== false)
-		        	{
-		        		$update_num +=1;	
-		        	} else {
-		        		// 保存出错
-		        		$error_num +=1;
-		        	}
+			        	// 保存，保存成功后，更新记
+			        	$save_rest = $is_exist->save();
+			        	if($save_rest !== false)
+			        	{
+			        		$update_num +=1;	
+			        	} else {
+			        		// 保存出错
+			        		$error_num +=1;
+			        	}
 
-		        } else {
-		        	$new_rec = new GoodsImport();
-					$new_rec->user_id           = $store_id; // usr_id
-					$new_rec->store_code        = $store_info->store_code;	// store_code
-					$new_rec->goods_name        = $row[1];
-					
-					$new_rec->goods_sn          = $row[2];
-					$new_rec->cat_id            = $abc[$row[3]] + 1;   // cat_id
-					$new_rec->type              = $row[4];
-					$new_rec->goods_picture     = ""; // 商品图片
-					$new_rec->spec              = $row[5];
-					$new_rec->create_time       = time();
-					$new_rec->unit              = $row[6];
-					$new_rec->cost_price        = $row[7];
-					$new_rec->shop_price        = $row[8];
-					$new_rec->repertory         = $row[9];
-					$new_rec->repertory_caution = $row[10];
-					$new_rec->place_code        = $row[11];
-					$new_rec->staleTime         = strtotime($row[12]->format('Y-m-d'));
-					$new_rec->custom            = "1";
-					$new_rec->is_forsale        = $row[13];
-					$new_rec->sale_time         = time();
-					$new_rec->is_short          = $row[14];
-					$new_rec->short_time        = time();
-					$new_rec->check             = "0";
-					$new_rec->last_modified     = time();
+			        } else {
+			        	$new_rec = new GoodsImport();
+						$new_rec->user_id           = $store_id; // usr_id
+						$new_rec->store_code        = $store_info->store_code;	// store_code
+						$new_rec->goods_name        = $row[1];
+						
+						$new_rec->goods_sn          = $row[2];
+						$new_rec->cat_id            = $abc[$row[3]] + 1;   // cat_id
+						$new_rec->type              = $row[4];
+						$new_rec->goods_picture     = ""; // 商品图片
+						$new_rec->spec              = $row[5];
+						$new_rec->create_time       = time();
+						$new_rec->unit              = $row[6];
+						$new_rec->cost_price        = $row[7];
+						$new_rec->shop_price        = $row[8];
+						$new_rec->repertory         = $row[9];
+						$new_rec->repertory_caution = $row[10];
+						$new_rec->place_code        = $row[11];
+						$new_rec->staleTime         = strtotime($row[12]->format('Y-m-d'));
+						$new_rec->custom            = "1";
+						$new_rec->is_forsale        = $row[13];
+						$new_rec->sale_time         = time();
+						$new_rec->is_short          = $row[14];
+						$new_rec->short_time        = time();
+						$new_rec->check             = "0";
+						$new_rec->last_modified     = time();
 
-		        	$create_rest = $new_rec->save();
-		        	if($create_rest !== false)
-		        	{
-		        		$create_num +=1;
-		        	} else {
-						$error_num +=1;
-		        	}
+			        	$create_rest = $new_rec->save();
+			        	if($create_rest !== false)
+			        	{
+			        		$create_num +=1;
+			        	} else {
+							$error_num +=1;
+			        	}
 
-		        	
-		        }
+			        	
+			        }
+			    }
 		    }
 		}
 
@@ -278,18 +279,29 @@ class ExcelController extends Controller
     	$abc = array_flip($tmplist);
 
     	// 验证规则
+    	// goods_sn 不能为空
+    	if(empty($row[2]))
+    	{
+    		$message.="第{$row_num} 行, 第 {$col[2]} 列;";
+    	} 
+    
     	// 商品分类必须是指定
     	if(in_array($row[3], $tmplist) !=true)
     	{
     		$message.="第{$row_num} 行, 第 {$col[3]} 列;";
     	}
 
-    	// 计价方式，是否上架，是否快捷只能是 0 或者 1
-    	if($row[4] != 0 && $row[4] != 1)
+    	if($row[4] == "")
+    	{
+    		$message.="第{$row_num} 行, 第 {$col[4]} 列;";		
+    	}
+
+    	
+    	if(intval($row[4]) !==false && $row[4] != 0 && $row[4] != 1)
     	{
     		$message.="第{$row_num} 行, 第 {$col[4]} 列;";	
     	}
-
+    		
     	// 进货价零售价 库存和预警只能是 数字
     	if(is_float($row[7]) !== true&& is_integer($row[7])!==true)
     	{
@@ -326,9 +338,13 @@ class ExcelController extends Controller
     	if($message != "")
     	{
     		return $message;
+    	} else {
+    		return true;
+
     	}
 
     	return true;
+
 
     	
     }
