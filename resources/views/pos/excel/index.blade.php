@@ -63,11 +63,12 @@
                     data:file1,
                     processData: false,
                     contentType: false,
-                }).done(function(res) {
-                    console.log(res)
-                }).fail(function(res) {
-                    console.log(res)
-                });
+                    success: function(response, status, xhr){
+                        eeor('上传成功','bg-red-2')
+                    },
+                    error:function(XMLHttpRequest, textStatus, errorThrown){
+                        eeor((errorThrown+'：'+XMLHttpRequest.status),'bg-red-2')
+                    }})
             }else{
                 eeor('请完整选择上传内容','bg-red-2')
             }
