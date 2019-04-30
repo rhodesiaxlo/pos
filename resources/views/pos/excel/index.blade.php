@@ -8,7 +8,7 @@
 
 @section('content')
 
-    <form enctype="multipart/form-data" id="uploadImg" class='txal' style='margin:200px 0;'>
+    <form enctype="multipart/form-data" id="uploadImg" class='txal' style='margin-top:200px;'>
         <select id='other' name='local_id' class='bor-4' style='width:300px;border:1px solid #e4f9ba;display:inline-block;margin:10px 0;'>
             <option value=''>选择店铺</option>
         </select><br/>
@@ -19,6 +19,7 @@
         </div>
         <input type="button" onclick='upload1()' id="btn" class='bor-n bg_green_1 white bor-4' value="上传" style='margin:10px 0;width:100px;'>
     </form>
+    <div id='failMassge' class='txal'></div>
     <div class='fixed bg-fff' id='eor' style='width:26%; left:40%; top:50%; display:none;'>
         <p class='txal bold w100pc' style='border-bottom:1px solid #999;'>警告</p>
     </div>
@@ -39,7 +40,6 @@
                     eeor(res.message,'bg-red-2')
                 }
             })
-            
         })
         $('input[type="file"]').on('change', function(){
             var loc=$('#other').val(),lo_id=$('#other').val();
@@ -71,12 +71,26 @@
                     processData: false,
                     contentType: false,
                     success: function(response, status, xhr){
-                        eeor('上传成功','bg-red-2')
-                        $('#file').val('')
-                        $('#see').val('')
+                        var msg=JSON.parse(response)
+                        console.log(msg)
+                        if(msg.code==1){
+                            eeor('上传成功','bg-red-2')
+                            $('#file').val('')
+                            $('#see').val('')
+                            $('#failMassge').text(msg.message)
+                        }else{
+                            eeor('上传失败','bg-red-2')
+                            $('#file').val('')
+                            $('#see').val('')
+                            $('#failMassge').empty()
+                            for(let item of msg.data){
+                                $('#failMassge').append(`<span>${item}</span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp`)
+                            }
+                        }                        
                     },
                     error:function(XMLHttpRequest, textStatus, errorThrown){
                         eeor((errorThrown+'：'+XMLHttpRequest.status),'bg-red-2')
+                        
                     }})
             }else{
                 eeor('请完整选择上传内容','bg-red-2')
