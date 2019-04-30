@@ -1,6 +1,7 @@
 /node_modules
 /public/storage
-/public/excel
+/public/excel/*.xlsx
+/public/excel/index.html
 /public/img
 /storage
 /.idea

@@ -293,12 +293,12 @@ class ExcelController extends Controller
     	// 进货价零售价 库存和预警只能是 数字
     	if(is_float($row[7]) !== true&& is_integer($row[7])!==true)
     	{
-    		$message.="第{$row_num} 行, 第 {$col[6]} 列;";	
+    		$message.="第{$row_num} 行, 第 {$col[7]} 列;";	
     	}
 
     	if(is_float($row[8]) !== true && is_integer($row[8])!==true)
     	{
-    		$message.="第{$row_num} 行, 第 {$col[7]} 列;";	
+    		$message.="第{$row_num} 行, 第 {$col[8]} 列;";	
     	}
 
     	if(is_integer($row[9]) !== true)
