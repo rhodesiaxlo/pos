@@ -56,7 +56,7 @@
         });
 
         $('#other').on('change',function(){
-            $('#file').outerHTML=$('#file').outerHTML
+            $('#file').val('')
             $('#see').val('')
         })
         
@@ -72,6 +72,8 @@
                     contentType: false,
                     success: function(response, status, xhr){
                         eeor('上传成功','bg-red-2')
+                        $('#file').val('')
+                        $('#see').val('')
                     },
                     error:function(XMLHttpRequest, textStatus, errorThrown){
                         eeor((errorThrown+'：'+XMLHttpRequest.status),'bg-red-2')
