@@ -1995,7 +1995,9 @@ class ApiPosController extends Controller
         */
         if(empty($date))
         {
-            $date = date('Y-m-d', time());
+            // 如果没有指定时间，默认去昨天的数据交易数据
+            // 和前天的结算数据
+            $date = date('Y-m-d', strtotime("-1 day"));
         }
 
 
@@ -2073,15 +2075,16 @@ class ApiPosController extends Controller
                 DB::commit();
                 // 写日志
                 $log = new GeneralLog();
-                $log->message = "拉取成功 日期 {$date}";
+                $log->message = "拉取成功 参数日期 {$date}";
                 $log->date = date('Y-m-d H:i:s', time());
                 $log->save();
                 // todo 
                 
-                // 生成 prepayment 
+                // 生成昨天的如今 prepayment 
                 $this->generatePrepayment($date);
-                // 生成对账单数据
-                $this->generateAfterPayment($date);
+
+                // 生成对账单数据前天的
+                $this->generateAfterPayment(date("Y-m-d", strtotime($date)-86400));
 
                 return $this->ajaxSuccess([], "read success, {$total} records date {$date}");
             } catch (Exception $e) {
@@ -2116,13 +2119,17 @@ class ApiPosController extends Controller
         $midnight_ts = strtotime($midnight_date);
 
         $orderlist = DB::select("select * from pos_server_order where create_time < {$midnight_ts} and create_time > {$draw_ts}");
-        $loglist = DB::select("select * from pos_cpcc_tx_log where TxType=1402 and check_date={$date}");
+        $loglist = DB::select("select * from pos_cpcc_tx_log where TxType=1402 and check_date='{$date}' ");
 
         $order_sn       = array_column($orderlist, 'order_sn');
         $txsn           = array_column($loglist, 'TxSn');
+
         $merge          = array_merge($order_sn, $txsn);
-        $order_diff_log = array_diff($order_sn, $txsn);
-        $log_diff_order = array_diff($txsn, $order_sn);
+        // 根据差集判断, log_diff 为 log 独有 order_diff 为 order 独有
+        $order_diff_log = array_diff($merge, $txsn);
+        $log_diff_order = array_diff($merge, $order_sn);
+
+        // exit("total sizeof ".sizeof($merge).'  order size '.sizeof($order_diff_log).' log size '.sizeof($log_diff_order));
 
         if(sizeof($merge) == sizeof($order_sn))
         {
@@ -2137,6 +2144,7 @@ class ApiPosController extends Controller
         $delta = 0;
 
 
+        // 计算双方公有的记录 
         $ll = DB::select("SELECT
             o.order_no, o.amount as o_amount,o.notify_time as o_notify_time, o.create_time as o_create_time,o.order_sn as o_serial_no,o.id as o_id,
             l.TxAmount as l_amount, l.BankNotificationTime as l_notify_time,l.TxSn as l_serial_no,l.TxType as l_type,l.id as l_id
@@ -2146,8 +2154,6 @@ class ApiPosController extends Controller
             where l.TxType=1402 and l.check_date='{$date}'
            
         ");
-
-
 
         // 开启事务
         DB::beginTransaction();
@@ -2225,44 +2231,54 @@ class ApiPosController extends Controller
                 if(sizeof($order_diff_log) > 0)
                 {
 
+
                     foreach ($order_diff_log as $key => $value) {
                         // 去重
                         
                         $is_exist = Prepayment::where(['serial_no'=>$value])->first();
 
-                        if($is_exist !==null)
-                        {
-                            continue;
-                        }
-
-                        // 根据id 查找 Order 信息
                         $orderinfo = ServerOrder::where(['order_sn'=>$value])->first();
 
                         // 统计 order 信息
                         $order_num +=1;
                         $order_total += $orderinfo->amount;
 
-                        unset($tmppre);
-                        $tmppre = new Prepayment();
-                        $tmppre->check_date = $date;
-                        $tmppre->serial_no = $orderinfo->order_sn;
-                        $tmppre->store_name = "orderoly";
-                        $tmppre->store_code = $orderinfo->order_no;
-                        $tmppre->cpcc_amount = 0;
-                        $tmppre->order_amount = $orderinfo->amount;
-                        $tmppre->result_status = self::check_CCPCNOT;// 
-                        $tmppre->status = 0;
-                        $tmppre->order_time = $orderinfo->create_time;
-                        $tmppre->cpcc_time = 0;
-                        $tmppre->cpcc_tx_log_id = 0;
-                        $tmppre->order_id = $orderinfo->id;
-                        $saveresult = $tmppre->save();
-                        if($saveresult === false)
+                        if($is_exist !==null)
                         {
-                            throw new \Exception("Error Processing Request", 1);
-                        }                        
+                            // 如果存在，不做任何处理
+                            
+                        } else {
+                            // 根据id 查找 Order 信息
+                            // $orderinfo = ServerOrder::where(['order_sn'=>$value])->first();
+
+                            // // 统计 order 信息
+                            // $order_num +=1;
+                            // $order_total += $orderinfo->amount;
+                            unset($tmppre);
+                            $tmppre = new Prepayment();
+                            $tmppre->check_date = $date;
+                            $tmppre->serial_no = $orderinfo->order_sn;
+                            $tmppre->store_name = "orderoly";
+                            $tmppre->store_code = $orderinfo->order_no;
+                            $tmppre->cpcc_amount = 0;
+                            $tmppre->order_amount = $orderinfo->amount;
+                            $tmppre->result_status = self::check_CCPCNOT;// 
+                            $tmppre->status = 0;
+                            $tmppre->order_time = $orderinfo->create_time;
+                            $tmppre->cpcc_time = 0;
+                            $tmppre->cpcc_tx_log_id = 0;
+                            $tmppre->order_id = $orderinfo->id;
+                            $saveresult = $tmppre->save();
+                            if($saveresult === false)
+                            {
+                                throw new \Exception("Error Processing Request", 1);
+                            } 
+                        }
+
+                        
                     }                    
                 }
+
 
                 if(sizeof($log_diff_order) > 0)
                 {
@@ -2350,7 +2366,7 @@ class ApiPosController extends Controller
             DB::commit();
             // 写日志
             $log = new GeneralLog();
-            $log->message = "prepayment 生成成功 日期 {$date} 总数 ".sizeof($merge).' order 独有 '.sizeof($order_diff_log).' log 独有 '.sizeof($log_diff_order);
+            $log->message = "prepayment 生成成功 日期 {$date} 总数 ".sizeof($merge).' order 独有 '.sizeof($order_diff_log).' log 独有 '.sizeof($log_diff_order)." oder total {$order_total} log total {$log_total} ";
             $log->date = date('Y-m-d H:i:s', time());
             $log->save();
 
@@ -2361,6 +2377,20 @@ class ApiPosController extends Controller
             return $this->ajaxFail(null, "read data fail", 1000);
         }
         
+    }
+
+
+    public function pullRange(Request $req)
+    {
+        $start = $req->get('start');
+        $end = $req->get('end');
+
+        $starttimestamp = strtotime($start);
+        $endtimestamp = strtotime($end)+100;
+        for ($i=$starttimestamp; $i < $endtimestamp; $i+=86400) { 
+            $checkdata['date'] = date("Y-m-d", $i);
+            $this->get_web_content(json_encode($checkdata), "http://pos1.123.com/api/apipos/pullbillfromccpc?date=".date('Y-m-d', $i));
+        }
     }
 
     /**
@@ -2380,14 +2410,14 @@ class ApiPosController extends Controller
         $draw_ts = strtotime($draw_date);
         $midnight_ts = strtotime($midnight_date);
 
-        $orderlist = DB::select("select * from pos_outflow_log where  check_date={$date}");
+        $orderlist = DB::select("select * from pos_outflow_log where  check_date='{$date}' ");
         $loglist = DB::select("select * from pos_cpcc_tx_log where TxType=1341 and check_date='{$date}' ");
 
         $order_sn       = array_column($orderlist, 'SerialNumber');
         $txsn           = array_column($loglist, 'TxSn');
         $merge          = array_merge($order_sn, $txsn);
-        $order_diff_log = array_diff($order_sn, $txsn);
-        $log_diff_order = array_diff($txsn, $order_sn);
+        $order_diff_log = array_diff($merge, $txsn);
+        $log_diff_order = array_diff($merge, $order_sn);
 
         if(sizeof($merge) == sizeof($order_sn))
         {
@@ -2498,6 +2528,7 @@ class ApiPosController extends Controller
                 }
  
 
+
                 // 差异性插入
                 if(sizeof($order_diff_log) > 0)
                 {
@@ -2507,13 +2538,17 @@ class ApiPosController extends Controller
                         
                         $is_exist =  Postpayment::where(['serial_no'=>$value])->first();
 
+                        // 根据id 查找 Order 信息
+                        $orderinfo = OutflowLog::where(['SerialNumber'=>$value])->first();
                         if($is_exist !==null)
                         {
+                            // 统计 order 信息
+                            $order_num +=1;
+                            $order_total += $orderinfo->amount;
                             continue;
                         }
 
-                        // 根据id 查找 Order 信息
-                        $orderinfo = OutflowLog::where(['order_sn'=>$value])->first();
+
 
                         // 统计 order 信息
                         $order_num +=1;
@@ -2524,10 +2559,11 @@ class ApiPosController extends Controller
                         $tmppre->check_date = $date;
                         $tmppre->serial_no = $orderinfo->SerialNumber;
 
-                        $store_info = User::where(['store_code'=>$value->order_no, 'rank'=>0])->first();
+                        //$store_info = User::where(['store_code'=>$value, 'rank'=>0])->first();
 
 
-                        $tmppre->store_name = is_null($store_info)?"no store":$store_info->store_name;
+                        //$tmppre->store_name = is_null($store_info)?"no store":$store_info->store_name;
+                        $tmppre->store_name = "no store";
                         $tmppre->store_code = $orderinfo->OrderNo;
                         $tmppre->cpcc_amount = 0;
                         $tmppre->order_amount = $orderinfo->Amount;
@@ -2636,7 +2672,7 @@ class ApiPosController extends Controller
             DB::commit();
             // 写日志
             $log = new GeneralLog();
-            $log->message = "prepayment 生成成功 日期 {$date} 总数 ".sizeof($merge).' order 独有 '.sizeof($order_diff_log).' log 独有 '.sizeof($log_diff_order);
+            $log->message = "afterpayment 生成成功 日期 {$date} 总数 ".sizeof($merge).' order 独有 '.sizeof($order_diff_log).' log 独有 '.sizeof($log_diff_order);
             $log->date = date('Y-m-d H:i:s', time());
             $log->save();
 

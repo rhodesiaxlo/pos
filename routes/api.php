@@ -49,6 +49,8 @@ Route::group(['namespace' => 'Api','middleware' => ['api']], function () {
 
     //回调接口
     Route::match(['get','post'],'apipos/ccpcnotify','ApiPosController@ccpcNotify')->name('api.apipos.ccpcnotify');
+    Route::match(['get','post'],'apipos/pullrange','ApiPosController@pullRange')->name('api.apipos.pullrange');
+
     Route::match(['get','post'],'apipos/pullbillfromccpc','ApiPosController@pullBillFromCcpc')->name('api.apipos.pullbillfromccpc');
     Route::match(['get','post'],'apipos/generatepreapi','ApiPosController@generatePreApi')->name('api.apipos.generatepreapi');
     Route::match(['get','post'],'apipos/generateoutflowprepayment','ApiPosController@generateOutflowPrepayment')->name('api.apipos.generateoutflowprepayment');
