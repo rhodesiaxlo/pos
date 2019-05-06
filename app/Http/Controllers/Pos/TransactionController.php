@@ -269,16 +269,18 @@ class TransactionController extends Controller
                 unset($tmp);
                 $tmp[] = $value->OrderNo;
                 $tmp[] = $value->OrderNo;
-                $tmp[] = $value->Amount;
-                $tmp[] = $value->Amount;
-                $tmp[] = $value->Amount;
-                $tmp[] = $value->BankID;
+                $tmp[] = $value->Amount/100;
+                $tmp[] = 0;
+                $tmp[] = $value->Amount/100;
+                $tmp[] = $value->bank->name;
                 $tmp[] = $value->AccountNumber;
-                $tmp[] = $value->result_status==0?'初始化':
-                        ($value->result_status==1?'成功':
-                        ($value->result_status==2?'失败':
-                        ($value->result_status==3?'其它':'其它')));
-                $tmp[] = $value->create_time;
+                $tmp[] = $value->AccountName;
+
+                $tmp[] = $value->status==0?'初始化':
+                        ($value->status==1?'成功':
+                        ($value->status==2?'失败':
+                        ($value->status==3?'其它':'其它')));
+                $tmp[] = $value->notify_time==0?"-":date('Y-m-d H:i:s', $value->notify_time);
 
                 $writer->addRow($tmp);
             }
