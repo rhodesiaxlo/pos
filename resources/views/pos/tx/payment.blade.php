@@ -53,9 +53,9 @@
             <td><input id='' type="checkbox" name="chart" value="{{$out->id}}"  /></td>
             <td class='red'>{{$out->OrderNo}}</td>
             <td>{{$out->OrderNo}}</td>
-            <td>{{$out->Amount}}</td>
+            <td>{{$out->Amount/100}}</td>
             <td>0</td>
-            <td>{{$out->Amount}}</td>
+            <td>{{$out->Amount/100}}</td>
             <td>{{$out->bank->name}}</td>
             <td>{{$out->AccountNumber}}</td>
             <td>{{$out->AccountName}}</td>
