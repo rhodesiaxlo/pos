@@ -95,10 +95,10 @@ class TransactionController extends Controller
                         ($value->result_status==1?'对账失败 金额不符':
                         ($value->result_status==2?'平台无此订单':
                         ($value->result_status==3?'中金无此订单':'其它')));
-                $tmp[] = $value->result_status==0?'待初审':
-                        ($value->result_status==1?'待复审 金额不符':
-                        ($value->result_status==2?'审核完成':
-                        ($value->result_status==3?'其它':'其它')));
+                $tmp[] = $value->status==0?'待初审':
+                        ($value->status==1?'待复审':
+                        ($value->status==2?'审核完成':
+                        ($value->status==3?'其它':'其它')));
 
                 $writer->addRow($tmp);
             }
@@ -253,7 +253,7 @@ class TransactionController extends Controller
         $drawntimestamp = strtotime($drawn);
         $midnighttimestamp = strtotime($midnight);
 
-        $outflows = OutflowLog::where(['check_date'=>$date])->get();
+        $outflows = OutflowLog::with('bank')->where(['check_date'=>$date])->get();
 
         if(!empty($excel2) && $excel2 > 0)
         {
@@ -428,14 +428,14 @@ class TransactionController extends Controller
                     Log::info("结算出错， 出错信息 {$json_str['message']}");
                     $tmpoutflow->message = $json_str['message'];
                     $tmpoutflow->save();
-                    exit(json_encode(['code'=>1,'message'=>"结算出错， 出错信息 {$json_str['message']}"]));
+                    exit(json_encode(['code'=>0,'message'=>"结算出错， 出错信息 {$json_str['message']}"]));
                 }else{
                     $tmpoutflow->status = 1;
                     $saveresult = $tmpoutflow->save();
                     if($saveresult === false)
                     {
                         // 报错
-                        exit(json_encode(['code'=>1,'message'=>'更新outflow 订单失败']));
+                        exit(json_encode(['code'=>0,'message'=>'更新outflow 订单失败']));
                         
                     }
                 }
@@ -668,6 +668,7 @@ class TransactionController extends Controller
                         $outflow->check_date = $check_date;
                         $outflow->create_time = time();
                         $outflow->Amount = $value['amount'];
+                        $outflow->SerialNumber = strval(time()).rand(1000,9999);
 
                         $storeinfo = User::where(['store_code'=>$value['store_code'], 'rank'=>0, 'deleted'=>0])->first();
                         if(is_null($storeinfo))

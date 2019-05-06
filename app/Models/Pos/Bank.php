@@ -14,6 +14,11 @@ class Bank extends Model
 		$this->hasMany('App\Models\User');
 	}
 
+	public function outflows()
+	{
+		$this->hasMany('App\Models\OutflowLog');
+	}
+
 	public function getAllBanks()
 	{
 		return $this->all();

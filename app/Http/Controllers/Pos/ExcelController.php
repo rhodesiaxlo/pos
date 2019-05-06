@@ -66,6 +66,11 @@ class ExcelController extends Controller
 
 			$ext = $ext_arr[sizeof($ext_arr)-1];
 
+			if(trim($ext)!="xlsx")
+			{
+				return response()->json(['code'=>0, 'error_code'=>101, 'message'=>'模板不正确', 'data'=>[]]);	
+			}
+
 			$new_file = date('Ymd').time().rand(10,99999).'.'.$ext;
 			$uploadfile = './excel/' .$new_file;
 			// 保存文件名
@@ -224,7 +229,7 @@ class ExcelController extends Controller
 						$new_rec->repertory         = $row[9];
 						$new_rec->repertory_caution = $row[10];
 						$new_rec->place_code        = $row[11];
-						$new_rec->staleTime         = strtotime($row[12]->format('Y-m-d'));
+						$new_rec->staleTime         = strtotime(date('Y-m-d',$row[12]));
 						$new_rec->custom            = "1";
 						$new_rec->is_forsale        = $row[13];
 						$new_rec->sale_time         = time();
@@ -278,6 +283,71 @@ class ExcelController extends Controller
 
     	$abc = array_flip($tmplist);
 
+    	if(empty($row[1]))
+    	{
+    		$message.="第{$row_num} 行, 第 {$col[1]} 列;";
+    	}
+
+    	if(empty($row[2]))
+    	{
+    		$message.="第{$row_num} 行, 第 {$col[2]} 列;";
+    	}
+
+    	if(empty($row[3]))
+    	{
+    		$message.="第{$row_num} 行, 第 {$col[3]} 列;";
+    	} 
+    	// if(empty($row[4]))
+    	// {
+    	// 	$message.="第{$row_num} 行, 第 {$col[4]} 列;";
+    	// } 
+
+    	if(empty($row[6]))
+    	{
+    		$message.="第{$row_num} 行, 第 {$col[6]} 列;";
+    	} 
+
+    	if(empty($row[7]))
+    	{
+    		$message.="第{$row_num} 行, 第 {$col[7]} 列;";
+    	} 
+    	if(empty($row[8]))
+    	{
+    		$message.="第{$row_num} 行, 第 {$col[8]} 列;";
+    	} 
+
+    	if(empty($row[9]))
+    	{
+    		$message.="第{$row_num} 行, 第 {$col[9]} 列;";
+    	} 
+    	if(empty($row[10]))
+    	{
+    		$message.="第{$row_num} 行, 第 {$col[10]} 列;";
+    	} 
+
+    	if(empty($row[14]))
+    	{
+    		$message.="第{$row_num} 行, 第 {$col[14]} 列;";
+    	} 
+
+     	$obj = json_decode(json_encode($row[12], true));
+     	if(!empty($obj))
+     	{
+     		$date = strval($obj->date);
+	    	// 条码不能为中文
+	    	if(strtotime($date)< time())
+	    	{
+	    		$message.="第{$row_num} 行, 第 {$col[12]} 列;";
+
+	    	}	
+     	}
+     	
+    	// 过期日期不能超过当前时间
+    	// if(preg_match("/^[0-9]+$/", $row[2]))
+    	// {
+    	// 	$message.="第{$row_num} 行, 第 {$col[2]} 列;";
+    	// }
+
     	// 验证规则
     	// goods_sn 不能为空
     	if(empty($row[2]))
@@ -291,13 +361,17 @@ class ExcelController extends Controller
     		$message.="第{$row_num} 行, 第 {$col[3]} 列;";
     	}
 
-    	if($row[4] == "")
+    	if($row[13] != 0 && $row[13] != 1)
     	{
     		$message.="第{$row_num} 行, 第 {$col[4]} 列;";		
     	}
 
-    	
-    	if(intval($row[4]) !==false && $row[4] != 0 && $row[4] != 1)
+		// if($row_num ==8)
+		// {
+		// 	exit(json_encode(is_integer($row[4])).'###'. json_encode(intval($row[4])).'###'.json_encode($row[4]==0).'###'.json_encode($row[4]==0));
+		// 	exit(json_encode($row));
+		// }    	
+    	if(!is_integer($row[4]) || ($row[4] != 0 && $row[4] != 1))
     	{
     		$message.="第{$row_num} 行, 第 {$col[4]} 列;";	
     	}

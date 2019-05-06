@@ -2168,11 +2168,21 @@ class ApiPosController extends Controller
                     $order_total += $value->o_amount;
                     $log_total += $value->l_amount;
 
+                    // 查询店铺信息
+                    $usrinfo = User::where(['store_code'=>$value->order_no, 'rank'=>0])->find();
+                    $store_name = "";
+                    if(is_null($usrinfo))
+                    {
+                        $store_name = "";
+                    }else {
+                        $store_name = $usrinfo->store_name;
+                    }
+
                     if($is_exist !==null)
                     {
                         $is_exist->check_date = $date;
                         $is_exist->serial_no = $value->o_serial_no;
-                        $is_exist->store_name = "待处理2";
+                        $is_exist->store_name = $store_name;
                         $is_exist->store_code = $value->order_no;
                         $is_exist->cpcc_amount = $value->l_amount;
                         $is_exist->order_amount = $value->o_amount;
@@ -2199,7 +2209,7 @@ class ApiPosController extends Controller
                         $tmppre = new Prepayment();
                         $tmppre->check_date = $date;
                         $tmppre->serial_no = $value->o_serial_no;
-                        $tmppre->store_name = "待处理2";
+                        $tmppre->store_name = $store_name;
                         $tmppre->store_code = $value->order_no;
                         $tmppre->cpcc_amount = $value->l_amount;
                         $tmppre->order_amount = $value->o_amount;
@@ -2296,8 +2306,8 @@ class ApiPosController extends Controller
 
                             $is_exist->check_date = $date;
                             $is_exist->serial_no = $loginfo->TxSn;
-                            $is_exist->store_name = "log_only";
-                            $is_exist->store_code = "xxxx";
+                            $is_exist->store_name = "-";
+                            $is_exist->store_code = "-";
                             $is_exist->cpcc_amount = $loginfo->TxAmount;
                             $is_exist->order_amount = 0;
                             $is_exist->result_status = self::CHECK_ORDERNOT;
@@ -2316,8 +2326,8 @@ class ApiPosController extends Controller
                             $tmppre = new Prepayment();
                             $tmppre->check_date = $date;
                             $tmppre->serial_no = $loginfo->TxSn;
-                            $tmppre->store_name = "log_only";
-                            $tmppre->store_code = "xxxx";
+                            $tmppre->store_name = "-";
+                            $tmppre->store_code = "-";
                             $tmppre->cpcc_amount = $loginfo->TxAmount;
                             $tmppre->order_amount = 0;
                             $tmppre->result_status = self::CHECK_ORDERNOT;

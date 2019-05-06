@@ -54,9 +54,9 @@
             <td class='red'>{{$out->OrderNo}}</td>
             <td>{{$out->OrderNo}}</td>
             <td>{{$out->Amount}}</td>
+            <td>0</td>
             <td>{{$out->Amount}}</td>
-            <td>{{$out->Amount}}</td>
-            <td>{{$out->BankID}}</td>
+            <td>{{$out->bank->name}}</td>
             <td>{{$out->AccountNumber}}</td>
             <td>{{$out->AccountName}}</td>
             @if($out->status==0)
@@ -68,7 +68,7 @@
             @if($out->status==2)
             <td>失败</td>
             @endif
-            <td>{{$out->create_time}}</td>
+            <td>{{$out->notify_time==0?"-":date('Y-m-d H:i:s', $out->notify_time)}}</td>
         </tr>
         @endforeach
     </table>
