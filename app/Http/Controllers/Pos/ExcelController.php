@@ -246,7 +246,7 @@ class ExcelController extends Controller
 							{
 								$row['12'] = 0;
 							}
-							
+
 							$new_rec->staleTime         = strtotime(date('Y-m-d',$row[12]));
 						}
 						//$new_rec->staleTime         = strtotime(date('Y-m-d',$row[12]));
@@ -366,10 +366,10 @@ class ExcelController extends Controller
         // 11 货架号 无要求
         
         // 12 过期日期  不能查过当前日期
-        if(!empty($row['12']))
+        if(!empty($row[12]))
         {
 	        $obj = json_decode(json_encode($row[12], true));
-	        if(!empty($obj)||empty($row[12]))
+	        if(!empty($obj)&&!is_null($obj))
 	        {
 	            $date = strval($obj->date);
 	            // 条码不能为中文
