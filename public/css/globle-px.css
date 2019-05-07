@@ -502,3 +502,15 @@
 .date_selector td.selected{background:#2b579a;color: #fff;font-weight: bold;}
 
 .date_selector td.selectable_day:hover, .date_selector td.selectable_day.hover{background:#5985c7;color: #fff;}
+
+.a_w{
+  width: 80px;
+  display: inline-block;
+  position: relative;
+  left: -6px;
+}
+
+.a_w:link {color: #fff}     /* 未访问的链接 */
+.a_w:visited {color: #fff}  /* 已访问的链接 */
+.a_w:hover {color: #fff}    /* 当有鼠标悬停在链接上 */
+.a_w:active {color: #fff}   /* 被选择的链接 */
