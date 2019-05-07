@@ -191,7 +191,14 @@ class ExcelController extends Controller
 						$is_exist->repertory_caution = $row[10];
 						$is_exist->place_code        = $row[11];
 						
-						$is_exist->staleTime         = strtotime($row[12]->format('Y-m-d'));
+						if(strtolower( gettype($row[12])) == "object")
+						{
+							$obj = json_decode(json_encode($row[12], true));
+            				$date = strval($obj->date);
+							$is_exist->staleTime = strtotime($date);
+						} else {
+							$is_exist->staleTime         = strtotime(date('Y-m-d',$row[12]));
+						}
 						$is_exist->custom            = "1";
 						$is_exist->is_forsale        = $row[13];
 						$is_exist->sale_time         = time();
@@ -229,7 +236,19 @@ class ExcelController extends Controller
 						$new_rec->repertory         = $row[9];
 						$new_rec->repertory_caution = $row[10];
 						$new_rec->place_code        = $row[11];
-						$new_rec->staleTime         = strtotime(date('Y-m-d',$row[12]));
+						if(strtolower( gettype($row[12])) == "object")
+						{
+							$obj = json_decode(json_encode($row[12], true));
+            				$date = strval($obj->date);
+							$new_rec->staleTime = strtotime($date);
+						} else {
+							// if(strtolower( gettype($row[12])) == "string")
+							// {
+							// 	exit(json_encode($row));
+							// }
+							$new_rec->staleTime         = strtotime(date('Y-m-d',$row[12]));
+						}
+						//$new_rec->staleTime         = strtotime(date('Y-m-d',$row[12]));
 						$new_rec->custom            = "1";
 						$new_rec->is_forsale        = $row[13];
 						$new_rec->sale_time         = time();
@@ -259,7 +278,7 @@ class ExcelController extends Controller
 		{
 			exit(json_encode(['code'=>1,'message'=>"success 共处理 {$total} 条，新增 {$create_num} 条， 更新 {$update_num} 条, 出错 {$error_num} 条"]));
 		} else {
-			exit(json_encode(['code'=>0,'message'=>'fail', 'data' => $message]));
+			exit(json_encode(['code'=>0,'message'=>"fail 共处理 {$total} 条，新增 {$create_num} 条， 更新 {$update_num} 条, 出错 {$error_num} 条", 'data' => $message]));
 		}
 		// 返回结果
     }
@@ -291,7 +310,7 @@ class ExcelController extends Controller
 
         // 商品条码 非空
         // 全数字  ？？？
-    	if(!empty($row[2]))
+    	if(empty($row[2]))
     	{
     		$message.="第{$row_num} 行, 第 {$col[2]} 列;";
     	}
@@ -346,17 +365,23 @@ class ExcelController extends Controller
         // 11 货架号 无要求
         
         // 12 过期日期  不能查过当前日期
-        $obj = json_decode(json_encode($row[12], true));
-        if(!empty($obj))
+        if(!empty($row['12']))
         {
-            $date = strval($obj->date);
-            // 条码不能为中文
-            if(strtotime($date)< time())
-            {
-                $message.="第{$row_num} 行, 第 {$col[12]} 列 过期;";
+	        $obj = json_decode(json_encode($row[12], true));
+	        if(!empty($obj)||empty($row[12]))
+	        {
+	            $date = strval($obj->date);
+	            // 条码不能为中文
+	            if(strtotime($date)< time())
+	            {
+	                $message.="第{$row_num} 行, 第 {$col[12]} 列 过期;";
 
-            }   
+	            }   
+	        }	
+        } else {
+			$message.="第{$row_num} 行, 第 {$col[12]} 列 过期;";        	
         }
+        
 
         // 13 是否上架 非空 整数  0 或者 1
         if(!is_integer($row[13])||
