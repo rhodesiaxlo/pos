@@ -31,8 +31,10 @@
     </div>
 </form>
     <div class='txalE pos_index_tital white'>
-        <button type='button' class='bor-14 mg-l-10 w80px bor-n bg-blue' style=''><a href="{{$exporturl}}">导出</a></button>
+        <button type='button' class='bor-14 mg-l-10 w80px bor-n bg-blue' style=''><a href="{{$exporturl}}" class='white a_w'>导出</a></button>
+        @if(Gate::forUser(auth('admin')->user())->check('pos.transaction.recheck'))
         <button type='button' onclick='al()' class='bor-14 mg-l-10 w125px bor-n bg-blue' style=''>结算（划出）</button>
+        @endif
     </div>
     <table id="box" class="tableA f12 w100pc mg-t-10" style="text-align: center;" border='1' rules='all' >
         <tr class='pos_tr'>
@@ -162,10 +164,7 @@
             }    
         });
         $('#clear').click(function(){
-            $('#name').val('')
-            $('#code').val('')
-            $('#date').val('')
-            sele()
+            window.location.reload()
         })
 </script>
 @stop

@@ -19,11 +19,12 @@
         </div>
         <input type="button" onclick='upload1()' id="btn" class='bor-n bg_green_1 white bor-4' value="上传" style='margin:10px 0;width:100px;'>
     </form>
-    <div id='failMassge' class='txal'></div>
+    <div class='w100pc txal'>
+        <div id='failMassge' class='dslb txalS' style='width:500px;word-break: break-all;margin-left:100px;'></div>        
+    </div>
     <div class='fixed bg-fff' id='eor' style='width:26%; left:40%; top:50%; display:none;'>
         <p class='txal bold w100pc' style='border-bottom:1px solid #999;'>警告</p>
     </div>
-    
 @stop
 
 @section('js')
@@ -71,8 +72,8 @@
                     processData: false,
                     contentType: false,
                     success: function(response, status, xhr){
-                        var msg=JSON.parse(response)
-                        console.log(msg)
+                        var msg=response
+                        typeof response=='string'?msg=JSON.parse(msg):''
                         if(msg.code==1){
                             eeor('上传成功','bg-red-2')
                             $('#file').val('')
@@ -84,8 +85,9 @@
                             $('#file').val('')
                             $('#see').val('')
                             $('#failMassge').empty()
+                            $('#failMassge').append(`<p>${msg.message}</p>`)
                             for(let item of msg.data){
-                                $('#failMassge').append(`<span>${item}</span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp`)
+                                $('#failMassge').append(`<p>${item}</p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp`)
                             }
                         }                        
                     },
