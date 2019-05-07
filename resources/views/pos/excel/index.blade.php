@@ -25,7 +25,6 @@
     <div class='fixed bg-fff' id='eor' style='width:26%; left:40%; top:50%; display:none;'>
         <p class='txal bold w100pc' style='border-bottom:1px solid #999;'>警告</p>
     </div>
-    
 @stop
 
 @section('js')
@@ -82,10 +81,11 @@
                             $('#failMassge').empty()
                             $('#failMassge').append(`<span>${msg.message}</span>`)
                         }else{
-                            eeor(msg.message,'bg-red-2')
+                            eeor('上传失败','bg-red-2')
                             $('#file').val('')
                             $('#see').val('')
                             $('#failMassge').empty()
+                            $('#failMassge').append(`<p>${msg.message}</p>`)
                             for(let item of msg.data){
                                 $('#failMassge').append(`<p>${item}</p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp`)
                             }
