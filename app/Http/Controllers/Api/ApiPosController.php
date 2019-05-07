@@ -2187,15 +2187,13 @@ class ApiPosController extends Controller
                         $is_exist->cpcc_amount = $value->l_amount;
                         $is_exist->order_amount = $value->o_amount;
 
-
-
                         if(abs($value->l_amount - $value->o_amount) > 1)
                         {
                             $is_exist->result_status = self::CHECK_NUMBERNOTMATCH;
                         } else {
                             $is_exist->result_status = self::CHECK_SUCCESS;
                         }
-                        $is_exist->status = 0;
+                        // $is_exist->status = 0;
                         $is_exist->order_time = $value->o_create_time;
                         $is_exist->cpcc_time = $value->l_notify_time;
                         $is_exist->cpcc_tx_log_id = $value->l_id;
@@ -2256,7 +2254,24 @@ class ApiPosController extends Controller
                         if($is_exist !==null)
                         {
                             // 如果存在，不做任何处理
-                            
+                            $is_exist->check_date = $date;
+                            $is_exist->serial_no = $orderinfo->order_sn;
+                            // $is_exist->store_name = "orderoly";
+                            // $is_exist->store_code = $orderinfo->order_no;
+                            $is_exist->cpcc_amount = 0;
+                            $is_exist->order_amount = $orderinfo->amount;
+                            $is_exist->result_status = self::check_CCPCNOT;// 
+                            // $is_exist->status = 0;
+                            $is_exist->order_time = $orderinfo->create_time;
+                            $is_exist->cpcc_time = 0;
+                            $is_exist->cpcc_tx_log_id = 0;
+                            $is_exist->order_id = $orderinfo->id;
+                            $saveresult = $is_exist->save();
+                            if($saveresult === false)
+                            {
+                                throw new \Exception("Error Processing Request", 1);
+                            } 
+
                         } else {
                             // 根据id 查找 Order 信息
                             // $orderinfo = ServerOrder::where(['order_sn'=>$value])->first();
@@ -2264,11 +2279,20 @@ class ApiPosController extends Controller
                             // // 统计 order 信息
                             // $order_num +=1;
                             // $order_total += $orderinfo->amount;
+                            $store = User::where(['store_code' => $orderinfo->order_no, 'rank'=>0])->first();
+                            $store_name = "";
+                            if(is_null($store))
+                            {
+
+                            }else {
+                                $store_name = $store->store_name;
+                            }
+
                             unset($tmppre);
                             $tmppre = new Prepayment();
                             $tmppre->check_date = $date;
                             $tmppre->serial_no = $orderinfo->order_sn;
-                            $tmppre->store_name = "orderoly";
+                            $tmppre->store_name = $store_name;
                             $tmppre->store_code = $orderinfo->order_no;
                             $tmppre->cpcc_amount = 0;
                             $tmppre->order_amount = $orderinfo->amount;
@@ -2493,7 +2517,7 @@ class ApiPosController extends Controller
                         } else {
                             $is_exist->result_status = self::CHECK_SUCCESS;
                         }
-                        $is_exist->status = 0;
+                        // $is_exist->status = 0;
                         $is_exist->order_time = $value->o_create_time;
                         $is_exist->cpcc_time = $value->l_notify_time;
                         $is_exist->cpcc_tx_log_id = $value->l_id;
@@ -2573,7 +2597,7 @@ class ApiPosController extends Controller
 
 
                         //$tmppre->store_name = is_null($store_info)?"no store":$store_info->store_name;
-                        $tmppre->store_name = "no store";
+                        $tmppre->store_name = "-";
                         $tmppre->store_code = $orderinfo->OrderNo;
                         $tmppre->cpcc_amount = 0;
                         $tmppre->order_amount = $orderinfo->Amount;
@@ -2617,7 +2641,7 @@ class ApiPosController extends Controller
                             $is_exist->cpcc_amount = $loginfo->TxAmount;
                             $is_exist->order_amount = 0;
                             $is_exist->result_status = self::CHECK_ORDERNOT;
-                            $is_exist->status = 0;
+                            // $is_exist->status = 0;
                             $is_exist->order_time = 0;
                             $is_exist->cpcc_time = $loginfo->BankNotificationTime;
                             $is_exist->cpcc_tx_log_id = $loginfo->id;
@@ -2632,8 +2656,8 @@ class ApiPosController extends Controller
                             $tmppre = new Postpayment();
                             $tmppre->check_date = $date;
                             $tmppre->serial_no = $loginfo->TxSn;
-                            $tmppre->store_name = "log_only";
-                            $tmppre->store_code = "xxxx";
+                            $tmppre->store_name = "-";
+                            $tmppre->store_code = "-";
                             $tmppre->cpcc_amount = $loginfo->TxAmount;
                             $tmppre->order_amount = 0;
                             $tmppre->result_status = self::CHECK_ORDERNOT;

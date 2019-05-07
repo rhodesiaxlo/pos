@@ -283,131 +283,112 @@ class ExcelController extends Controller
 
     	$abc = array_flip($tmplist);
 
+        // 商品名称，飞控
     	if(empty($row[1]))
     	{
     		$message.="第{$row_num} 行, 第 {$col[1]} 列;";
     	}
 
-    	if(empty($row[2]))
+        // 商品条码 非空
+        // 全数字  ？？？
+    	if(!empty($row[2]))
     	{
     		$message.="第{$row_num} 行, 第 {$col[2]} 列;";
     	}
 
-    	if(empty($row[3]))
+        // 商品分类 非空
+        // 且要在分类栏目范围之内
+    	if(empty($row[3]) || !in_array($row[3], $tmplist))
     	{
     		$message.="第{$row_num} 行, 第 {$col[3]} 列;";
     	} 
-    	// if(empty($row[4]))
-    	// {
-    	// 	$message.="第{$row_num} 行, 第 {$col[4]} 列;";
-    	// } 
 
+        // 计价方式 非空 数字 0 或者 1
+        if(!is_integer($row[4]) || ($row[4] != 0 && $row[4] != 1))
+        {
+            $message.="第{$row_num} 行, 第 {$col[4]} 列;";  
+        }
+
+        // 5 规格，无要求
+        
+        // 6 商品单位 非空
     	if(empty($row[6]))
     	{
     		$message.="第{$row_num} 行, 第 {$col[6]} 列;";
     	} 
 
-    	if(empty($row[7]))
+
+        // 7 进货价 非空 浮点
+    	if(!is_float($row[7]) && !is_integer($row[7]))
     	{
     		$message.="第{$row_num} 行, 第 {$col[7]} 列;";
     	} 
-    	if(empty($row[8]))
+
+        // 8 零售价 浮点 非空
+    	if(!is_float($row[8]) && !is_integer($row[8]))
     	{
     		$message.="第{$row_num} 行, 第 {$col[8]} 列;";
     	} 
 
-    	if(empty($row[9]))
+        // 9 初始库存 非空 整数
+    	if(!is_integer($row[9]))
     	{
     		$message.="第{$row_num} 行, 第 {$col[9]} 列;";
     	} 
-    	if(empty($row[10]))
+
+        // 10 库存预警 非空 整数
+    	if(!is_integer($row[10]))
     	{
     		$message.="第{$row_num} 行, 第 {$col[10]} 列;";
     	} 
 
-    	if(empty($row[14]))
-    	{
-    		$message.="第{$row_num} 行, 第 {$col[14]} 列;";
-    	} 
 
-     	$obj = json_decode(json_encode($row[12], true));
-     	if(!empty($obj))
-     	{
-     		$date = strval($obj->date);
-	    	// 条码不能为中文
-	    	if(strtotime($date)< time())
-	    	{
-	    		$message.="第{$row_num} 行, 第 {$col[12]} 列;";
+        // 11 货架号 无要求
+        
+        // 12 过期日期  不能查过当前日期
+        $obj = json_decode(json_encode($row[12], true));
+        if(!empty($obj))
+        {
+            $date = strval($obj->date);
+            // 条码不能为中文
+            if(strtotime($date)< time())
+            {
+                $message.="第{$row_num} 行, 第 {$col[12]} 列 过期;";
 
-	    	}	
-     	}
+            }   
+        }
+
+        // 13 是否上架 非空 整数  0 或者 1
+        if(!is_integer($row[13])||
+          (intval($row[13]) != 0 && intval($row[13]) != 1))
+        {
+            $message.="第{$row_num} 行, 第 {$col[13]} 列;"; 
+        }
+
+        // 14 是否快捷 非空 整数 0 或者 1
+        if(!is_integer($row[14])||
+          (intval($row[14])!=0 || intval($row[14])!=1))
+        {
+            $message.="第{$row_num} 行, 第 {$col[14]} 列;";
+        }
+
      	
     	// 过期日期不能超过当前时间
     	// if(preg_match("/^[0-9]+$/", $row[2]))
     	// {
     	// 	$message.="第{$row_num} 行, 第 {$col[2]} 列;";
     	// }
-
-    	// 验证规则
-    	// goods_sn 不能为空
-    	if(empty($row[2]))
-    	{
-    		$message.="第{$row_num} 行, 第 {$col[2]} 列;";
-    	} 
     
-    	// 商品分类必须是指定
-    	if(in_array($row[3], $tmplist) !=true)
-    	{
-    		$message.="第{$row_num} 行, 第 {$col[3]} 列;";
-    	}
 
-    	if($row[13] != 0 && $row[13] != 1)
-    	{
-    		$message.="第{$row_num} 行, 第 {$col[4]} 列;";		
-    	}
+    	
 
-		// if($row_num ==8)
+		// if($row_num ==5)
 		// {
+  //           exit(gettype($row[12]));
 		// 	exit(json_encode(is_integer($row[4])).'###'. json_encode(intval($row[4])).'###'.json_encode($row[4]==0).'###'.json_encode($row[4]==0));
 		// 	exit(json_encode($row));
-		// }    	
-    	if(!is_integer($row[4]) || ($row[4] != 0 && $row[4] != 1))
-    	{
-    		$message.="第{$row_num} 行, 第 {$col[4]} 列;";	
-    	}
-    		
-    	// 进货价零售价 库存和预警只能是 数字
-    	if(is_float($row[7]) !== true&& is_integer($row[7])!==true)
-    	{
-    		$message.="第{$row_num} 行, 第 {$col[7]} 列;";	
-    	}
+		// }  
 
-    	if(is_float($row[8]) !== true && is_integer($row[8])!==true)
-    	{
-    		$message.="第{$row_num} 行, 第 {$col[8]} 列;";	
-    	}
-
-    	if(is_integer($row[9]) !== true)
-    	{
-    		$message.="第{$row_num} 行, 第 {$col[9]} 列;";	
-    	}
-
-    	if(is_integer($row[10]) !== true)
-    	{
-    		$message.="第{$row_num} 行, 第 {$col[10]} 列;";	
-    	}
-
-    	// 计价方式，是否上架，是否快捷只能是 0 或者 1
-    	if($row[13] != 0 && $row[13] != 1)
-    	{
-    		$message.="第{$row_num} 行, 第 {$col[13]} 列;";	
-    	}
-
-    	// 计价方式，是否上架，是否快捷只能是 0 或者 1
-    	if($row[14] != 0 && $row[14] != 1)
-    	{
-    		$message.="第{$row_num} 行, 第 {$col[14]} 列;";	
-    	}
 
     	if($message != "")
     	{
