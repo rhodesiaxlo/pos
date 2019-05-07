@@ -242,6 +242,11 @@ class ExcelController extends Controller
             				$date = strval($obj->date);
 							$new_rec->staleTime = strtotime($date);
 						} else {
+							if(strtolower( gettype($row[12])) == "string" && empty($row[12]))
+							{
+								$row['12'] = 0;
+							}
+							
 							$new_rec->staleTime         = strtotime(date('Y-m-d',$row[12]));
 						}
 						//$new_rec->staleTime         = strtotime(date('Y-m-d',$row[12]));
@@ -375,7 +380,7 @@ class ExcelController extends Controller
 	            }   
 	        }	
         } else {
-			$message.="第{$row_num} 行, 第 {$col[12]} 列 过期;";        	
+			// $message.="第{$row_num} 行, 第 {$col[12]} 列 ;";        	
         }
         
 
