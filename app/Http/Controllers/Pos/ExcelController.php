@@ -242,10 +242,6 @@ class ExcelController extends Controller
             				$date = strval($obj->date);
 							$new_rec->staleTime = strtotime($date);
 						} else {
-							// if(strtolower( gettype($row[12])) == "string")
-							// {
-							// 	exit(json_encode($row));
-							// }
 							$new_rec->staleTime         = strtotime(date('Y-m-d',$row[12]));
 						}
 						//$new_rec->staleTime         = strtotime(date('Y-m-d',$row[12]));
