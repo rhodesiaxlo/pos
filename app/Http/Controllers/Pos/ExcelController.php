@@ -367,7 +367,7 @@ class ExcelController extends Controller
 
         // 14 是否快捷 非空 整数 0 或者 1
         if(!is_integer($row[14])||
-          (intval($row[14])!=0 || intval($row[14])!=1))
+          (intval($row[14])!=0 && intval($row[14])!=1))
         {
             $message.="第{$row_num} 行, 第 {$col[14]} 列;";
         }
