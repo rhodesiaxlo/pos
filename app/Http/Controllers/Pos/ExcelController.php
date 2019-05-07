@@ -197,6 +197,10 @@ class ExcelController extends Controller
             				$date = strval($obj->date);
 							$is_exist->staleTime = strtotime($date);
 						} else {
+							if(strtolower( gettype($row[12])) == "string" && empty($row[12]))
+							{
+								$row['12'] = 0;
+							}
 							$is_exist->staleTime         = strtotime(date('Y-m-d',$row[12]));
 						}
 						$is_exist->custom            = "1";
