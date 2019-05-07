@@ -311,7 +311,7 @@ class ExcelController extends Controller
 
         // 商品条码 非空
         // 全数字  ？？？
-    	if(empty($row[2]))
+    	if(empty($row[2])&& strlen($row[2])<21)
     	{
     		$message.="第{$row_num} 行, 第 {$col[2]} 列;";
     	}
@@ -332,7 +332,7 @@ class ExcelController extends Controller
         // 5 规格，无要求
         
         // 6 商品单位 非空
-    	if(empty($row[6]))
+    	if(empty($row[6])&& strlen($row[6])<10)
     	{
     		$message.="第{$row_num} 行, 第 {$col[6]} 列;";
     	} 
