@@ -2169,7 +2169,7 @@ class ApiPosController extends Controller
                     $log_total += $value->l_amount;
 
                     // 查询店铺信息
-                    $usrinfo = User::where(['store_code'=>$value->order_no, 'rank'=>0])->find();
+                    $usrinfo = User::where(['store_code'=>$value->order_no, 'rank'=>0])->first();
                     $store_name = "";
                     if(is_null($usrinfo))
                     {
