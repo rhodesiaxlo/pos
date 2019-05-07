@@ -304,7 +304,7 @@ class ExcelController extends Controller
     	$abc = array_flip($tmplist);
 
         // 商品名称，飞控
-    	if(empty($row[1]))
+    	if(empty($row[1])&& strlen($row[1])<21)
     	{
     		$message.="第{$row_num} 行, 第 {$col[1]} 列;";
     	}
