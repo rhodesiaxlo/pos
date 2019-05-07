@@ -304,14 +304,14 @@ class ExcelController extends Controller
     	$abc = array_flip($tmplist);
 
         // 商品名称，飞控
-    	if(empty($row[1])&& strlen($row[1])<21)
+    	if(empty($row[1])|| strlen($row[1])>20)
     	{
     		$message.="第{$row_num} 行, 第 {$col[1]} 列;";
     	}
 
         // 商品条码 非空
         // 全数字  ？？？
-    	if(empty($row[2])&& strlen($row[2])<21)
+    	if(empty($row[2])|| strlen($row[2])>20)
     	{
     		$message.="第{$row_num} 行, 第 {$col[2]} 列;";
     	}
@@ -332,7 +332,7 @@ class ExcelController extends Controller
         // 5 规格，无要求
         
         // 6 商品单位 非空
-    	if(empty($row[6])&& strlen($row[6])<10)
+    	if(empty($row[6])|| strlen($row[6])>10)
     	{
     		$message.="第{$row_num} 行, 第 {$col[6]} 列;";
     	} 
