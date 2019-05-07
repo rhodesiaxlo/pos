@@ -274,7 +274,7 @@ class ExcelController extends Controller
 		{
 			exit(json_encode(['code'=>1,'message'=>"success 共处理 {$total} 条，新增 {$create_num} 条， 更新 {$update_num} 条, 出错 {$error_num} 条"]));
 		} else {
-			exit(json_encode(['code'=>0,'message'=>"fail 共处理 {$total} 条，新增 {$create_num} 条， 更新 {$update_num} 条, 出错 {$error_num} 条", 'data' => $message]));
+			exit(json_encode(['code'=>0,'message'=>"共处理 {$total} 条，新增 {$create_num} 条， 更新 {$update_num} 条, 出错 {$error_num} 条", 'data' => $message]));
 		}
 		// 返回结果
     }
