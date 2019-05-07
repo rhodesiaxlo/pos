@@ -396,7 +396,8 @@ class TransactionController extends Controller
                 if(is_null($tmpoutflow))
                 {
                     // 报错
-                    continue;
+                    exit(json_encode(['code'=>0,'message'=>"结算出错， 没有找到id 为 {$value} 的订单"]));
+                    
                 }
 
                 // 判断结算状态
@@ -404,6 +405,7 @@ class TransactionController extends Controller
                 {
                     // 已结算成功，无需结算
                     //continue;
+                    exit(json_encode(['code'=>0,'message'=>"结算出错， 订单中存在已结算订单，请检查后重试"]));
                 }
 
                 // 组装参数，发送报文
