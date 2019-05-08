@@ -459,7 +459,7 @@ class ApiPosController extends Controller
                 $data['code']                 =  $code;
 
                 // 判断 status 10 未知  20 成功 30 失败
-                if(!is_integer($simpleXML->Body->Status))
+                if(intval($simpleXML->Body->Status)===false)
                 {
                     return $this->ajaxFail(null, "中金异常 {$simpleXML->Body->Status}", 2000);
                 } else if(intval((string)$simpleXML->Body->Status) == 10){
