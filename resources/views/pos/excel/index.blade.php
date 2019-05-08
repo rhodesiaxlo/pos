@@ -93,7 +93,6 @@
                     },
                     error:function(XMLHttpRequest, textStatus, errorThrown){
                         eeor((errorThrown+'：'+XMLHttpRequest.status),'bg-red-2')
-                        
                     }})
             }else{
                 eeor('请完整选择上传内容','bg-red-2')

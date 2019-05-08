@@ -88,9 +88,10 @@
         <p class='txal bold w100pc' style='border-bottom:1px solid #999;'>警告</p>
     </div>
     <input type="hidden" id="seachdate"  value="{{$search['date']}}" />
-@stop
+@stop 
 @section('js')
 <script>
+console.log(new Date(new Date(new Date().toLocaleDateString()).getTime()-24*60*60*1000))
         let selectName=[
             {name:'全部',status:0,},
             {name:'已结算',status:1,},
@@ -164,7 +165,10 @@
             }    
         });
         $('#clear').click(function(){
-            window.location.reload()
+            $('#name').val('')
+            $('#code').val('')
+            $('#date').val('')
+            sele()
         })
 </script>
 @stop
