@@ -456,6 +456,22 @@ class ApiPosController extends Controller
                 $data['ResponseCode']         = (string)$simpleXML->Body->ResponseCode;
                 $data['ResponseMessage']      = (string)$simpleXML->Body->ResponseMessage;
                 $data['Fee']                  = (string)$simpleXML->Body->Fee;
+                $data['code']                 =  $code;
+
+                // 判断 status 10 未知  20 成功 30 失败
+                if(!is_integer((string)$simpleXML->Body->Status))
+                {
+                    return $this->ajaxFail(null, "中金异常", 2000);
+                } else if(intval((string)$simpleXML->Body->Status) == 10){
+                    return $this->ajaxFail(null, "中金异常 状态未知", 2001);
+
+                } else if(intval((string)$simpleXML->Body->Status) == 20){
+                } else if(intval((string)$simpleXML->Body->Status) == 30){
+                    return $this->ajaxFail(null, "中金异常 请求失败", 2002);
+
+                } else {
+                    return $this->ajaxFail(null, "中金异常 其它", 2003);
+                }
 
                 // 订单状态更新
                 $serverorderinfo = ServerOrder::where(['order_sn' => $data['PaymentNo']])->first();
