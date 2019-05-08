@@ -2462,7 +2462,7 @@ class ApiPosController extends Controller
         $draw_ts = strtotime($draw_date);
         $midnight_ts = strtotime($midnight_date);
 
-        $orderlist = DB::select("select * from pos_outflow_log where  check_date='{$date}' and status=0 ");
+        $orderlist = DB::select("select * from pos_outflow_log where  check_date='{$date}' and status=1 ");
         $loglist = DB::select("select * from pos_cpcc_tx_log where TxType=1341 and check_date='{$date}' ");
 
         $order_sn       = array_column($orderlist, 'SerialNumber');
@@ -2689,25 +2689,19 @@ class ApiPosController extends Controller
                         } else {
                             unset($tmppre);
                             // 根据 serial_no 在 outflow 中找 store_name 和 store_code 
-                            // $outflowinfo = OutflowLog::where(['SerialNumber'=>$value])->first();
-                            // $store_name = "";
-                            // $store_code = "";
-                            // if(!is_null($outflowinfo))
-                            // {
-                            //     $store_code = $outflowinfo->OrderNo;
-                            //     $store_in = User::where(['rank'=>0, 'store_code'=>$store_code])->first();
-                            //     if(!is_null($store_in))
-                            //     {
-                            //         $store_name = $store_in->store_name;
-                            //     }
-                            // } 
-                            $store_info = User::where(['store_code'=>$loginfo->MarketOrderNo, 'rank'=>0])->first();
-
+                            $outflowinfo = OutflowLog::where(['SerialNumber'=>$value])->first();
                             $store_name = "-";
                             $store_code = "-";
-                            $store_name = is_null($store_info)?"-":$store_info->store_name;
-
-                            $store_code = $loginfo->MarketOrderNo;
+                            if(!is_null($outflowinfo))
+                            {
+                                $store_code = $outflowinfo->OrderNo;
+                                $store_in = User::where(['rank'=>0, 'store_code'=>$store_code])->first();
+                                if(!is_null($store_in))
+                                {
+                                    $store_name = $store_in->store_name;
+                                }
+                            } 
+                           
 
                             $tmppre = new Postpayment();
                             $tmppre->check_date = $date;
