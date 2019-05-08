@@ -860,6 +860,8 @@ class ApiPosController extends Controller
                 $data['txname'] = $txCode;
                 $data['desc'] = $txName;
 
+
+
             
                 if(!is_null($flowinfo))
                 {
@@ -2483,7 +2485,7 @@ class ApiPosController extends Controller
 
         // 取检查日期内的公有记录
         $ll = DB::select("SELECT
-            o.OrderNo, o.Amount as o_amount,o.notify_time as o_notify_time, o.create_time as o_create_time,o.SerialNumber as o_serial_no,o.id as o_id,
+            o.OrderNo as order_no, o.Amount as o_amount,o.notify_time as o_notify_time, o.create_time as o_create_time,o.SerialNumber as o_serial_no,o.id as o_id,
             l.TxAmount as l_amount, l.BankNotificationTime as l_notify_time,l.TxSn as l_serial_no,l.TxType as l_type,l.id as l_id
                 FROM pos_outflow_log as o
             JOIN pos_cpcc_tx_log as l
@@ -2520,7 +2522,7 @@ class ApiPosController extends Controller
                         $store_info = User::where(['store_code'=>$value->order_no, 'rank'=>0])->first();
 
 
-                        $is_exist->store_name = is_null($store_info)?"no store":$store_info->store_name;
+                        $is_exist->store_name = is_null($store_info)?"-":$store_info->store_name;
                         $is_exist->store_code = $value->order_no;
                         $is_exist->cpcc_amount = $value->l_amount;
                         $is_exist->order_amount = $value->o_amount;
@@ -2550,7 +2552,7 @@ class ApiPosController extends Controller
 
                         $store_info = User::where(['store_code'=>$value->order_no, 'rank'=>0])->first();
 
-                        $tmppre->store_name = is_null($store_info)?"no store":$store_info->store_name;
+                        $tmppre->store_name = is_null($store_info)?"-":$store_info->store_name;
                         $tmppre->store_code = $value->order_no;
                         $tmppre->cpcc_amount = $value->l_amount;
                         $tmppre->order_amount = $value->o_amount;
@@ -2651,10 +2653,10 @@ class ApiPosController extends Controller
                             $store_info = User::where(['store_code'=>$loginfo->MarketOrderNo, 'rank'=>0])->first();
 
                         
-                            $is_exist->store_name = is_null($store_info)?"no store":$store_info->store_name;
+                            $is_exist->store_name = is_null($store_info)?"-":$store_info->store_name;
 
                             $is_exist->store_code = $loginfo->MarketOrderNo;
-                            $is_exist->cpcc_amount = $loginfo->TxAmount;
+                            $is_exist->cpcc_amount = $loginfo->l_amount;
                             $is_exist->order_amount = 0;
                             $is_exist->result_status = self::CHECK_ORDERNOT;
                             // $is_exist->status = 0;
@@ -2674,7 +2676,7 @@ class ApiPosController extends Controller
                             $tmppre->serial_no = $loginfo->TxSn;
                             $tmppre->store_name = "-";
                             $tmppre->store_code = "-";
-                            $tmppre->cpcc_amount = $loginfo->TxAmount;
+                            $tmppre->cpcc_amount = $loginfo->l_amount;
                             $tmppre->order_amount = 0;
                             $tmppre->result_status = self::CHECK_ORDERNOT;
                             $tmppre->status = 0;
