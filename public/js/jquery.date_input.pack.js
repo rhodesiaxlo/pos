@@ -94,6 +94,9 @@ DateInput = (function($) {
 			if (typeof(date) == "undefined") {
 				// date = this.stringToDate(new Date(this.input.val()))
 				date = new Date(this.input.val())
+				if(isNaN(date.getTime())){
+					date =new Date(new Date(new Date().toLocaleDateString()).getTime()-24*60*60*1000)
+				}
 			};
 			if (!date) date = new Date();
 			this.selectedDate = date;
