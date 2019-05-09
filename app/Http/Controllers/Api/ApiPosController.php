@@ -3039,7 +3039,7 @@ class ApiPosController extends Controller
             $newoutflowlog->AccountNumber = $userinfo->account_no;
             $newoutflowlog->create_time = time();
             $newoutflowlog->notify_time = time();
-            $newoutflowlog->check_date = "1234";
+            $newoutflowlog->check_date = date('Y-m-d', time());
             $newoutflowlog->message = "自动生成,ccpc 回调成功";
             $newoutflowlog->status = intval($status)==40?1:$newoutflowlog->status;
             $newoutflowlog->save();
@@ -3047,12 +3047,15 @@ class ApiPosController extends Controller
         }
 
         //update
-        if(abs($info->amount - $amount)>1)
+        if(abs($info->Amount - $amount)>1)
         {
             Log::info("1341 异步回调 serial_no {$serial_no}  order_no {$order_no} amount {$amount} status {$status} transafer_time {$transafer_time} amount not match {$info->amount} vs ccps {$amount}");    
         }
 
-        $info->status = $status;
+        $info->notify_time = time();
+        $info->check_date = date('Y-m-d', time());
+        $info->message = "自动生成,ccpc 回调成功";
+        $info->status = intval($status)==40?1:$newoutflowlog->status;
         $result = $info->save();
         if($result === false)
         {
