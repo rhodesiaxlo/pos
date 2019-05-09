@@ -70,6 +70,9 @@
             @if($out->status==2)
             <td>失败</td>
             @endif
+            @if($out->status==40)
+            <td>成功</td>
+            @endif
             <td>{{$out->notify_time==0?"-":date('Y-m-d H:i:s', $out->notify_time)}}</td>
         </tr>
         @endforeach
