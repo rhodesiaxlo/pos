@@ -461,13 +461,13 @@ class ApiPosController extends Controller
                 // 判断 status 10 未知  20 成功 30 失败
                 if(intval($simpleXML->Body->Status)===false)
                 {
-                    return $this->ajaxFail(null, "中金异常 {$simpleXML->Body->Status}", 2000);
+                    return $this->ajaxFail(null, "中金异常 {$simpleXML->Body->Status} {$simpleXML->Body->ResponseMessage}", 2000);
                 } else if(intval((string)$simpleXML->Body->Status) == 10){
                     return $this->ajaxFail(null, "中金异常 状态未知", 2001);
 
                 } else if(intval((string)$simpleXML->Body->Status) == 20){
                 } else if(intval((string)$simpleXML->Body->Status) == 30){
-                    return $this->ajaxFail(null, "中金异常 请求失败", 2002);
+                    return $this->ajaxFail(null, "中金异常 请求失败 {$simpleXML->Body->Status} {$simpleXML->Body->ResponseMessage} ", 2002);
 
                 } else {
                     return $this->ajaxFail(null, "中金异常 其它", 2003);
