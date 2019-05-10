@@ -110,7 +110,8 @@ console.log(new Date(new Date(new Date().toLocaleDateString()).getTime()-24*60*6
             }
         }
         function val(e){
-            var start1 = new Date(new Date(new Date().toLocaleDateString()).getTime()-24*60*60*1000);//前天00:00
+            // var start1 = new Date(new Date(new Date().toLocaleDateString()).getTime()-24*60*60*1000);//前天00:00
+            var start1 = new Date(new Date(new Date().toLocaleDateString()).getTime());//当天00:00//前天00:00
             var yest1=Date.parse(start1)
 
             var date=new Date($('.date_picker').val())

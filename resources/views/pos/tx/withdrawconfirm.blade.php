@@ -90,25 +90,25 @@
             <td>{{$prepayment->order_amount}}</td>
             <td>{{$prepayment->cpcc_amount}}</td>
             @if($prepayment->result_status==0)
-            (<td>对账成功</td>)
+            <td>对账成功</td>
             @endif
             @if($prepayment->result_status==1)
-            (<td>对账失败 金额不符</td>)
+            <td>对账失败 金额不符</td>
             @endif
             @if($prepayment->result_status==2)
-            (<td>平台无此订单</td>)
+            <td>平台无此订单</td>
             @endif
             @if($prepayment->result_status==3)
-            (<td>中金无此订单</td>)
+            <td>中金无此订单</td>
             @endif
             @if($prepayment->status==0)
-            (<td>待初审</td>)
+            <td>待初审</td>
             @endif
             @if($prepayment->status==1)
-            (<td>待复审</td>)
+            <td>待复审</td>
             @endif
             @if($prepayment->status==2)
-            (<td>审核完成</td>)
+            <td>审核完成</td>
             @endif
         </tr>
         @endforeach
