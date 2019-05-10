@@ -351,12 +351,12 @@ class TransactionController extends Controller
             foreach ($prepayments as $key => $value) {
                 unset($tmp);
                 $tmp[] = $value->serial_no;
-                $tmp[] = $value->order_time;
-                $tmp[] = $value->cpcc_time;
+                $tmp[] = $value->order_time==0?"-":date('Y-m-d H:i:s',$value->order_time);
+                $tmp[] = $value->cpcc_time==0?"-":date('Y-m-d H:i:s',$value->cpcc_time);
                 $tmp[] = $value->store_name;
                 $tmp[] = $value->store_code;
-                $tmp[] = $value->order_amount;
-                $tmp[] = $value->cpcc_amount;
+                $tmp[] = $value->order_amount/100;
+                $tmp[] = $value->cpcc_amount/100;
                 $tmp[] = $value->result_status==0?'对账成功':
                         ($value->result_status==1?'对账失败 金额不符':
                         ($value->result_status==2?'平台无此订单':
@@ -669,6 +669,7 @@ class TransactionController extends Controller
                     foreach ($ret as $key => $value) {
                         $outflow = new OutflowLog();
                         $outflow->OrderNo = $value['store_code'];
+                        $outflow->store_name = $value['store_name'];
                         $outflow->check_date = $check_date;
                         $outflow->create_time = time();
                         $outflow->Amount = $value['amount'];

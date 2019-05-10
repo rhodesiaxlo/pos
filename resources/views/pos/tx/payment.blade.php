@@ -32,7 +32,7 @@
 </form>
     <div class='txalE pos_index_tital white'>
         <button type='button' class='bor-14 mg-l-10 w80px bor-n bg-blue' style=''><a href="{{$exporturl}}" class='white a_w'>导出</a></button>
-        @if(Gate::forUser(auth('admin')->user())->check('pos.transaction.recheck'))
+        @if(Gate::forUser(auth('admin')->user())->check('pos.transaction.outflow'))
         <button type='button' onclick='al()' class='bor-14 mg-l-10 w125px bor-n bg-blue' style=''>结算（划出）</button>
         @endif
     </div>
@@ -53,7 +53,7 @@
         @foreach($outflows as $out)
         <tr>
             <td><input id='' type="checkbox" name="chart" value="{{$out->id}}"  /></td>
-            <td class='red'>{{$out->OrderNo}}</td>
+            <td class='red'>{{$out->store_name}}</td>
             <td>{{$out->OrderNo}}</td>
             <td>{{$out->Amount/100}}</td>
             <td>0</td>
