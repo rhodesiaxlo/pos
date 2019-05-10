@@ -2465,6 +2465,7 @@ class ApiPosController extends Controller
         $orderlist = DB::select("select * from pos_outflow_log where  check_date='{$date}' and status=1 ");
         $loglist = DB::select("select * from pos_cpcc_tx_log where TxType=1341 and check_date='{$date}' ");
 
+
         $order_sn       = array_column($orderlist, 'SerialNumber');
         $txsn           = array_column($loglist, 'TxSn');
         $merge          = array_merge($order_sn, $txsn);
@@ -2484,13 +2485,14 @@ class ApiPosController extends Controller
         $delta = 0;
 
         // 取检查日期内的公有记录
+        // 可能会出现 serial_no 对上，但是日期对不上的情况，这种情况再对账上是不允许的，因此2个表都要有check_date 过滤
         $ll = DB::select("SELECT
             o.OrderNo as order_no, o.Amount as o_amount,o.notify_time as o_notify_time, o.create_time as o_create_time,o.SerialNumber as o_serial_no,o.id as o_id,
             l.TxAmount as l_amount, l.BankNotificationTime as l_notify_time,l.TxSn as l_serial_no,l.TxType as l_type,l.id as l_id
                 FROM pos_outflow_log as o
             JOIN pos_cpcc_tx_log as l
             ON o.SerialNumber = l.TxSn
-            where l.TxType=1341 and l.check_date='{$date}' and o.status=1
+            where l.TxType=1341 and l.check_date='{$date}' and o.status=1 and o.check_date='{$date}'
            
         ");
 
@@ -2596,7 +2598,7 @@ class ApiPosController extends Controller
 
                         $order_num +=1;
                         $order_total += $orderinfo->amount;
-                        
+
                         if($is_exist !==null)
                         {
                             // 统计 order 信息
