@@ -2593,19 +2593,23 @@ class ApiPosController extends Controller
 
                         // 根据id 查找 Order 信息
                         $orderinfo = OutflowLog::where(['SerialNumber'=>$value])->first();
+
+                        $order_num +=1;
+                        $order_total += $orderinfo->amount;
+                        
                         if($is_exist !==null)
                         {
                             // 统计 order 信息
-                            $order_num +=1;
-                            $order_total += $orderinfo->amount;
+                            // $order_num +=1;
+                            // $order_total += $orderinfo->amount;
                             continue;
                         }
 
 
 
                         // 统计 order 信息
-                        $order_num +=1;
-                        $order_total += $orderinfo->amount;
+                        // $order_num +=1;
+                        // $order_total += $orderinfo->amount;
 
                         unset($tmppre);
                         $tmppre = new Postpayment();
