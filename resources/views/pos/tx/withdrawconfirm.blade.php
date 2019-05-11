@@ -194,7 +194,7 @@ function val(e){
         eeor('当前时间不可选择','bg-red-2')
         $('.date_picker').val('')
     }
-}
+} 
 
 function alrt(num){
     $('#mov').show()
