@@ -85,8 +85,8 @@ class TransactionController extends Controller
             foreach ($prepayments as $key => $value) {
                 unset($tmp);
                 $tmp[] = $value->serial_no;
-                $tmp[] = $value->order_time;
-                $tmp[] = $value->cpcc_time;
+                $tmp[] = $value->order_time==0?"-":date('Y-m-d H:i:s', $value->order_time);
+                $tmp[] = $value->cpcc_time==0?"-":date('Y-m-d H:i:s', strtotime($value->cpcc_time));
                 $tmp[] = $value->store_name;
                 $tmp[] = $value->store_code;
                 $tmp[] = $value->order_amount/100;
@@ -230,6 +230,11 @@ class TransactionController extends Controller
         if($date2!=0){
             $getdate = $date2;
         }
+
+        $store_name = $req->get('storeName');
+        $store_code = $req->get('storeCode');
+        $status = $req->get('status');
+
         $is_export = $req->get('excel');
         if(!empty($getdate))
             $date = $getdate;
@@ -246,6 +251,10 @@ class TransactionController extends Controller
         }
         $time = strtotime($date);
         $search['date'] = $date;
+        $search['storeCode'] = $store_code;
+        $search['storeName'] = $store_name;
+        $search['status'] = $status;
+
         // 生成凌晨和午夜的时间段
         $drawn = date('Y-m-d 0:0:0', $time);
         $midnight = date('Y-m-d 23:59:59', $time);
@@ -253,7 +262,27 @@ class TransactionController extends Controller
         $drawntimestamp = strtotime($drawn);
         $midnighttimestamp = strtotime($midnight);
 
-        $outflows = OutflowLog::with('bank')->where(['check_date'=>$date])->get();
+        if(!empty($status))
+        {
+            $where['status'] = $status;
+        }
+
+        if(!empty($store_code))
+        {
+            $where['OrderNo'] = $store_code; 
+        }
+
+        if(!empty($store_name))
+        {
+            $where['store_name'] = $store_name;
+        }
+
+        if(!empty($date))
+        {
+            $where['check_date'] = $date;
+        }
+
+        $outflows = OutflowLog::with('bank')->where($where)->get();
 
         if(!empty($excel2) && $excel2 > 0)
         {
@@ -351,12 +380,12 @@ class TransactionController extends Controller
             foreach ($prepayments as $key => $value) {
                 unset($tmp);
                 $tmp[] = $value->serial_no;
-                $tmp[] = $value->order_time;
-                $tmp[] = $value->cpcc_time;
+                $tmp[] = $value->order_time==0?"-":date('Y-m-d H:i:s',$value->order_time);
+                $tmp[] = $value->cpcc_time==0?"-":date('Y-m-d H:i:s',$value->cpcc_time);
                 $tmp[] = $value->store_name;
                 $tmp[] = $value->store_code;
-                $tmp[] = $value->order_amount;
-                $tmp[] = $value->cpcc_amount;
+                $tmp[] = $value->order_amount/100;
+                $tmp[] = $value->cpcc_amount/100;
                 $tmp[] = $value->result_status==0?'对账成功':
                         ($value->result_status==1?'对账失败 金额不符':
                         ($value->result_status==2?'平台无此订单':
@@ -669,6 +698,7 @@ class TransactionController extends Controller
                     foreach ($ret as $key => $value) {
                         $outflow = new OutflowLog();
                         $outflow->OrderNo = $value['store_code'];
+                        $outflow->store_name = $value['store_name'];
                         $outflow->check_date = $check_date;
                         $outflow->create_time = time();
                         $outflow->Amount = $value['amount'];

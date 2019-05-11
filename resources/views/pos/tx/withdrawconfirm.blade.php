@@ -83,12 +83,12 @@
         @foreach($prepayments as $prepayment)
         <tr class='{{$prepayment->result_status!=0?"red":""}}'>
             <td>{{$prepayment->serial_no}}</td>
-            <td>{{date('Y-m-d',$prepayment->order_time)}}</td>
-            <td>{{$prepayment->cpcc_time==0?"-":$prepayment->cpcc_time}}</td>
+            <td>{{$prepayment->order_time==0?"-":date('Y-m-d H:i:s',$prepayment->order_time)}}</td>
+            <td>{{$prepayment->cpcc_time==0?"-":date('Y-m-d H:i:s',$prepayment->cpcc_time)}}</td>
             <td>{{$prepayment->store_name}}</td>
             <td>{{$prepayment->store_code}}</td>
-            <td>{{$prepayment->order_amount}}</td>
-            <td>{{$prepayment->cpcc_amount}}</td>
+            <td>{{$prepayment->order_amount/100}}</td>
+            <td>{{$prepayment->cpcc_amount/100}}</td>
             @if($prepayment->result_status==0)
             <td>对账成功</td>
             @endif

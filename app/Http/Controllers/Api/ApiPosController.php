@@ -207,7 +207,7 @@ class ApiPosController extends Controller
             return $this->ajaxFail(null, "type can not be empty", 1002);
         }
 
-        if(intval($type)===false || intval($type)> self::SYNC_CATEGORY || intval($type) < self::SYNC_USER)
+        if(intval($type)===false || intval($type)> self::SYNC_IMPOTEDGOODS || intval($type) < self::SYNC_USER)
         {
             return $this->ajaxFail(null, "type value illegal", 1003);
         }
@@ -456,6 +456,22 @@ class ApiPosController extends Controller
                 $data['ResponseCode']         = (string)$simpleXML->Body->ResponseCode;
                 $data['ResponseMessage']      = (string)$simpleXML->Body->ResponseMessage;
                 $data['Fee']                  = (string)$simpleXML->Body->Fee;
+                $data['code']                 =  $code;
+
+                // 判断 status 10 未知  20 成功 30 失败
+                if(intval($simpleXML->Body->Status)===false)
+                {
+                    return $this->ajaxFail(null, "中金异常 {$simpleXML->Body->Status} {$simpleXML->Body->ResponseMessage}", 2000);
+                } else if(intval((string)$simpleXML->Body->Status) == 10){
+                    return $this->ajaxFail(null, "中金异常 状态未知", 2001);
+
+                } else if(intval((string)$simpleXML->Body->Status) == 20){
+                } else if(intval((string)$simpleXML->Body->Status) == 30){
+                    return $this->ajaxFail(null, "中金异常 请求失败 {$simpleXML->Body->Status} {$simpleXML->Body->ResponseMessage} ", 2002);
+
+                } else {
+                    return $this->ajaxFail(null, "中金异常 其它", 2003);
+                }
 
                 // 订单状态更新
                 $serverorderinfo = ServerOrder::where(['order_sn' => $data['PaymentNo']])->first();
@@ -843,6 +859,8 @@ class ApiPosController extends Controller
                 $data = [];
                 $data['txname'] = $txCode;
                 $data['desc'] = $txName;
+
+
 
             
                 if(!is_null($flowinfo))
@@ -2444,8 +2462,9 @@ class ApiPosController extends Controller
         $draw_ts = strtotime($draw_date);
         $midnight_ts = strtotime($midnight_date);
 
-        $orderlist = DB::select("select * from pos_outflow_log where  check_date='{$date}' ");
+        $orderlist = DB::select("select * from pos_outflow_log where  check_date='{$date}' and status=1 ");
         $loglist = DB::select("select * from pos_cpcc_tx_log where TxType=1341 and check_date='{$date}' ");
+
 
         $order_sn       = array_column($orderlist, 'SerialNumber');
         $txsn           = array_column($loglist, 'TxSn');
@@ -2466,15 +2485,17 @@ class ApiPosController extends Controller
         $delta = 0;
 
         // 取检查日期内的公有记录
+        // 可能会出现 serial_no 对上，但是日期对不上的情况，这种情况再对账上是不允许的，因此2个表都要有check_date 过滤
         $ll = DB::select("SELECT
-            o.OrderNo, o.Amount as o_amount,o.notify_time as o_notify_time, o.create_time as o_create_time,o.SerialNumber as o_serial_no,o.id as o_id,
+            o.OrderNo as order_no, o.Amount as o_amount,o.notify_time as o_notify_time, o.create_time as o_create_time,o.SerialNumber as o_serial_no,o.id as o_id,
             l.TxAmount as l_amount, l.BankNotificationTime as l_notify_time,l.TxSn as l_serial_no,l.TxType as l_type,l.id as l_id
                 FROM pos_outflow_log as o
             JOIN pos_cpcc_tx_log as l
             ON o.SerialNumber = l.TxSn
-            where l.TxType=1341 and l.check_date='{$date}'
+            where l.TxType=1341 and l.check_date='{$date}' and o.status=1 and o.check_date='{$date}'
            
         ");
+
 
         $comonsize = sizeof($ll);
         $odersize = sizeof($order_diff_log);
@@ -2504,7 +2525,7 @@ class ApiPosController extends Controller
                         $store_info = User::where(['store_code'=>$value->order_no, 'rank'=>0])->first();
 
 
-                        $is_exist->store_name = is_null($store_info)?"no store":$store_info->store_name;
+                        $is_exist->store_name = is_null($store_info)?"-":$store_info->store_name;
                         $is_exist->store_code = $value->order_no;
                         $is_exist->cpcc_amount = $value->l_amount;
                         $is_exist->order_amount = $value->o_amount;
@@ -2534,7 +2555,7 @@ class ApiPosController extends Controller
 
                         $store_info = User::where(['store_code'=>$value->order_no, 'rank'=>0])->first();
 
-                        $tmppre->store_name = is_null($store_info)?"no store":$store_info->store_name;
+                        $tmppre->store_name = is_null($store_info)?"-":$store_info->store_name;
                         $tmppre->store_code = $value->order_no;
                         $tmppre->cpcc_amount = $value->l_amount;
                         $tmppre->order_amount = $value->o_amount;
@@ -2574,19 +2595,23 @@ class ApiPosController extends Controller
 
                         // 根据id 查找 Order 信息
                         $orderinfo = OutflowLog::where(['SerialNumber'=>$value])->first();
+
+                        $order_num +=1;
+                        $order_total += $orderinfo->amount;
+
                         if($is_exist !==null)
                         {
                             // 统计 order 信息
-                            $order_num +=1;
-                            $order_total += $orderinfo->amount;
+                            // $order_num +=1;
+                            // $order_total += $orderinfo->amount;
                             continue;
                         }
 
 
 
                         // 统计 order 信息
-                        $order_num +=1;
-                        $order_total += $orderinfo->amount;
+                        // $order_num +=1;
+                        // $order_total += $orderinfo->amount;
 
                         unset($tmppre);
                         $tmppre = new Postpayment();
@@ -2617,10 +2642,12 @@ class ApiPosController extends Controller
 
                 if(sizeof($log_diff_order) > 0)
                 {
+                    
                     foreach ($log_diff_order as $key => $value) {
                         // 去重
                         $is_exist = Postpayment::where(['serial_no'=>$value])->first();
                         $loginfo = CpccTxLog::where(['TxSn'=>$value])->first();
+
 
                         // 统计 log 信息
                         $log_num +=1;
@@ -2632,18 +2659,32 @@ class ApiPosController extends Controller
                             $is_exist->check_date = $date;
                             $is_exist->serial_no = $loginfo->TxSn;
 
-                            $store_info = User::where(['store_code'=>$loginfo->MarketOrderNo, 'rank'=>0])->first();
+                            // 1341 没有market order _no
+                            //$store_info = User::where(['store_code'=>$loginfo->MarketOrderNo, 'rank'=>0])->first();
+
+                            $outflowinfo = OutflowLog::where(['SerialNumber'=>$value])->first();
+                            $store_name = "-";
+                            $store_code = "-";
+                            if(!is_null($outflowinfo))
+                            {
+                                $store_code = $outflowinfo->OrderNo;
+                                $store_in = User::where(['rank'=>0, 'store_code'=>$store_code])->first();
+                                if(!is_null($store_in))
+                                {
+                                    $store_name = $store_in->store_name;
+                                }
+                            } 
 
                         
-                            $is_exist->store_name = is_null($store_info)?"no store":$store_info->store_name;
+                            $is_exist->store_name = $store_name;
 
-                            $is_exist->store_code = $loginfo->MarketOrderNo;
+                            $is_exist->store_code = $store_code;
                             $is_exist->cpcc_amount = $loginfo->TxAmount;
                             $is_exist->order_amount = 0;
                             $is_exist->result_status = self::CHECK_ORDERNOT;
                             // $is_exist->status = 0;
                             $is_exist->order_time = 0;
-                            $is_exist->cpcc_time = $loginfo->BankNotificationTime;
+                            $is_exist->cpcc_time = empty($loginfo->BankNotificationTime)?time():$loginfo->BankNotificationTime;
                             $is_exist->cpcc_tx_log_id = $loginfo->id;
                             $is_exist->order_id = 0;
                             $saveresult = $is_exist->save();
@@ -2653,17 +2694,32 @@ class ApiPosController extends Controller
                             }  
                         } else {
                             unset($tmppre);
+                            // 根据 serial_no 在 outflow 中找 store_name 和 store_code 
+                            $outflowinfo = OutflowLog::where(['SerialNumber'=>$value])->first();
+                            $store_name = "-";
+                            $store_code = "-";
+                            if(!is_null($outflowinfo))
+                            {
+                                $store_code = $outflowinfo->OrderNo;
+                                $store_in = User::where(['rank'=>0, 'store_code'=>$store_code])->first();
+                                if(!is_null($store_in))
+                                {
+                                    $store_name = $store_in->store_name;
+                                }
+                            } 
+                           
+
                             $tmppre = new Postpayment();
                             $tmppre->check_date = $date;
                             $tmppre->serial_no = $loginfo->TxSn;
-                            $tmppre->store_name = "-";
-                            $tmppre->store_code = "-";
+                            $tmppre->store_name = $store_name;
+                            $tmppre->store_code = $store_code;
                             $tmppre->cpcc_amount = $loginfo->TxAmount;
                             $tmppre->order_amount = 0;
                             $tmppre->result_status = self::CHECK_ORDERNOT;
                             $tmppre->status = 0;
                             $tmppre->order_time = 0;
-                            $tmppre->cpcc_time = $loginfo->BankNotificationTime;
+                            $tmppre->cpcc_time = empty($loginfo->BankNotificationTime)?time():$loginfo->BankNotificationTime;
                             $tmppre->cpcc_tx_log_id = $loginfo->id;
                             $tmppre->order_id = 0;
                             $saveresult = $tmppre->save();
@@ -2989,20 +3045,23 @@ class ApiPosController extends Controller
             $newoutflowlog->AccountNumber = $userinfo->account_no;
             $newoutflowlog->create_time = time();
             $newoutflowlog->notify_time = time();
-            $newoutflowlog->check_date = "1234";
-            $newoutflowlog->message = "自动生成";
-            $newoutflowlog->status = $status;
+            $newoutflowlog->check_date = date('Y-m-d', time());
+            $newoutflowlog->message = "自动生成,ccpc 回调成功";
+            $newoutflowlog->status = intval($status)==40?1:$newoutflowlog->status;
             $newoutflowlog->save();
             return;
         }
 
         //update
-        if(abs($info->amount - $amount)>1)
+        if(abs($info->Amount - $amount)>1)
         {
             Log::info("1341 异步回调 serial_no {$serial_no}  order_no {$order_no} amount {$amount} status {$status} transafer_time {$transafer_time} amount not match {$info->amount} vs ccps {$amount}");    
         }
 
-        $info->status = $status;
+        $info->notify_time = time();
+        $info->check_date = date('Y-m-d', time());
+        $info->message = "自动生成,ccpc 回调成功";
+        $info->status = intval($status)==40?1:$newoutflowlog->status;
         $result = $info->save();
         if($result === false)
         {

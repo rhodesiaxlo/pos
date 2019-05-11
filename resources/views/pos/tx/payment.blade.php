@@ -18,8 +18,8 @@
     <input type="hidden" name="_token" value="{{ csrf_token() }}">
     <div class='pos_index_tital white'>
         <div class='fsb ' style='width:55%;'>
-            <div>商家名称  <input class='bor-n bor-4 mg-l-3 ' style='color: black;' type="text" name="storeName" id="name" /></div>
-            <div>商家编号  <input class='bor-n bor-4 mg-l-3 ' style='color: black;' type="text" name="storeCode" id="code" /></div>
+            <div>商家名称  <input class='bor-n bor-4 mg-l-3 ' style='color: black;' type="text" @if($search['storeName']) value="name" @endif name="storeName" id="name" /></div>
+            <div>商家编号  <input class='bor-n bor-4 mg-l-3 ' style='color: black;' type="text" @if($search['storeCode']) value="code" @endif name="storeCode" id="code" /></div>
             <div class='gray'><span class='white'>应结算日期</span><input  id='date' name='date' onchange="val()" style='height:;width:226px;color: black;' type="text" placeholder="" autocomplete="off" class='date_picker bor-n bor-4 mg-l-3 ' ></div>
             <div>结算状态  <select class='bor-n bor-4 mg-l-3 black' name="status" id="status"></select></div>
         </div>
@@ -32,7 +32,7 @@
 </form>
     <div class='txalE pos_index_tital white'>
         <button type='button' class='bor-14 mg-l-10 w80px bor-n bg-blue' style=''><a href="{{$exporturl}}" class='white a_w'>导出</a></button>
-        @if(Gate::forUser(auth('admin')->user())->check('pos.transaction.recheck'))
+        @if(Gate::forUser(auth('admin')->user())->check('pos.transaction.outflow'))
         <button type='button' onclick='al()' class='bor-14 mg-l-10 w125px bor-n bg-blue' style=''>结算（划出）</button>
         @endif
     </div>
@@ -53,7 +53,7 @@
         @foreach($outflows as $out)
         <tr>
             <td><input id='' type="checkbox" name="chart" value="{{$out->id}}"  /></td>
-            <td class='red'>{{$out->OrderNo}}</td>
+            <td class='red'>{{$out->store_name}}</td>
             <td>{{$out->OrderNo}}</td>
             <td>{{$out->Amount/100}}</td>
             <td>0</td>
@@ -69,6 +69,9 @@
             @endif
             @if($out->status==2)
             <td>失败</td>
+            @endif
+            @if($out->status==40)
+            <td>成功</td>
             @endif
             <td>{{$out->notify_time==0?"-":date('Y-m-d H:i:s', $out->notify_time)}}</td>
         </tr>
