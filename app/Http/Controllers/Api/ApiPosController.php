@@ -207,7 +207,7 @@ class ApiPosController extends Controller
             return $this->ajaxFail(null, "type can not be empty", 1002);
         }
 
-        if(intval($type)===false || intval($type)> self::SYNC_CATEGORY || intval($type) < self::SYNC_USER)
+        if(intval($type)===false || intval($type)> self::SYNC_IMPOTEDGOODS || intval($type) < self::SYNC_USER)
         {
             return $this->ajaxFail(null, "type value illegal", 1003);
         }
