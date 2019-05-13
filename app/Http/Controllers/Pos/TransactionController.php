@@ -470,6 +470,7 @@ class TransactionController extends Controller
                     exit(json_encode(['code'=>0,'message'=>"结算出错， 出错信息 {$json_str['message']}"]));
                 }else{
                     $tmpoutflow->status = 1;
+                    $tmpoutflow->check_date = date('Y-m-d', time());
                     $saveresult = $tmpoutflow->save();
                     if($saveresult === false)
                     {
