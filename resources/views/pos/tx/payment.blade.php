@@ -92,17 +92,14 @@
         <p class='txal bold w100pc' style='border-bottom:1px solid #999;'>警告</p>
     </div>
     <input type="hidden" id="seachdate"  value="{{$search['date']}}" />
-    @if($search['status']) 
+    @if($search['status']!='') 
     <input type="hidden" id="seachStatus"  value="{{$search['status']}}" />
     @endif
-    @if(!$search['status']) 
-    <input type="hidden" id="seachStatus"  value="" />
-    @endif
+
 
 @stop 
 @section('js')
 <script>
-// console.log(new Date(new Date(new Date().toLocaleDateString()).getTime()-24*60*60*1000))
         let selectName=[
             {name:'全部',status:'',},
             {name:'已结算',status:1,},
@@ -113,7 +110,6 @@
             var date=$('#seachdate').val()
             $('#date').val(date)
             $('.date_picker').date_input();
-            debugger
             if(!$('#seachStatus').val()){$('#status').val('')}else{$('#status').val($('#seachStatus').val())}
             
         })
