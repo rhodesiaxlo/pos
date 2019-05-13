@@ -90,25 +90,25 @@
             <td>{{$prepayment->order_amount/100}}</td>
             <td>{{$prepayment->cpcc_amount/100}}</td>
             @if($prepayment->result_status==0)
-            (<td>对账成功</td>)
+            <td>对账成功</td>
             @endif
             @if($prepayment->result_status==1)
-            (<td>对账失败 金额不符</td>)
+            <td>对账失败 金额不符</td>
             @endif
             @if($prepayment->result_status==2)
-            (<td>平台无此订单</td>)
+            <td>平台无此订单</td>
             @endif
             @if($prepayment->result_status==3)
-            (<td>中金无此订单</td>)
+            <td>中金无此订单</td>
             @endif
             @if($prepayment->status==0)
-            (<td>待初审</td>)
+            <td>待初审</td>
             @endif
             @if($prepayment->status==1)
-            (<td>待复审</td>)
+            <td>待复审</td>
             @endif
             @if($prepayment->status==2)
-            (<td>审核完成</td>)
+            <td>审核完成</td>
             @endif
         </tr>
         @endforeach
@@ -184,7 +184,8 @@ $(function(){
     $('.date_picker').date_input();
 })
 function val(e){
-    var start = new Date(new Date(new Date().toLocaleDateString()).getTime());//当天00:00
+    // var start = new Date(new Date(new Date().toLocaleDateString()).getTime());//当天00:00
+    var start = new Date(new Date(new Date().toLocaleDateString()).getTime()-24*60*60*1000);//前天00:00
     var yest=Date.parse(start)
 
     var date=new Date($('.date_picker').val())
@@ -193,7 +194,7 @@ function val(e){
         eeor('当前时间不可选择','bg-red-2')
         $('.date_picker').val('')
     }
-}
+} 
 
 function alrt(num){
     $('#mov').show()
