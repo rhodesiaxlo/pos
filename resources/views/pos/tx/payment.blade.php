@@ -14,14 +14,15 @@
 </style>
 
 <div class='bold f20 pos_str_msg'>POS商户应收款结算划出</div>
+<?php echo json_encode($search); ?>
 <form class='' action="{{url::route('pos.transaction.payment')}}" method="post">
     <input type="hidden" name="_token" value="{{ csrf_token() }}">
     <div class='pos_index_tital white'>
         <div class='fsb ' style='width:55%;'>
-            <div>商家名称  <input class='bor-n bor-4 mg-l-3 ' style='color: black;' type="text" @if($search['storeName']) value="name" @endif name="storeName" id="name" /></div>
-            <div>商家编号  <input class='bor-n bor-4 mg-l-3 ' style='color: black;' type="text" @if($search['storeCode']) value="code" @endif name="storeCode" id="code" /></div>
+            <div>商家名称  <input class='bor-n bor-4 mg-l-3 ' style='color: black;' type="text" @if($search['storeName']) value="{{$search['storeName']}}" @endif name="storeName" id="name" /></div>
+            <div>商家编号  <input class='bor-n bor-4 mg-l-3 ' style='color: black;' type="text" @if($search['storeCode']) value="code" @endif name="{{$search['storeCode']}}" id="code" /></div>
             <div class='gray'><span class='white'>应结算日期</span><input  id='date' name='date' onchange="val()" style='height:;width:226px;color: black;' type="text" placeholder="" autocomplete="off" class='date_picker bor-n bor-4 mg-l-3 ' ></div>
-            <div>结算状态  <select class='bor-n bor-4 mg-l-3 black' name="status" id="status"></select></div>
+            <div>结算状态  <select class='bor-n bor-4 mg-l-3 black'  name="status" id="status"></select></div>
         </div>
     </div>
     <!-- <input onchange="val()" name='chatTime' style='height:30px;width:226px;' type="text" placeholder="" autocomplete="off" class="date_picker"> -->
@@ -91,10 +92,17 @@
         <p class='txal bold w100pc' style='border-bottom:1px solid #999;'>警告</p>
     </div>
     <input type="hidden" id="seachdate"  value="{{$search['date']}}" />
+    @if($search['status']) 
+    <input type="hidden" id="seachStatus"  value="{{$search['status']}}" />
+    @endif
+    @if(!$search['status']) 
+    <input type="hidden" id="seachStatus"  value="" />
+    @endif
+
 @stop 
 @section('js')
 <script>
-console.log(new Date(new Date(new Date().toLocaleDateString()).getTime()-24*60*60*1000))
+// console.log(new Date(new Date(new Date().toLocaleDateString()).getTime()-24*60*60*1000))
         let selectName=[
             {name:'全部',status:0,},
             {name:'已结算',status:1,},
@@ -105,6 +113,8 @@ console.log(new Date(new Date(new Date().toLocaleDateString()).getTime()-24*60*6
             var date=$('#seachdate').val()
             $('#date').val(date)
             $('.date_picker').date_input();
+            if(!$('#seachStatus').val()){$('#status').val('0')}else{$('#status').val($('#seachStatus').val())}
+            
         })
         function sele(){
             $('#status').empty()
