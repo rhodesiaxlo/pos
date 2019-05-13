@@ -14,7 +14,7 @@
 </style>
 
 <div class='bold f20 pos_str_msg'>POS商户应收款结算划出</div>
-<?php echo json_encode($search); ?>
+<!-- <?php echo json_encode($search); ?> -->
 <form class='' action="{{url::route('pos.transaction.payment')}}" method="post">
     <input type="hidden" name="_token" value="{{ csrf_token() }}">
     <div class='pos_index_tital white'>
