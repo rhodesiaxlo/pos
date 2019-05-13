@@ -171,6 +171,9 @@ class ExcelController extends Controller
 		        
 			        // 写入数据
 			        $is_exist = GoodsImport::where(['goods_sn'=>$row[2],'user_id'=>$store_id])->first();
+
+			        $this->insertGoodsIfStoreGoodsEmpty($store_info->store_code, $row, $store_id, $store_info, $abc);
+
 			        if(!is_null($is_exist))
 			        {
 			        	
@@ -443,6 +446,130 @@ class ExcelController extends Controller
 		//exit(json_encode(file_exists(dirname(dirname(dirname(dirname(dirname(__FILE__)))))."/public/exceltemplate/import.xlsx")));;
 		#return Response::download($file, $id. '.' .$type, $headers); 
 		return response()->download(dirname(dirname(dirname(dirname(dirname(__FILE__)))))."/public/exceltemplate/import.xlsx", 'import.xlsx', $headers);
+    }
+
+    /**
+     * 当商品店铺是新建的， device_no 为空  商品店铺
+     * @return [type] [description]
+     */
+    private function insertGoodsIfStoreGoodsEmpty($store_code, $row, $store_id, $store_info, $abc)
+    {
+    	// 
+    	$is_exist = User::where(['store_code' => $store_code])->first();
+
+    	if(is_null($is_exist))
+    		return;
+
+
+    	if(!empty($is_exist->device_no))
+    		return;
+
+
+    	// 检查商品库
+    	// $goods_exist = Goods::where(['store_code'=>$store_code])->first();
+    	// if(!is_null($goods_exist))
+    	// 	return;
+    	$goods_info = Goods::where(['store_code'=>$store_code, 'goods_sn' => $row[2]])->first();
+    	if(!is_null($goods_info))
+    	{
+    		// 存在 更新
+			$goods_info->user_id           = $store_id; // usr_id
+			$goods_info->store_code        = $store_info->store_code;	// store_code
+			$goods_info->goods_name        = $row[1];
+
+			$goods_info->goods_sn          = $row[2];
+			$goods_info->cat_id            = $abc[$row[3]] + 1;   // cat_id
+			$goods_info->type              = $row[4];
+			$goods_info->goods_picture     = ""; // 商品图片
+			$goods_info->spec              = $row[5];
+			$goods_info->create_time       = time();
+			$goods_info->unit              = $row[6];
+			$goods_info->cost_price        = $row[7];
+			$goods_info->shop_price        = $row[8];
+			$goods_info->repertory         = $row[9];
+			$goods_info->repertory_caution = $row[10];
+			$goods_info->place_code        = $row[11];
+
+			if(strtolower( gettype($row[12])) == "object")
+			{
+				$obj = json_decode(json_encode($row[12], true));
+				$date = strval($obj->date);
+				$goods_info->staleTime = strtotime($date);
+			} else {
+				if(strtolower( gettype($row[12])) == "string" && empty($row[12]))
+				{
+					$row['12'] = 0;
+				}
+				$goods_info->staleTime         = strtotime(date('Y-m-d',$row[12]));
+			}
+			$goods_info->custom            = "1";
+			$goods_info->is_forsale        = $row[13];
+			$goods_info->sale_time         = time();
+			$goods_info->is_short          = $row[14];
+			$goods_info->short_time        = time();
+			$goods_info->check             = "0";
+			$goods_info->last_modified     = time();
+
+
+			// 保存，保存成功后，更新记
+			$save_rest = $goods_info->save();
+    		
+    	} else {
+    		// 不存在，插入
+    	
+        	$new_rec = new Goods();
+			$new_rec->user_id           = $store_id; // usr_id
+			$new_rec->id  				= 1000;
+			$new_rec->store_code        = $store_info->store_code;	// store_code
+			$new_rec->goods_name        = $row[1];
+			
+			$new_rec->goods_sn          = $row[2];
+			$new_rec->cat_id            = $abc[$row[3]] + 1;   // cat_id
+			$new_rec->type              = $row[4];
+			$new_rec->goods_picture     = ""; // 商品图片
+			$new_rec->spec              = $row[5];
+			$new_rec->create_time       = time();
+			$new_rec->unit              = $row[6];
+			$new_rec->cost_price        = $row[7];
+			$new_rec->shop_price        = $row[8];
+			$new_rec->repertory         = $row[9];
+			$new_rec->repertory_caution = $row[10];
+			$new_rec->place_code        = $row[11];
+			if(strtolower( gettype($row[12])) == "object")
+			{
+				$obj = json_decode(json_encode($row[12], true));
+				$date = strval($obj->date);
+				$new_rec->staleTime = strtotime($date);
+			} else {
+				if(strtolower( gettype($row[12])) == "string" && empty($row[12]))
+				{
+					$row['12'] = 0;
+				}
+
+				$new_rec->staleTime         = strtotime(date('Y-m-d',$row[12]));
+			}
+			//$new_rec->staleTime         = strtotime(date('Y-m-d',$row[12]));
+			$new_rec->custom            = "1";
+			$new_rec->is_forsale        = $row[13];
+			$new_rec->sale_time         = time();
+			$new_rec->is_short          = $row[14];
+			$new_rec->short_time        = time();
+			$new_rec->check             = "0";
+			$new_rec->last_modified     = time();
+
+        	$create_rest = $new_rec->save();
+
+        	$up = Goods::where(['store_code' => $store_info->store_code, 'id'=>1000])->first();
+        	if(!is_null($up))
+        	{
+        		$up->id = $up->local_id;
+        		$up->save();
+        	}	
+
+    	}
+
+
+
     }
 
 }

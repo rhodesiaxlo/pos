@@ -262,6 +262,7 @@ class TransactionController extends Controller
         $drawntimestamp = strtotime($drawn);
         $midnighttimestamp = strtotime($midnight);
 
+        $where = [];
         if(!empty($status))
         {
             $where['status'] = $status;
@@ -391,6 +392,11 @@ class TransactionController extends Controller
                         ($value->result_status==2?'平台无此订单':
                         ($value->result_status==3?'中金无此订单':'其它')));
 
+                $tmp[] = $value->status==0?'待初审':
+                        ($value->status==1?'待复审':
+                        ($value->status==2?'审核完成':
+                        ($value->status==3?'-':'-')));
+
                 $writer->addRow($tmp);
             }
 
@@ -464,6 +470,7 @@ class TransactionController extends Controller
                     exit(json_encode(['code'=>0,'message'=>"结算出错， 出错信息 {$json_str['message']}"]));
                 }else{
                     $tmpoutflow->status = 1;
+                    $tmpoutflow->check_date = date('Y-m-d', time());
                     $saveresult = $tmpoutflow->save();
                     if($saveresult === false)
                     {

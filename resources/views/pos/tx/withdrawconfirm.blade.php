@@ -17,7 +17,7 @@
 <div>
     <div style="font-size:18px;"  class='pos_index_tital white'>查询条件</div>
     <div style="margin:10px 20px;">
-        <span style="">交易日期</span>
+        <span style="">打款日期</span>
         <form class="dslb mg-l-10" id='form' method="POST" action="{{url::route('pos.transaction.withdrawconfirm')}}" >
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
             <input onchange="val()" id='date' name='chatTime' style='height:30px;width:226px;' type="text" placeholder="" autocomplete="off" class="date_picker">

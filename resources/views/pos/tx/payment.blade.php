@@ -20,7 +20,7 @@
     <div class='pos_index_tital white'>
         <div class='fsb ' style='width:55%;'>
             <div>商家名称  <input class='bor-n bor-4 mg-l-3 ' style='color: black;' type="text" @if($search['storeName']) value="{{$search['storeName']}}" @endif name="storeName" id="name" /></div>
-            <div>商家编号  <input class='bor-n bor-4 mg-l-3 ' style='color: black;' type="text" @if($search['storeCode']) value="code" @endif name="{{$search['storeCode']}}" id="code" /></div>
+            <div>商家编号  <input class='bor-n bor-4 mg-l-3 ' style='color: black;' type="text" @if($search['storeCode']) value="{{$search['storeCode']}}" @endif name="storeCode" id="code" /></div>
             <div class='gray'><span class='white'>应结算日期</span><input  id='date' name='date' onchange="val()" style='height:;width:226px;color: black;' type="text" placeholder="" autocomplete="off" class='date_picker bor-n bor-4 mg-l-3 ' ></div>
             <div>结算状态  <select class='bor-n bor-4 mg-l-3 black'  name="status" id="status"></select></div>
         </div>
@@ -104,16 +104,17 @@
 <script>
 // console.log(new Date(new Date(new Date().toLocaleDateString()).getTime()-24*60*60*1000))
         let selectName=[
-            {name:'全部',status:0,},
+            {name:'全部',status:'',},
             {name:'已结算',status:1,},
-            {name:'未结算',status:2,}
+            {name:'未结算',status:0,}
         ]
         $(function(){
             sele()
             var date=$('#seachdate').val()
             $('#date').val(date)
             $('.date_picker').date_input();
-            if(!$('#seachStatus').val()){$('#status').val('0')}else{$('#status').val($('#seachStatus').val())}
+            debugger
+            if(!$('#seachStatus').val()){$('#status').val('')}else{$('#status').val($('#seachStatus').val())}
             
         })
         function sele(){
