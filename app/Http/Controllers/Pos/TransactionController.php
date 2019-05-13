@@ -263,7 +263,7 @@ class TransactionController extends Controller
         $midnighttimestamp = strtotime($midnight);
 
         $where = [];
-        if(!empty($status))
+        if(intval($status) == 0 || intval($status) == 1)
         {
             $where['status'] = $status;
         }
