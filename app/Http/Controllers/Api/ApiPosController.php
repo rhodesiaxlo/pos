@@ -2102,7 +2102,8 @@ class ApiPosController extends Controller
                 $this->generatePrepayment($date);
 
                 // 生成对账单数据前天的
-                $this->generateAfterPayment(date("Y-m-d", strtotime($date)-86400));
+                //$this->generateAfterPayment(date("Y-m-d", strtotime($date)-86400));
+                $this->generateAfterPayment($date);
 
                 return $this->ajaxSuccess([], "read success, {$total} records date {$date}");
             } catch (Exception $e) {
@@ -2450,6 +2451,7 @@ class ApiPosController extends Controller
      * @param  [type] $date [description]
      * @return [type]       [description]
      */
+    // 
     public function generateAfterPayment($date)
     {
         $qrytime = strtotime($date);
