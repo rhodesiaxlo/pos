@@ -690,6 +690,7 @@ class ApiPosController extends Controller
             $msg = (string)$simpleXML->Head->Message;
             $total = (string)$simpleXML->Head->TotalCount;
             $cur_total = (string)$simpleXML->Body->Tx->count();
+
             // if($cur_total ==0)
             // {
             //     // 当前查询没有记录，终止 
@@ -703,7 +704,7 @@ class ApiPosController extends Controller
                 $ret = [];
                 $ret['total'] = $total;
                 $data = [];
-                if($cur_total > 1)
+                if($cur_total >= 1)
                 {
                     for($i = 0; $i<$cur_total; $i++)
                     {
@@ -2037,6 +2038,7 @@ class ApiPosController extends Controller
 
             // 写入数据   
             // 开启事务
+
             DB::beginTransaction();
             try{
                 foreach ($response['list'] as $key => $value) {
