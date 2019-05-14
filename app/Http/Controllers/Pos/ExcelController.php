@@ -135,6 +135,7 @@ class ExcelController extends Controller
 		
 		$sheet_num = 0;
 		$fields = ['商品名称','商品条码','商品分类','计价方式','商品规格', '商品单位','进货价','零售价','起始库存','库存预警','货架号','过期时间','是否上架','是否快捷'];
+
 		foreach ($reader->getSheetIterator() as $sheet) {
 			$sheet_num +=1;
 			if($sheet_num > 1)
@@ -310,10 +311,12 @@ class ExcelController extends Controller
 
     	$abc = array_flip($tmplist);
 
+
         // 商品名称，飞控
-    	if(empty($row[1])|| strlen($row[1])>40)
+    	if(empty($row[1])|| strlen($row[1])>100)
     	{
     		$message.="第{$row_num} 行, 第 {$col[1]} 列;";
+    	
     	}
 
         // 商品条码 非空
@@ -422,6 +425,7 @@ class ExcelController extends Controller
 		// 	exit(json_encode($row));
 		// }  
 
+        echo $row_num.'###';
 
     	if($message != "")
     	{
