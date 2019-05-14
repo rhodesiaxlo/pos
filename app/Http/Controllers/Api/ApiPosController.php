@@ -3179,7 +3179,7 @@ class ApiPosController extends Controller
 
         if($is_product)
         {
-            $file = dirname(__FILE__).'/pro/test.pfx';
+            $file = dirname(__FILE__).'/pro/ent.pfx';
         } else {
             $file = dirname(__FILE__).'/dev/test.pfx';
         }
@@ -3203,7 +3203,7 @@ class ApiPosController extends Controller
 
         if($is_product)
         {
-            $file = dirname(__FILE__).'/pro/paytest.cer';
+            $file = dirname(__FILE__).'/pro/payment.cer';
         } else {
             $file = dirname(__FILE__).'/dev/paytest.cer';
         }
