@@ -3049,7 +3049,7 @@ class ApiPosController extends Controller
             $newoutflowlog->AccountNumber = $userinfo->account_no;
             $newoutflowlog->create_time = time();
             $newoutflowlog->notify_time = time();
-            $newoutflowlog->check_date = date('Y-m-d', time());
+            $newoutflowlog->out_date = date('Y-m-d', time());
             $newoutflowlog->message = "自动生成,ccpc 回调成功";
             $newoutflowlog->status = intval($status)==40?1:$newoutflowlog->status;
             $newoutflowlog->save();
