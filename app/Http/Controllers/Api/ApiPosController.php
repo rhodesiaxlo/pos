@@ -2137,7 +2137,8 @@ class ApiPosController extends Controller
         $draw_ts = strtotime($draw_date);
         $midnight_ts = strtotime($midnight_date);
 
-        $orderlist = DB::select("select * from pos_server_order where create_time < {$midnight_ts} and create_time > {$draw_ts}");
+        // status = 20 成功订单，创建时间限定
+        $orderlist = DB::select("select * from pos_server_order where create_time < {$midnight_ts} and create_time > {$draw_ts} and status =20");
         $loglist = DB::select("select * from pos_cpcc_tx_log where TxType=1402 and check_date='{$date}' ");
 
         $order_sn       = array_column($orderlist, 'order_sn');
