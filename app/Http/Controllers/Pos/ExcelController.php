@@ -425,7 +425,6 @@ class ExcelController extends Controller
 		// 	exit(json_encode($row));
 		// }  
 
-        echo $row_num.'###';
 
     	if($message != "")
     	{
