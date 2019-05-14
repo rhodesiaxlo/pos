@@ -2465,7 +2465,8 @@ class ApiPosController extends Controller
         $draw_ts = strtotime($draw_date);
         $midnight_ts = strtotime($midnight_date);
 
-        $orderlist = DB::select("select * from pos_outflow_log where  check_date='{$date}' and status=1 ");
+        // out_date 划出日期
+        $orderlist = DB::select("select * from pos_outflow_log where  out_date='{$date}' and status=1 ");
         $loglist = DB::select("select * from pos_cpcc_tx_log where TxType=1341 and check_date='{$date}' ");
 
 
@@ -2495,7 +2496,7 @@ class ApiPosController extends Controller
                 FROM pos_outflow_log as o
             JOIN pos_cpcc_tx_log as l
             ON o.SerialNumber = l.TxSn
-            where l.TxType=1341 and l.check_date='{$date}' and o.status=1 and o.check_date='{$date}'
+            where l.TxType=1341 and l.check_date='{$date}' and o.status=1 and o.out_date='{$date}'
            
         ");
 

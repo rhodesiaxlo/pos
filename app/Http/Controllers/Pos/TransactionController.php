@@ -264,7 +264,7 @@ class TransactionController extends Controller
 
         $where = [];
 
-        if((intval($status) == 0 || intval($status) == 1)&&$status!=="")
+        if((intval($status) == 0 || intval($status) == 1)&&$status!==""&&$status!=null)
         {
             $where['status'] = $status;
         }
