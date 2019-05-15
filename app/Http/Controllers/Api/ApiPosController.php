@@ -3286,4 +3286,13 @@ class ApiPosController extends Controller
         return $this->ajaxSuccess($city, 'success');
     }
 
+    public function test(Request $req)
+    {
+        echo "is_product ".json_encode(env('IS_PRODUCT'));
+        echo "<br/>";
+        echo "url =".$this->cpcc_url;
+        
+        return;
+    }
+
 }

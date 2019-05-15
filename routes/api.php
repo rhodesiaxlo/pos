@@ -58,6 +58,7 @@ Route::group(['namespace' => 'Api','middleware' => ['api']], function () {
     Route::match(['get','post'],'apipos/banklist','ApiPosController@banklist')->name('api.apipos.banklist');
     Route::match(['get','post'],'apipos/province','ApiPosController@province')->name('api.apipos.province');
     Route::match(['get','post'],'apipos/storelist','ApiPosController@storelist')->name('api.apipos.storelist');
+    Route::match(['get','post'],'apipos/test','ApiPosController@test')->name('api.apipos.test');
     
     Route::match(['get','post'],'apipos/city','ApiPosController@city')->name('api.apipos.city');
     Route::match(['get','post'],'apipos/area','ApiPosController@area')->name('api.apipos.area');
