@@ -199,7 +199,7 @@ class ExcelController extends Controller
 						{
 							$obj = json_decode(json_encode($row[12], true));
             				$date = strval($obj->date);
-							$is_exist->staleTime = strtotime($date);
+							$is_exist->staleTime = strtotime($date)*1000;
 						} else {
 							if(strtolower( gettype($row[12])) == "string" && empty($row[12]))
 							{
@@ -248,7 +248,7 @@ class ExcelController extends Controller
 						{
 							$obj = json_decode(json_encode($row[12], true));
             				$date = strval($obj->date);
-							$new_rec->staleTime = strtotime($date);
+							$new_rec->staleTime = strtotime($date)*1000;
 						} else {
 							if(strtolower( gettype($row[12])) == "string" && empty($row[12]))
 							{
@@ -497,7 +497,7 @@ class ExcelController extends Controller
 			{
 				$obj = json_decode(json_encode($row[12], true));
 				$date = strval($obj->date);
-				$goods_info->staleTime = strtotime($date);
+				$goods_info->staleTime = strtotime($date)*1000;
 			} else {
 				if(strtolower( gettype($row[12])) == "string" && empty($row[12]))
 				{
@@ -542,7 +542,7 @@ class ExcelController extends Controller
 			{
 				$obj = json_decode(json_encode($row[12], true));
 				$date = strval($obj->date);
-				$new_rec->staleTime = strtotime($date);
+				$new_rec->staleTime = strtotime($date)*1000;
 			} else {
 				if(strtolower( gettype($row[12])) == "string" && empty($row[12]))
 				{
