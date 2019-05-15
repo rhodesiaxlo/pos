@@ -282,7 +282,7 @@ class ExcelController extends Controller
 
 		$reader->close();
 
-		$total -=4;
+		$total -=3;
 		if(empty($message))
 		{
 			exit(json_encode(['code'=>1,'message'=>"success 共处理 {$total} 条，新增 {$create_num} 条， 更新 {$update_num} 条, 出错 {$error_num} 条"]));
