@@ -205,7 +205,7 @@ class ExcelController extends Controller
 							{
 								$row['12'] = 0;
 							}
-							$is_exist->staleTime         = "";
+							$is_exist->staleTime         = 0;
 						}
 						$is_exist->custom            = "1";
 						$is_exist->is_forsale        = $row[13];
@@ -255,7 +255,7 @@ class ExcelController extends Controller
 								$row['12'] = 0;
 							}
 
-							$new_rec->staleTime         = "";
+							$new_rec->staleTime         = 0;
 						}
 						//$new_rec->staleTime         = strtotime(date('Y-m-d',$row[12]));
 						$new_rec->custom            = "1";
@@ -503,7 +503,7 @@ class ExcelController extends Controller
 				{
 					$row['12'] = 0;
 				}
-				$goods_info->staleTime         = "";
+				$goods_info->staleTime         = 0;
 			}
 			$goods_info->custom            = "1";
 			$goods_info->is_forsale        = $row[13];
@@ -549,7 +549,7 @@ class ExcelController extends Controller
 					$row['12'] = 0;
 				}
 
-				$new_rec->staleTime         = "";
+				$new_rec->staleTime         = 0;
 			}
 			//$new_rec->staleTime         = strtotime(date('Y-m-d',$row[12]));
 			$new_rec->custom            = "1";
