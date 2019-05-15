@@ -3189,7 +3189,7 @@ class ApiPosController extends Controller
         $fd = fopen($file, 'r');
         $p12buf = fread($fd, filesize($file));
         fclose($fd);
-        openssl_pkcs12_read($p12buf, $p12cert, 'cfca1234');
+        openssl_pkcs12_read($p12buf, $p12cert, 'star12345678');
         
         $pkeyid = $p12cert["pkey"];
         $binary_signature = "";
