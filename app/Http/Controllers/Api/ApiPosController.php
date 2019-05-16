@@ -50,6 +50,9 @@ class ApiPosController extends Controller
     private $cpcc_url = "";
     private $cpcc_url_dev = "https://test.cpcn.com.cn/Gateway/InterfaceII";
     private $cpcc_url_pro = "https://www.china-clearing.com/Gateway/InterfaceII";
+    private $dev_institution_id = "004792";
+    private $pro_institution_id = "000547";
+    private $institution_id = "";
 
     const SYNC_USER = 1;
     const SYNC_MEMBER = 2;
@@ -96,8 +99,10 @@ class ApiPosController extends Controller
         if($is_product)
         {
             $this->cpcc_url = $this->cpcc_url_pro;
+            $this->institution_id = $this->pro_institution_id;
         } else {
             $this->cpcc_url = $this->cpcc_url_dev;
+            $this->institution_id = $this->dev_institution_id;
         }
    }
 
@@ -374,7 +379,7 @@ class ApiPosController extends Controller
         }
 
         // 提取请求参数
-        $institutionID   = $req->get("InstitutionID");
+        $institutionID   = $this->institution_id;
         $orderNo         = $req->get("OrderNo");
         $paymentNo       = $req->get("PaymentNo");
         $paymentWay      = $req->get("PaymentWay");
@@ -577,7 +582,7 @@ class ApiPosController extends Controller
         }
 
         // 提取参数
-        $institutionID = $req->get("InstitutionID");
+        $institutionID = $this->institution_id;
         $date          = $req->get("Date");
         $pageno        = $req->get("PageNO");
         $countperpage  = $req->get("CountPerPage");
@@ -787,7 +792,7 @@ class ApiPosController extends Controller
         }
 
         // 提取参数
-        $institutionID        = $req->get("InstitutionID");
+        $institutionID        = $this->institution_id;
         $serialNumber         = $req->get("SerialNumber");
         $orderNo              = $req->get("OrderNo");
         $amount               = intval($req->get("Amount"));
@@ -3291,7 +3296,9 @@ class ApiPosController extends Controller
         echo "is_product ".json_encode(env('IS_PRODUCT'));
         echo "<br/>";
         echo "url =".$this->cpcc_url;
-        
+        echo "<br/>";
+        echo "ins_id =".$this->institution_id;
+
         return;
     }
 
