@@ -466,7 +466,7 @@ class ApiPosController extends Controller
                 // 判断 status 10 未知  20 成功 30 失败
                 if(intval($simpleXML->Body->Status)===false)
                 {
-                    return $this->ajaxFail(null, "中金异常 {$simpleXML->Body->Status} {$simpleXML->Body->ResponseMessage}", 2000);
+                    //return $this->ajaxFail(null, "中金异常 {$simpleXML->Body->Status} {$simpleXML->Body->ResponseMessage}", 2000);
                 } else if(intval((string)$simpleXML->Body->Status) == 10){
                     return $this->ajaxFail(null, "中金异常 状态未知", 2001);
 
@@ -2030,7 +2030,7 @@ class ApiPosController extends Controller
 
         while(1)
         {
-            $response = $this->fun1811('004792', $date, $page, 10000, true);
+            $response = $this->fun1811($this->institution_id, $date, $page, 10000, true);
             $current_no = sizeof($response['list']);
             
             $total = $response['total'];
@@ -3300,6 +3300,36 @@ class ApiPosController extends Controller
         echo "ins_id =".$this->institution_id;
 
         return;
+    }
+
+    public function getOrderStatus(Request $req)
+    {
+        $store_code = $req->get('store_code');
+        $order_sn = $req->get('order_sn');
+
+        if(empty($store_code))
+        {
+            // 店铺编码不能为空
+            return $this->ajaxFail(null, "store_code can not be empty", 1000);
+        }
+
+        if(empty($order_sn))
+        {
+            // 序列号不能为空
+            return $this->ajaxFail(null, "order_sn can not be empty", 1001);
+            
+        }
+
+        $order_info = ServerOrder::where(['order_no'=>$store_code, 'order_sn'=>$order_sn])->first();
+        if(is_null($order_info))
+        {
+            // 订单不存在
+            return $this->ajaxFail(null, "order not found", 1001);
+        }
+
+
+        return $this->ajaxSuccess($order_info, 'success');
+
     }
 
 }
