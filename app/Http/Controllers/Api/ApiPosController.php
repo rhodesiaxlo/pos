@@ -3056,7 +3056,7 @@ class ApiPosController extends Controller
             $newoutflowlog->AccountNumber = $userinfo->account_no;
             $newoutflowlog->create_time = time();
             $newoutflowlog->notify_time = time();
-            $newoutflowlog->out_date = date('Y-m-d', time());
+            //$newoutflowlog->out_date = date('Y-m-d', time());
             $newoutflowlog->message = "自动生成,ccpc 回调成功";
             $newoutflowlog->status = intval($status)==40?1:$newoutflowlog->status;
             $newoutflowlog->save();
@@ -3070,7 +3070,7 @@ class ApiPosController extends Controller
         }
 
         $info->notify_time = time();
-        $info->check_date = date('Y-m-d', time());
+        //$info->check_date = date('Y-m-d', time());
         $info->message = "自动生成,ccpc 回调成功";
         $info->status = intval($status)==40?1:$newoutflowlog->status;
         $result = $info->save();
