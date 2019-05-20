@@ -522,7 +522,7 @@ class ApiPosController extends Controller
 
         if(empty($institutionID))
         {
-            return $this->ajaxFail(null," institutionID can not be empty", 1000);
+            //return $this->ajaxFail(null," institutionID can not be empty", 1000);
         }
 
         if(empty($orderNo))
@@ -758,7 +758,7 @@ class ApiPosController extends Controller
 
         if(empty($institutionID))
         {
-            return $this->ajaxFail(null, "institutionID can not be empty", 1000);
+            // return $this->ajaxFail(null, "institutionID can not be empty", 1000);
         }
 
         if(empty($date))
@@ -908,7 +908,7 @@ class ApiPosController extends Controller
 
         if(empty($institutionID))
         {
-            return $this->ajaxFail(null," institutionID can not be empty", 1000);
+            //return $this->ajaxFail(null," institutionID can not be empty", 1000);
         }
 
         if(empty($serialNumber))
@@ -1052,7 +1052,7 @@ class ApiPosController extends Controller
 
         if(empty($institutionID))
         {
-            return $this->ajaxFail(null, "institutionID can not be empty ", 1000);
+            // return $this->ajaxFail(null, "institutionID can not be empty ", 1000);
         }
 
         if(empty($paymentNo))
