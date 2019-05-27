@@ -1960,7 +1960,7 @@ class ApiPosController extends Controller
                 {
                     $tmpuser              = new Supplier;
                     $tmpuser->store_code  = $store_code;
-                    $tmpuser->store_id  = $storeinfo->local_id;
+                    $tmpuser->store_id  = $storeinfo[0]->local_id;
 
                     $tmpuser->id                 = $value['id'];
                     $tmpuser->supplier_name      = $value['supplier_name'];
@@ -1981,7 +1981,7 @@ class ApiPosController extends Controller
                     $save_count++; 
                 } else {
                     $is_exist->store_code  = $store_code;
-                    $is_exist->store_id  = $storeinfo->local_id;
+                    $is_exist->store_id  = $storeinfo[0]->local_id;
 
                     $is_exist->id                 = $value['id'];
                     $is_exist->supplier_name      = $value['supplier_name'];
@@ -2048,7 +2048,7 @@ class ApiPosController extends Controller
                 {
                     $tmpuser              = new InOutStockLog;
                     $tmpuser->store_code  = $store_code;
-                    $tmpuser->store_id  = $storeinfo->local_id;
+                    $tmpuser->store_id  = $storeinfo[0]->local_id;
 
                     $tmpuser->id               = $value['id'];
                     $tmpuser->supplier_name    = $value['supplier_name'];
@@ -2077,7 +2077,7 @@ class ApiPosController extends Controller
                     $save_count++; 
                 } else {
                     $is_exist->store_code  = $store_code;
-                    $is_exist->store_id  = $storeinfo->local_id;
+                    $is_exist->store_id  = $storeinfo[0]->local_id;
 
                     $is_exist->id               = $value['id'];
                     $is_exist->supplier_name    = $value['supplier_name'];
