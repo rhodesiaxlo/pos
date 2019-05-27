@@ -29,6 +29,9 @@ use App\Models\Pos\Postpayment;
 use App\Models\Pos\GoodsSku;
 use App\Models\Pos\GeneralLog;
 use App\Models\Pos\GoodsImport;
+use App\Models\Pos\Supplier;
+use App\Models\Pos\InOutStockLog;
+
 
 
 
@@ -63,6 +66,9 @@ class ApiPosController extends Controller
     const SYNC_SHIFTLOG = 7;
     const SYNC_CATEGORY = 8;
     const SYNC_IMPOTEDGOODS = 9;
+    const SYNC_SUPPLIER = 10;
+    const SYNC_INOUTSTOCK = 11;
+
 
     // 支付方式
     const PAYWAY_WECHAT = 11;
@@ -212,7 +218,7 @@ class ApiPosController extends Controller
             return $this->ajaxFail(null, "type can not be empty", 1002);
         }
 
-        if(intval($type)===false || intval($type)> self::SYNC_IMPOTEDGOODS || intval($type) < self::SYNC_USER)
+        if(intval($type)===false || intval($type)> self::SYNC_INOUTSTOCK || intval($type) < self::SYNC_USER)
         {
             return $this->ajaxFail(null, "type value illegal", 1003);
         }
@@ -288,6 +294,18 @@ class ApiPosController extends Controller
             $where1['is_synced'] = 0;
             $importgoodslist = GoodsImport::where($where1)->get();
             return $this->ajaxSuccess($importgoodslist, "success");
+        }
+
+        if(intval($type) == self::SYNC_SUPPLIER)
+        {
+            $shiftloginfo = Supplier::where($where)->get();
+            return $this->ajaxSuccess($shiftloginfo, "success"); 
+        }
+
+        if(intval($type) == self::SYNC_INOUTSTOCK)
+        {
+            $shiftloginfo = InOutStockLog::where($where)->get();
+            return $this->ajaxSuccess($shiftloginfo, "success"); 
         }
 
         $ret = [];
@@ -1799,6 +1817,12 @@ class ApiPosController extends Controller
             case self::SYNC_SHIFTLOG:
                 $fields = ['id','uid','shifts_code','start_time','end_time','total_price','cash_price','deleted'];
                 break;
+            case self::SYNC_SUPPLIER:
+                $fields = ['id','supplier_name','supplier_principal','phone','address','create_time','last_modified','user_name','uid','deleted'];
+                break;
+            case slef::SYNC_INOUTSTOCK:
+                $fields = ['id','supplier_name','s_id','goods_name','goods_sn','gid','repertory','in_out_repertory','type','in_out_price','unit','subtotal','uid','user_name','create_time','last_modified','deleted'];
+                break;
             default:
                 # code...
                 break;
@@ -1905,6 +1929,197 @@ class ApiPosController extends Controller
     }
 
     /**
+     * 同步供应商数据
+     * @param  Request $req [description]
+     * @return [type]       [description]
+     */
+    public function syncSupplier(Request $req)
+    {
+        $data = $req->get('data');
+        $store_code = $req->get('store_code');
+
+        $fieldsresult = $this->checkFields($data, self::SYNC_SUPPLIER);
+        if($fieldsresult !== true)
+        {
+            return $fieldsresult;
+        }
+
+        DB::beginTransaction();
+        try {
+            $save_count = 0;
+            $update_count = 0;
+
+            // fields check
+            
+            foreach ($data as $key => $value) {
+                // 去重
+                $is_exist = Supplier::where(['store_code'=>$store_code,'id'=>$value['id']])->first();
+                if(is_null($is_exist))
+                {
+                    $tmpuser              = new Supplier;
+                    $tmpuser->store_code  = $store_code;
+                    $tmpuser->store_id  = "";
+
+                    $tmpuser->id                 = $value['id'];
+                    $tmpuser->supplier_name      = $value['supplier_name'];
+                    $tmpuser->supplier_principal = $value['supplier_principal'];
+                    $tmpuser->phone              = $value['phone'];
+                    $tmpuser->address            = $value['address'];
+                    $tmpuser->create_time        = $value['create_time'];
+                    $tmpuser->last_modified      = $value['last_modified'];
+                    $tmpuser->user_name          = $value['user_name'];
+                    $tmpuser->uid                = $value['uid'];
+                    $tmpuser->deleted            = $value['deleted'];
+
+                    $ret = $tmpuser->save();
+                    if($ret === false)
+                    {
+                        throw new \Exception(" save supplier record failed", 1);
+                    }   
+                    $save_count++; 
+                } else {
+                    $is_exist->store_code  = $store_code;
+                    $is_exist->store_id  = "";
+
+                    $is_exist->id                 = $value['id'];
+                    $is_exist->supplier_name      = $value['supplier_name'];
+                    $is_exist->supplier_principal = $value['supplier_principal'];
+                    $is_exist->phone              = $value['phone'];
+                    $is_exist->address            = $value['address'];
+                    $is_exist->create_time        = $value['create_time'];
+                    $is_exist->last_modified      = $value['last_modified'];
+                    $is_exist->user_name          = $value['user_name'];
+                    $is_exist->uid                = $value['uid'];
+                    $is_exist->deleted            = $value['deleted'];
+
+                    $ret = $is_exist->save();
+                    if($ret === false)
+                    {
+                        throw new \Exception(" update supplier record failed", 1);
+                    }
+                    $update_count++; 
+                }
+
+            }
+            DB::commit();
+            $size = sizeof($data);
+            $total = $update_count + $save_count;
+            return $this->ajaxSuccess([], "save supplier  data success, {$total} processed , {$save_count} records saved,{$update_count} updated, {$size} input ");
+        } catch (Exception $e) {
+            DB::rollBack();
+            return $this->ajaxFail(null, $e->getMessage(), 1000);
+            
+        }
+
+        return true;
+
+        return $this->ajaxFail(null, 'not implement yet', 1000);
+    }
+
+    /**
+     * 同步出入库
+     * @param  Request $req [description]
+     * @return [type]       [description]
+     */
+    public function syncInOutStock(Request $req)
+    {
+        $data = $req->get('data');
+        $store_code = $req->get('store_code');
+
+        $fieldsresult = $this->checkFields($data, self::SYNC_SUPPLIER);
+        if($fieldsresult !== true)
+        {
+            return $fieldsresult;
+        }
+
+        DB::beginTransaction();
+        try {
+            $save_count = 0;
+            $update_count = 0;
+
+            // fields check
+            
+            foreach ($data as $key => $value) {
+                // 去重
+                $is_exist = InOutStockLog::where(['store_code'=>$store_code,'id'=>$value['id']])->first();
+                if(is_null($is_exist))
+                {
+                    $tmpuser              = new InOutStockLog;
+                    $tmpuser->store_code  = $store_code;
+                    $tmpuser->store_id  = "";
+
+                    $tmpuser->id               = $value['id'];
+                    $tmpuser->supplier_name    = $value['supplier_name'];
+                    $tmpuser->s_id             = $value['s_id'];
+                    $tmpuser->goods_name       = $value['goods_name'];
+                    $tmpuser->goods_sn         = $value['goods_sn'];
+                    $tmpuser->gid              = $value['gid'];
+                    $tmpuser->repertory        = $value['repertory'];
+                    $tmpuser->in_out_repertory = $value['in_out_repertory'];
+                    $tmpuser->type             = $value['type'];
+                    $tmpuser->in_out_price     = $value['in_out_price'];
+                    $tmpuser->unit             = $value['unit'];
+                    $tmpuser->subtotal         = $value['subtotal'];
+                    $tmpuser->uid              = $value['uid'];
+                    $tmpuser->user_name        = $value['user_name'];
+                    $tmpuser->create_time      = $value['create_time'];
+                    $tmpuser->last_modified    = $value['last_modified'];
+                    $tmpuser->deleted          = $value['deleted'];
+
+
+                    $ret = $tmpuser->save();
+                    if($ret === false)
+                    {
+                        throw new \Exception(" save in_out_stock record failed", 1);
+                    }   
+                    $save_count++; 
+                } else {
+                    $is_exist->store_code  = $store_code;
+                    $is_exist->store_id  = "";
+
+                    $is_exist->id               = $value['id'];
+                    $is_exist->supplier_name    = $value['supplier_name'];
+                    $is_exist->s_id             = $value['s_id'];
+                    $is_exist->goods_name       = $value['goods_name'];
+                    $is_exist->goods_sn         = $value['goods_sn'];
+                    $is_exist->gid              = $value['gid'];
+                    $is_exist->repertory        = $value['repertory'];
+                    $is_exist->in_out_repertory = $value['in_out_repertory'];
+                    $is_exist->type             = $value['type'];
+                    $is_exist->in_out_price     = $value['in_out_price'];
+                    $is_exist->unit             = $value['unit'];
+                    $is_exist->subtotal         = $value['subtotal'];
+                    $is_exist->uid              = $value['uid'];
+                    $is_exist->user_name        = $value['user_name'];
+                    $is_exist->create_time      = $value['create_time'];
+                    $is_exist->last_modified    = $value['last_modified'];
+                    $is_exist->deleted          = $value['deleted'];
+
+                    $ret = $is_exist->save();
+                    if($ret === false)
+                    {
+                        throw new \Exception(" update in_out_stock record failed", 1);
+                    }
+                    $update_count++; 
+                }
+
+            }
+            DB::commit();
+            $size = sizeof($data);
+            $total = $update_count + $save_count;
+            return $this->ajaxSuccess([], "save in_out_stock  data success, {$total} processed , {$save_count} records saved,{$update_count} updated, {$size} input ");
+        } catch (Exception $e) {
+            DB::rollBack();
+            return $this->ajaxFail(null, $e->getMessage(), 1000);
+            
+        }
+
+        return true;
+
+        return $this->ajaxFail(null, 'not implement yet', 1000);
+    }
+
+    /**
      * 同步数据
      * @param  Request $req [description]
      * @return [type]       [description]
@@ -1933,7 +2148,7 @@ class ApiPosController extends Controller
         }
 
 
-        if( intval($type)<1 || intval($type)>7)
+        if( intval($type)<1 || intval($type)>self::SYNC_INOUTSTOCK)
         {
             return $this->ajaxFail(null, 'type value type illegal', 1003);        
         }
@@ -1967,6 +2182,12 @@ class ApiPosController extends Controller
                 break;
             case self::SYNC_SHIFTLOG:
                 $ret = $this->syncShiftLog($req);
+                break;
+            case self::SYNC_SUPPLIER:
+                $ret = $this->syncSupplier($req);
+                break;
+            case self::SYNC_INOUTSTOCK:
+                $ret = $this->syncInOutStock($req);
                 break;
             default:
                 # code...
@@ -3194,8 +3415,14 @@ class ApiPosController extends Controller
         $fd = fopen($file, 'r');
         $p12buf = fread($fd, filesize($file));
         fclose($fd);
-        openssl_pkcs12_read($p12buf, $p12cert, 'star12345678');
-        
+
+        if($is_product)
+        {
+            openssl_pkcs12_read($p12buf, $p12cert, 'star12345678');
+        } else {
+            openssl_pkcs12_read($p12buf, $p12cert, 'cfca1234');
+        }
+
         $pkeyid = $p12cert["pkey"];
         $binary_signature = "";
         openssl_sign($plainText, $binary_signature, $pkeyid,OPENSSL_ALGO_SHA1);
