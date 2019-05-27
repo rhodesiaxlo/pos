@@ -1935,7 +1935,7 @@ class ApiPosController extends Controller
      * @param  Request $req [description]
      * @return [type]       [description]
      */
-    public function syncSupplier(Request $req)
+    public function syncSupplier(Request $req, $storeinfo)
     {
         $data = $req->get('data');
         $store_code = $req->get('store_code');
@@ -1960,7 +1960,7 @@ class ApiPosController extends Controller
                 {
                     $tmpuser              = new Supplier;
                     $tmpuser->store_code  = $store_code;
-                    $tmpuser->store_id  = "";
+                    $tmpuser->store_id  = $storeinfo->id;
 
                     $tmpuser->id                 = $value['id'];
                     $tmpuser->supplier_name      = $value['supplier_name'];
@@ -1981,7 +1981,7 @@ class ApiPosController extends Controller
                     $save_count++; 
                 } else {
                     $is_exist->store_code  = $store_code;
-                    $is_exist->store_id  = "";
+                    $is_exist->store_id  = $storeinfo->id;
 
                     $is_exist->id                 = $value['id'];
                     $is_exist->supplier_name      = $value['supplier_name'];
@@ -2023,7 +2023,7 @@ class ApiPosController extends Controller
      * @param  Request $req [description]
      * @return [type]       [description]
      */
-    public function syncInOutStock(Request $req)
+    public function syncInOutStock(Request $req, $storeinfo)
     {
         $data = $req->get('data');
         $store_code = $req->get('store_code');
@@ -2048,7 +2048,7 @@ class ApiPosController extends Controller
                 {
                     $tmpuser              = new InOutStockLog;
                     $tmpuser->store_code  = $store_code;
-                    $tmpuser->store_id  = "";
+                    $tmpuser->store_id  = $storeinfo->id;
 
                     $tmpuser->id               = $value['id'];
                     $tmpuser->supplier_name    = $value['supplier_name'];
@@ -2077,7 +2077,7 @@ class ApiPosController extends Controller
                     $save_count++; 
                 } else {
                     $is_exist->store_code  = $store_code;
-                    $is_exist->store_id  = "";
+                    $is_exist->store_id  = $storeinfo->id;
 
                     $is_exist->id               = $value['id'];
                     $is_exist->supplier_name    = $value['supplier_name'];
@@ -2186,10 +2186,10 @@ class ApiPosController extends Controller
                 $ret = $this->syncShiftLog($req);
                 break;
             case self::SYNC_SUPPLIER:
-                $ret = $this->syncSupplier($req);
+                $ret = $this->syncSupplier($req, $is_exist);
                 break;
             case self::SYNC_INOUTSTOCK:
-                $ret = $this->syncInOutStock($req);
+                $ret = $this->syncInOutStock($req, $is_exist);
                 break;
             default:
                 # code...
