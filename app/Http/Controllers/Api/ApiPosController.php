@@ -1823,7 +1823,7 @@ class ApiPosController extends Controller
                 break;
             case slef::SYNC_INOUTSTOCK:
                 // $fields = ['id','supplier_name','s_id','goods_name','goods_sn','gid','repertory','in_out_repertory','type','in_out_price','unit','subtotal','uid','user_name','create_time','last_modified','deleted'];
-                $fields = ['id','supplier_name','s_id','goods_name','goods_sn','gid','repertory','in_out_repertory','type','in_out_price','unit','subtotal','uid','user_name','create_time','last_modified','deleted'];
+                $fields = ['id','supplier_name','sid','goods_name','goods_sn','gid','repertory','in_out_repertory','type','in_out_price','unit','subtotal','uid','user_name','create_time','last_modified','deleted'];
                 break;
             default:
                 # code...
@@ -2052,7 +2052,7 @@ class ApiPosController extends Controller
 
                     $tmpuser->id               = $value['id'];
                     $tmpuser->supplier_name    = $value['supplier_name'];
-                    $tmpuser->s_id             = $value['s_id'];
+                    $tmpuser->sid             = $value['sid'];
                     $tmpuser->goods_name       = $value['goods_name'];
                     $tmpuser->goods_sn         = $value['goods_sn'];
                     $tmpuser->gid              = $value['gid'];
@@ -2081,7 +2081,7 @@ class ApiPosController extends Controller
 
                     $is_exist->id               = $value['id'];
                     $is_exist->supplier_name    = $value['supplier_name'];
-                    $is_exist->s_id             = $value['s_id'];
+                    $is_exist->sid             = $value['sid'];
                     $is_exist->goods_name       = $value['goods_name'];
                     $is_exist->goods_sn         = $value['goods_sn'];
                     $is_exist->gid              = $value['gid'];
