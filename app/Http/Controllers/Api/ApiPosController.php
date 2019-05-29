@@ -1823,7 +1823,7 @@ class ApiPosController extends Controller
                 break;
             case self::SYNC_INOUTSTOCK:
                 // $fields = ['id','supplier_name','s_id','goods_name','goods_sn','gid','repertory','in_out_repertory','type','in_out_price','unit','subtotal','uid','user_name','create_time','last_modified','deleted'];
-                $fields = ['id','supplier_name','sid','goods_name','goods_sn','gid','repertory','in_out_repertory','type','in_out_price','unit','subtotal','uid','user_name','create_time','last_modified','deleted'];
+                $fields = ['id','supplier_name','goods_name','goods_sn','gid','repertory','in_out_repertory','type','in_out_price','unit','subtotal','uid','user_name','create_time','last_modified','deleted'];
                 break;
             default:
                 # code...
