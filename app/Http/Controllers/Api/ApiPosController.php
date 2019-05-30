@@ -1626,29 +1626,34 @@ class ApiPosController extends Controller
                 $is_exist = Order::where(['store_code'=>$store_code,'order_sn'=>$value['order_sn']])->first();
                 if(is_null($is_exist))
                 {
-                    $tmpuser                   = new Order;
-                    $tmpuser->id               = $value['id'];
-                    $tmpuser->order_sn         = $value['order_sn'];
-                    $tmpuser->create_time      = $value['create_time'];
-                    $tmpuser->status           = $value['status'];
-                    $tmpuser->pay_type         = $value['pay_type'];
-                    $tmpuser->uid              = $value['uid'];
-                    $tmpuser->store_code       = $store_code;
-                    $tmpuser->user_name        = $value['user_name'];
-                    $tmpuser->mid              = is_null($value['mid'])?0:$value['mid'];
-                    $tmpuser->total_price      = $value['total_price'];
-                    $tmpuser->discount_rate    = $value['discount_rate'];
+                    $tmpuser                        = new Order;
+                    $tmpuser->id                    = $value['id'];
+                    $tmpuser->order_sn              = $value['order_sn'];
+                    $tmpuser->create_time           = $value['create_time'];
+                    $tmpuser->status                = $value['status'];
+                    $tmpuser->pay_type              = $value['pay_type'];
+                    $tmpuser->uid                   = $value['uid'];
+                    $tmpuser->store_code            = $store_code;
+                    $tmpuser->user_name             = $value['user_name'];
+                    $tmpuser->mid                   = is_null($value['mid'])?0:$value['mid'];
+                    $tmpuser->total_price           = $value['total_price'];
+                    $tmpuser->discount_rate         = $value['discount_rate'];
                     
-                    $tmpuser->discounts_price  = $value['discounts_price'];
-                    $tmpuser->discount_code    = $value['discount_code'];
-                    $tmpuser->change_price     = $value['change_price'];
-                    $tmpuser->refund_uid       = is_null($value['refund_uid'])?0:$value['refund_uid'];
-
-                    $tmpuser->receivable_price = $value['receivable_price'];
-                    $tmpuser->practical_price  = $value['practical_price'];
-                    $tmpuser->total_num        = $value['total_num'];
-                    $tmpuser->refund_time      = $value['refund_time'];
-                    $tmpuser->deleted          = $value['deleted'];
+                    $tmpuser->discounts_price       = $value['discounts_price'];
+                    $tmpuser->discount_code         = $value['discount_code'];
+                    $tmpuser->change_price          = $value['change_price'];
+                    $tmpuser->refund_uid            = is_null($value['refund_uid'])?0:$value['refund_uid'];
+                    
+                    $tmpuser->receivable_price      = $value['receivable_price'];
+                    $tmpuser->practical_price       = $value['practical_price'];
+                    $tmpuser->total_num             = $value['total_num'];
+                    $tmpuser->refund_time           = $value['refund_time'];
+                    $tmpuser->deleted               = $value['deleted'];
+                    
+                    // 增加字段
+                    $tmpuser->discount_item_price   = $value['discount_item_price'];
+                    $tmpuser->discount_member_price = $value['discount_member_price'];
+                    $tmpuser->discount_list_price   = $value['discount_list_price'];
                     
 
                     $ret = $tmpuser->save();
@@ -1658,29 +1663,36 @@ class ApiPosController extends Controller
                     }    
                     $save_count++;
                 } else {
-                    $is_exist->id               = $value['id'];
-                    $is_exist->order_sn         = $value['order_sn'];
-                    $is_exist->create_time      = $value['create_time'];
-                    $is_exist->status           = $value['status'];
-                    $is_exist->pay_type         = $value['pay_type'];
-                    $is_exist->uid              = $value['uid'];
-                    $is_exist->store_code       = $store_code;
-                    $is_exist->user_name        = $value['user_name'];
-                    $is_exist->mid              = is_null($value['mid'])?0:$value['mid'];
-                    $is_exist->total_price      = $value['total_price'];
-                    $is_exist->discount_rate    = $value['discount_rate'];
+                    $is_exist->id                    = $value['id'];
+                    $is_exist->order_sn              = $value['order_sn'];
+                    $is_exist->create_time           = $value['create_time'];
+                    $is_exist->status                = $value['status'];
+                    $is_exist->pay_type              = $value['pay_type'];
+                    $is_exist->uid                   = $value['uid'];
+                    $is_exist->store_code            = $store_code;
+                    $is_exist->user_name             = $value['user_name'];
+                    $is_exist->mid                   = is_null($value['mid'])?0:$value['mid'];
+                    $is_exist->total_price           = $value['total_price'];
+                    $is_exist->discount_rate         = $value['discount_rate'];
                     
-                    $is_exist->discounts_price  = $value['discounts_price'];
-                    $is_exist->discount_code    = $value['discount_code'];
-                    $is_exist->change_price     = $value['change_price'];
-                    $is_exist->refund_uid       = is_null($value['refund_uid'])?0:$value['refund_uid'];
+                    $is_exist->discounts_price       = $value['discounts_price'];
+                    $is_exist->discount_code         = $value['discount_code'];
+                    $is_exist->change_price          = $value['change_price'];
+                    $is_exist->refund_uid            = is_null($value['refund_uid'])?0:$value['refund_uid'];
                     
+                    
+                    $is_exist->receivable_price      = $value['receivable_price'];
+                    $is_exist->practical_price       = $value['practical_price'];
+                    $is_exist->total_num             = $value['total_num'];
+                    $is_exist->refund_time           = $value['refund_time'];
+                    $is_exist->deleted               = $value['deleted'];
+                    
+                    // 增加字段
+                    $is_exist->discount_item_price   = $value['discount_item_price'];
+                    $is_exist->discount_member_price = $value['discount_member_price'];
+                    $is_exist->discount_list_price   = $value['discount_list_price'];
 
-                    $is_exist->receivable_price = $value['receivable_price'];
-                    $is_exist->practical_price  = $value['practical_price'];
-                    $is_exist->total_num        = $value['total_num'];
-                    $is_exist->refund_time      = $value['refund_time'];
-                    $is_exist->deleted          = $value['deleted'];
+                    
                     $ret                        = $is_exist->save();
                     if($ret === false)
                     {
