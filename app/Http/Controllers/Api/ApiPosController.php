@@ -1651,9 +1651,9 @@ class ApiPosController extends Controller
                     $tmpuser->deleted               = $value['deleted'];
                     
                     // 增加字段
-                    $tmpuser->discount_item_price   = $value['discount_item_price'];
-                    $tmpuser->discount_member_price = $value['discount_member_price'];
-                    $tmpuser->discount_list_price   = $value['discount_list_price'];
+                    // $tmpuser->discount_item_price   = $value['discount_item_price'];
+                    // $tmpuser->discount_member_price = $value['discount_member_price'];
+                    // $tmpuser->discount_list_price   = $value['discount_list_price'];
                     
 
                     $ret = $tmpuser->save();
@@ -1688,9 +1688,9 @@ class ApiPosController extends Controller
                     $is_exist->deleted               = $value['deleted'];
                     
                     // 增加字段
-                    $is_exist->discount_item_price   = $value['discount_item_price'];
-                    $is_exist->discount_member_price = $value['discount_member_price'];
-                    $is_exist->discount_list_price   = $value['discount_list_price'];
+                    // $is_exist->discount_item_price   = $value['discount_item_price'];
+                    // $is_exist->discount_member_price = $value['discount_member_price'];
+                    // $is_exist->discount_list_price   = $value['discount_list_price'];
 
                     
                     $ret                        = $is_exist->save();
