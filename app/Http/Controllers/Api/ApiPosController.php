@@ -31,6 +31,12 @@ use App\Models\Pos\GeneralLog;
 use App\Models\Pos\GoodsImport;
 use App\Models\Pos\Supplier;
 use App\Models\Pos\InOutStockLog;
+use App\Models\Pos\RolePermissions;
+use App\Models\Pos\Role;
+use App\Models\Pos\Permissions;
+
+
+
 
 
 
@@ -68,6 +74,11 @@ class ApiPosController extends Controller
     const SYNC_IMPOTEDGOODS = 9;
     const SYNC_SUPPLIER = 10;
     const SYNC_INOUTSTOCK = 11;
+
+    const SYNC_PERMISSION = 12;
+    const SYNC_ROLE = 13;
+const SYNC_ROLEPERMISSION = 14;
+
 
 
     // 支付方式
@@ -306,6 +317,25 @@ class ApiPosController extends Controller
         {
             $shiftloginfo = InOutStockLog::where($where)->get();
             return $this->ajaxSuccess($shiftloginfo, "success"); 
+        }
+
+        if(intval($type) == self::SYNC_PERMISSION)
+        {
+            $permission = Permissions::where(1)->select();
+            return $this->ajaxSuccess($permission, "success"); 
+        }
+
+        if(intval($type) == self::SYNC_ROLE)
+        {
+            $role = Role::where($where)->select();
+            return $this->ajaxSuccess($role, "success"); 
+        }
+
+        if(intval($type) == self::SYNC_ROLEPERMISSION)
+        {
+            $role_permissions = RolePermissions::where($where)->select();
+            return $this->ajaxSuccess($role_permissions, "success"); 
+
         }
 
         $ret = [];
@@ -1744,6 +1774,8 @@ class ApiPosController extends Controller
                     $tmpuser->goods_name      = $value['goods_name'];
                     $tmpuser->goods_num       = $value['goods_num'];
                     $tmpuser->goods_price     = $value['goods_price'];
+                    $tmpuser->cost_price     = $value['cost_price'];
+
                     $tmpuser->subtotal_price  = $value['subtotal_price'];
                     $tmpuser->discounts_price = $value['discounts_price'];
                     
@@ -1766,6 +1798,9 @@ class ApiPosController extends Controller
                     $is_exist->goods_sn        = $value['goods_sn'];
                     $is_exist->goods_name      = $value['goods_name'];
                     $is_exist->goods_num       = $value['goods_num'];
+
+                    $is_exist->cost_price     = $value['cost_price'];
+
                     $is_exist->goods_price     = $value['goods_price'];
                     $is_exist->subtotal_price  = $value['subtotal_price'];
                     $is_exist->discounts_price = $value['discounts_price'];
@@ -1836,6 +1871,12 @@ class ApiPosController extends Controller
             case self::SYNC_INOUTSTOCK:
                 // $fields = ['id','supplier_name','s_id','goods_name','goods_sn','gid','repertory','in_out_repertory','type','in_out_price','unit','subtotal','uid','user_name','create_time','last_modified','deleted'];
                 $fields = ['id','supplier_name','goods_name','goods_sn','gid','repertory','in_out_repertory','type','in_out_price','unit','subtotal','uid','user_name','create_time','last_modified','deleted'];
+                break;
+            case self::SYNC_ROLE:
+                $fields = ['id','role_name','enabled','lastmodified'];
+                break;
+            case self::SYNC_ROLEPERMISSION:
+                $fields = ['id','role_id','permission_id', 'lastmodified'];
                 break;
             default:
                 # code...
@@ -2133,6 +2174,154 @@ class ApiPosController extends Controller
         return $this->ajaxFail(null, 'not implement yet', 1000);
     }
 
+
+    /**
+     * 同步角色表
+     * @param  Request $req [description]
+     * @return [type]       [description]
+     */
+    public function syncRole(Request $req, $storeinfo)
+    {
+        $data = $req->get('data');
+        $store_code = $req->get('store_code');
+
+        $fieldsresult = $this->checkFields($data, self::SYNC_ROLE);
+        if($fieldsresult !== true)
+        {
+            return $fieldsresult;
+        }
+
+        DB::beginTransaction();
+        try {
+            $save_count = 0;
+            $update_count = 0;
+
+            // fields check
+            
+            foreach ($data as $key => $value) {
+                // 去重
+                $is_exist = Role::where(['store_code'=>$store_code,'id'=>$value['id']])->first();
+                if(is_null($is_exist))
+                {
+                    $tmpuser               = new Role;
+                    $tmpuser->id           = $value['id'];
+                    $tmpuser->role_name    = $value['role_name'];
+                    $tmpuser->enabled      = $value['enabled'];
+                    $tmpuser->lastmodified = $value['lastmodified'];
+                
+
+                    $ret = $tmpuser->save();
+                    if($ret === false)
+                    {
+                        throw new \Exception(" save members record failed", 1);
+                    }   
+                    $save_count++; 
+                } else {
+                    $is_exist->id           = $value['id'];
+                    $is_exist->role_name    = $value['role_name'];
+                    $is_exist->enabled      = $value['enabled'];
+                    $is_exist->lastmodified = $value['lastmodified'];
+
+                    $ret = $is_exist->save();
+                    if($ret === false)
+                    {
+                        throw new \Exception(" update members record failed", 1);
+                    }
+                    $update_count++; 
+                }
+
+            }
+            DB::commit();
+            $size = sizeof($data);
+            $total = $update_count + $save_count;
+            return $this->ajaxSuccess([], "save role  data success, {$total} processed , {$save_count} records saved,{$update_count} updated, {$size} input ");
+        } catch (Exception $e) {
+            DB::rollBack();
+            return $this->ajaxFail(null, $e->getMessage(), 1000);
+            
+        }
+
+        return true;
+
+        return $this->ajaxFail(null, 'not implement yet', 1000);
+
+    }
+
+    /**
+     * [syncRolePermission description]
+     * @param  Request $req [description]
+     * @return [type]       [description]
+     */
+    public function syncRolePermission(Request $req, $storeinfo)
+    {
+        $data = $req->get('data');
+        $store_code = $req->get('store_code');
+
+        $fieldsresult = $this->checkFields($data, self::SYNC_ROLEPERMISSION);
+        if($fieldsresult !== true)
+        {
+            return $fieldsresult;
+        }
+
+        DB::beginTransaction();
+        try {
+            $save_count = 0;
+            $update_count = 0;
+
+            // fields check
+            
+            foreach ($data as $key => $value) {
+                // 去重
+                $is_exist = RolePermissions::where(['store_code'=>$store_code,'id'=>$value['id']])->first();
+                if(is_null($is_exist))
+                {
+                    $tmpuser                = new RolePermissions;
+                    $tmpuser->id            = $value['id'];
+                    $tmpuser->role_id       = $value['role_id'];
+                    $tmpuser->permission_id = $value['permission_id'];
+                    $tmpuser->lastmodified  = $value['lastmodified'];
+                    $tmpuser->store_code    = $store_code;
+
+                
+
+                    $ret = $tmpuser->save();
+                    if($ret === false)
+                    {
+                        throw new \Exception(" save members record failed", 1);
+                    }   
+                    $save_count++; 
+                } else {
+                    $is_exist->id            = $value['id'];
+                    $is_exist->role_id       = $value['role_id'];
+                    $is_exist->permission_id = $value['permission_id'];
+                    $is_exist->lastmodified  = $value['lastmodified'];
+                    $is_exist->store_code    = $store_code;
+
+
+                    $ret = $is_exist->save();
+                    if($ret === false)
+                    {
+                        throw new \Exception(" update role_permissions record failed", 1);
+                    }
+                    $update_count++; 
+                }
+
+            }
+            DB::commit();
+            $size = sizeof($data);
+            $total = $update_count + $save_count;
+            return $this->ajaxSuccess([], "save role_permissions  data success, {$total} processed , {$save_count} records saved,{$update_count} updated, {$size} input ");
+        } catch (Exception $e) {
+            DB::rollBack();
+            return $this->ajaxFail(null, $e->getMessage(), 1000);
+            
+        }
+
+        return true;
+
+        return $this->ajaxFail(null, 'not implement yet', 1000);
+    }
+
     /**
      * 同步数据
      * @param  Request $req [description]
@@ -2202,6 +2391,13 @@ class ApiPosController extends Controller
                 break;
             case self::SYNC_INOUTSTOCK:
                 $ret = $this->syncInOutStock($req, $is_exist);
+                break;
+
+            case self::SYNC_ROLE:
+                $ret = $this->syncRole($req, $is_exist);
+                break;
+            case self::SYNC_ROLEPERMISSION:
+                $ret = $this->syncRolePermission($req, $is_exist);
                 break;
             default:
                 # code...
