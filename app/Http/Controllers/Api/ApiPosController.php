@@ -322,7 +322,6 @@ class ApiPosController extends Controller
         if(intval($type) == self::SYNC_PERMISSION)
         {
             $permission = Permissions::get();
-            exit(json_encode($permission));
             return $this->ajaxSuccess($permission, "success"); 
         }
 
