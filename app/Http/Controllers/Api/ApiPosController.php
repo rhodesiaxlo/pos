@@ -2206,6 +2206,7 @@ class ApiPosController extends Controller
                     $tmpuser               = new Role;
                     $tmpuser->id           = $value['id'];
                     $tmpuser->role_name    = $value['role_name'];
+                    $tmpuser->store_code   = $store_code;
                     $tmpuser->enabled      = $value['enabled'];
                     $tmpuser->lastmodified = $value['lastmodified'];
                 
@@ -2221,6 +2222,7 @@ class ApiPosController extends Controller
                     $is_exist->role_name    = $value['role_name'];
                     $is_exist->enabled      = $value['enabled'];
                     $is_exist->lastmodified = $value['lastmodified'];
+                    $is_exist->store_code   = $store_code;
 
                     $ret = $is_exist->save();
                     if($ret === false)
@@ -2399,6 +2401,7 @@ class ApiPosController extends Controller
             case self::SYNC_ROLEPERMISSION:
                 $ret = $this->syncRolePermission($req, $is_exist);
                 break;
+
             default:
                 # code...
                 break;
