@@ -77,7 +77,7 @@ class ApiPosController extends Controller
 
     const SYNC_PERMISSION = 12;
     const SYNC_ROLE = 13;
-const SYNC_ROLEPERMISSION = 14;
+    const SYNC_ROLEPERMISSION = 14;
 
 
 
@@ -229,7 +229,7 @@ const SYNC_ROLEPERMISSION = 14;
             return $this->ajaxFail(null, "type can not be empty", 1002);
         }
 
-        if(intval($type)===false || intval($type)> self::SYNC_INOUTSTOCK || intval($type) < self::SYNC_USER)
+        if(intval($type)===false || intval($type)> self::SYNC_ROLEPERMISSION || intval($type) < self::SYNC_USER)
         {
             return $this->ajaxFail(null, "type value illegal", 1003);
         }
@@ -2351,7 +2351,7 @@ const SYNC_ROLEPERMISSION = 14;
         }
 
 
-        if( intval($type)<1 || intval($type)>self::SYNC_INOUTSTOCK)
+        if( intval($type)<1 || intval($type)>self::SYNC_ROLEPERMISSION)
         {
             return $this->ajaxFail(null, 'type value type illegal', 1003);        
         }
