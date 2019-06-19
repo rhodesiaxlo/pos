@@ -321,19 +321,20 @@ class ApiPosController extends Controller
 
         if(intval($type) == self::SYNC_PERMISSION)
         {
-            $permission = Permissions::where(1)->select();
+            $permission = Permissions::get();
+            exit(json_encode($permission));
             return $this->ajaxSuccess($permission, "success"); 
         }
 
         if(intval($type) == self::SYNC_ROLE)
         {
-            $role = Role::where($where)->select();
+            $role = Role::where($where)->get();
             return $this->ajaxSuccess($role, "success"); 
         }
 
         if(intval($type) == self::SYNC_ROLEPERMISSION)
         {
-            $role_permissions = RolePermissions::where($where)->select();
+            $role_permissions = RolePermissions::where($where)->get();
             return $this->ajaxSuccess($role_permissions, "success"); 
 
         }

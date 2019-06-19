@@ -8,5 +8,5 @@ class Role extends Model
 {
     protected $table = 'pos_user_role';
     public $timestamps = false;
-    protected $primaryKey = "id";
+    protected $primaryKey = "local_id";
 }

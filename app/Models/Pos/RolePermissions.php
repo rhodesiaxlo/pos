@@ -8,5 +8,5 @@ class RolePermissions extends Model
 {
     protected $table = 'pos_role_permissions';
     public $timestamps = false;
-    protected $primaryKey = "id";
+    protected $primaryKey = "local_id";
 }
