@@ -1465,7 +1465,7 @@ class ApiPosController extends Controller
                     $tmpuser->deleted             = $value['deleted'];
                     $tmpuser->is_active           = $value['deleted'];
                     $tmpuser->realname            = $value['realname'];
-                    $tmpuser->business_licence_no = $value['user_number'];
+                    $tmpuser->business_licence_no = $value['business_licence_no'];
                     $tmpuser->phone               = $value['phone'];
 
                     if(!is_null($value['store_name']))
@@ -1515,7 +1515,7 @@ class ApiPosController extends Controller
                     $is_exist->is_active           = $value['deleted'];
                     
                     $is_exist->realname            = $value['realname'];
-                    $is_exist->business_licence_no = $value['user_number'];
+                    $is_exist->business_licence_no = $value['business_licence_no'];
                     $is_exist->phone               = $value['phone'];
 
                     if(!is_null($value['store_name']))
