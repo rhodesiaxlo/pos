@@ -1468,6 +1468,36 @@ class ApiPosController extends Controller
                     $tmpuser->business_licence_no = $value['user_number'];
                     $tmpuser->phone               = $value['phone'];
 
+                    if(!is_null($value['store_name']))
+                    {
+                        $tmpuser->store_name               = $value['store_name'];
+
+                    }
+
+                    if(!is_null($value['province_id']))
+                    {
+                        $tmpuser->province_id               = $value['province_id'];
+                        
+                    }
+
+                    if(!is_null($value['city_id']))
+                    {
+                        $tmpuser->city_id               = $value['city_id'];
+                        
+                    }
+
+                    if(!is_null($value['area_id']))
+                    {
+                        $tmpuser->area_id               = $value['area_id'];
+                        
+                    }
+
+                    if(!is_null($value['address']))
+                    {
+                        $tmpuser->address               = $value['address'];
+                    }
+
+
 
                     $ret = $tmpuser->save();
                     if($ret === false)
@@ -1487,6 +1517,36 @@ class ApiPosController extends Controller
                     $is_exist->realname            = $value['realname'];
                     $is_exist->business_licence_no = $value['user_number'];
                     $is_exist->phone               = $value['phone'];
+
+                    if(!is_null($value['store_name']))
+                    {
+                        $is_exist->store_name               = $value['store_name'];
+
+                    }
+
+                    if(!is_null($value['province_id']))
+                    {
+                        $is_exist->province_id               = $value['province_id'];
+                        
+                    }
+
+                    if(!is_null($value['city_id']))
+                    {
+                        $is_exist->city_id               = $value['city_id'];
+                        
+                    }
+
+                    if(!is_null($value['area_id']))
+                    {
+                        $is_exist->area_id               = $value['area_id'];
+                        
+                    }
+
+                    if(!is_null($value['address']))
+                    {
+                        $is_exist->address               = $value['address'];
+                    }
+
 
 
                     $ret = $is_exist->save();
