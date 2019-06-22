@@ -678,8 +678,6 @@ class TransactionController extends Controller
                 // 如果是 收银对账，还需要生成结算列表
                 if($tx_type == 1402)
                 {
-
-
                     $rest = Prepayment::where(['check_date'=>$check_date])->get();
 
                     // $rest = DB::select("select `cpcc_amount`, `store_code`, `store_name` from pos_prepayment where check_date={$check_date}");

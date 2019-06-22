@@ -2269,6 +2269,8 @@ class ApiPosController extends Controller
                     $tmpuser->store_code   = $store_code;
                     $tmpuser->enabled      = $value['enabled'];
                     $tmpuser->lastmodified = $value['lastmodified'];
+                    $tmpuser->deleted = $value['deleted'];
+
                 
 
                     $ret = $tmpuser->save();
@@ -2283,6 +2285,8 @@ class ApiPosController extends Controller
                     $is_exist->enabled      = $value['enabled'];
                     $is_exist->lastmodified = $value['lastmodified'];
                     $is_exist->store_code   = $store_code;
+                    $is_exist->deleted = $value['deleted'];
+                    
 
                     $ret = $is_exist->save();
                     if($ret === false)
