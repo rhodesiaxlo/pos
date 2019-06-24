@@ -1463,7 +1463,7 @@ class ApiPosController extends Controller
                     $tmpuser->store_code          = $store_code;
                     $tmpuser->rank                = $value['rank'];
                     $tmpuser->deleted             = $value['deleted'];
-                    $tmpuser->is_active           = $value['deleted'];
+                    $tmpuser->is_active           = $value['enabled'];
                     $tmpuser->realname            = $value['realname'];
                     $tmpuser->business_licence_no = $value['business_licence_no'];
                     $tmpuser->phone               = $value['phone'];
@@ -1498,6 +1498,17 @@ class ApiPosController extends Controller
                     }
 
 
+                    if(!is_null($value['role_id']))
+                    {
+                        $tmpuser->role_id               = $value['role_id'];
+                    }
+
+                    if(!is_null($value['role_name']))
+                    {
+                        $tmpuser->role_name               = $value['role_name'];
+                    }
+
+
 
                     $ret = $tmpuser->save();
                     if($ret === false)
@@ -1512,7 +1523,7 @@ class ApiPosController extends Controller
                     $is_exist->rank                = $value['rank'];
                     $is_exist->store_code          = $store_code;
                     $is_exist->deleted             = $value['deleted'];
-                    $is_exist->is_active           = $value['deleted'];
+                    $is_exist->is_active           = $value['enabled'];
                     
                     $is_exist->realname            = $value['realname'];
                     $is_exist->business_licence_no = $value['business_licence_no'];
@@ -1547,7 +1558,15 @@ class ApiPosController extends Controller
                         $is_exist->address               = $value['address'];
                     }
 
+                    if(!is_null($value['role_id']))
+                    {
+                        $is_exist->role_id               = $value['role_id'];
+                    }
 
+                    if(!is_null($value['role_name']))
+                    {
+                        $is_exist->role_name               = $value['role_name'];
+                    }
 
                     $ret = $is_exist->save();
                     if($ret === false)
@@ -2286,7 +2305,7 @@ class ApiPosController extends Controller
                     $is_exist->lastmodified = $value['lastmodified'];
                     $is_exist->store_code   = $store_code;
                     $is_exist->deleted = $value['deleted'];
-                    
+
 
                     $ret = $is_exist->save();
                     if($ret === false)
