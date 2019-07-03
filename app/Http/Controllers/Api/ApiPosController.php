@@ -239,9 +239,13 @@ class ApiPosController extends Controller
         $where['store_code'] = $store_code;
         $userinfo =User::where($where)->get();
 
+        foreach ($userinfo as $key => $value) {
+            $userinfo[$key]->enabled = $value->is_active;
+        }
+
         if(empty($userinfo[0]))
         {
-            return $this->ajaxFail(null, "store not found", 1001);   
+            return $this->ajaxFail(null, "store not found", 1001);  
         }
         if(intval($type) == self::SYNC_USER)
         {
@@ -1057,7 +1061,9 @@ class ApiPosController extends Controller
 
             if($code !=2000)
             {
+                Log::info("1410  异步回调 msg is {$msg} code is {$code}");
                 return $this->ajaxFail(null, $msg, $code);
+
             } else {
                 $data = [];
                 $data['txname'] = $txCode;
